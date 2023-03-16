@@ -14,19 +14,21 @@ class RDF2Mermaid:
 
     ICON_MAP = {
         "urn:k8s:Application": "fa:fa-cubes",
+        "urn:k8s:ConfigMap": "\N{EMPTY DOCUMENT}",
         "urn:k8s:Container": "fa:fa-cube",
         "urn:k8s:Deployment": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:DeploymentConfig": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
-        "urn:k8s:Image": "fa:fa-docker",
+        "urn:k8s:Endpoint": "fa:fa-ethernet",
+        "urn:k8s:Host": "fa:fa-globe",
+        "urn:k8s:Image": "fab:fa-docker",
         "urn:k8s:Namespace": "\N{DOTTED SQUARE}",
         "urn:k8s:PersistentVolumeClaim": "fa:fa-database",
         "urn:k8s:Pod": "fa:fa-cube",
         "urn:k8s:Port": "fa:fa-ethernet",
         "urn:k8s:Secret": "fa:fa-key",
         "urn:k8s:Service": "fa:fa-network-wired",
-        "urn:k8s:Registry": "fa:fa-docker fa:fa-database",
+        "urn:k8s:Registry": "fab:fa-docker fa:fa-database",
         "urn:k8s:Route": "fa:fa-route",
-        "urn:k8s:Host": "fa:fa-globe",
     }
     DONT_RENDER_AS_NODES = (
         NS_K8S.Application,
@@ -71,7 +73,7 @@ class RDF2Mermaid:
                 offset += 20
         return ret.strip(r"\n").strip()
 
-    def parse(self, match: str = ""):
+    def parse(self, match: str = "", skip_label=True):
         if self.lines:
             log.info(f"Already parsed {len(self.lines)} lines.")
             return
@@ -84,13 +86,26 @@ class RDF2Mermaid:
             # Skip non-k8s resources.
             if not str(type_).startswith(("urn:k8s:", "d3f:")):
                 continue
+            if type_ in (
+                NS_K8S.Registry,
+                NS_K8S.Image,
+                NS_K8S.ImageStream,
+                NS_K8S.ImageStreamTag,
+            ):
+                continue
 
             log.debug("Processing %s", [s, p, o])
             icon = RDF2Mermaid.ICON_MAP.get(str(type_), "") or type_
             src = RDF2Mermaid.sanitize_uri(s)
 
             label = self.g.value(s, RDFS.label) or ""
-            label_l = f"{icon} {Path(s).name} {label}"
+            label_l = f"{icon}"
+            if not skip_label or type_ in (
+                NS_K8S.Namespace,
+                NS_K8S.Registry,
+                NS_K8S.Application,
+            ):
+                label_l += f" {Path(s).name} {label}"
             label_l = RDF2Mermaid.sanitize_label(label_l)
             label_l = f'"{label_l}"'
             # Create a tree of subgraph based on the
@@ -115,22 +130,39 @@ class RDF2Mermaid:
                     left_p, right_p = "[[", "]]"
                 elif type_ == NS_K8S.Service:
                     left_p, right_p = "((", "))"
-                elif type_ in (NS_K8S.PersistentVolumeClaim, NS_K8S.Image):
+                elif type_ in (
+                    NS_K8S.PersistentVolumeClaim,
+                    NS_K8S.Image,
+                    NS_K8S.ImageStream,
+                ):
                     left_p, right_p = "[(", ")]"
+                elif type_ in (NS_K8S.Route,):
+                    left_p, right_p = "([", "])"
+                elif type_ in (NS_K8S.Deployment, NS_K8S.DeploymentConfig):
+                    left_p, right_p = "[\\", "/]"
+                elif type_ in (NS_K8S.ConfigMap, NS_K8S.Secret):
+                    left_p, right_p = ">", "]"
+
                 else:
                     left_p, right_p = "[", "]"
                 self.lines.append(
                     f"""{src}{left_p}{label_l}{right_p}""".replace("\n", "")
                 )
 
-            for link in (
-                NS_K8S.executes,
-                NS_K8S.exposes,
-                NS_K8S.accesses,
+            for link, arrow in (
+                (NS_K8S.executes, "-->"),
+                (NS_K8S.exposes, "-.-o"),
+                (NS_K8S.accesses, "-->"),
             ):
                 for dst in self.g.objects(s, link) or []:
                     dst = RDF2Mermaid.sanitize_uri(dst)
-                    self.lines.append(f"""{src} --> |{str(link)[8:]}| {dst}""")
+                    if link == NS_K8S.exposes:
+                        src, dst = dst, src
+                    if "configmap" in dst.lower() or "secret" in dst.lower():
+                        src, dst = dst, src
+                        arrow = "-.-"
+                        link = "is accessed by"
+                    self.lines.append(f"""{src} {arrow} |{str(link)[8:]}| {dst}""")
         log.info("Parsed %s lines.", len(self.lines))
 
     def render(self):

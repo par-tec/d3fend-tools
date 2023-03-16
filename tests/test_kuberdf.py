@@ -69,6 +69,17 @@ def test_parse_resource(manifest_yaml):
     assert g is not None
 
 
+@pytest.mark.parametrize("manifest_yaml", Path(".").glob("**/kuberdf/*.yaml"))
+def test_parse_resources(manifest_yaml):
+    dpath = (
+        Path(__file__).parent
+        / "data"
+        / "as_mermaid"
+        / f"deleteme-out-{manifest_yaml.stem}"
+    )
+    parse_resources((manifest_yaml,), dpath.as_posix())
+
+
 def test_graph():
     manifests = Path("tests").glob("**/*.yaml")
     parse_resources(manifests, "deleteme")

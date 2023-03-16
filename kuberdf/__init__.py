@@ -111,7 +111,8 @@ class K8Resource:
             "Deployment": DC,
             "DeploymentConfig": DC,
             "Endpoints": None,
-            "HorizontalPodAutoscaler": None,
+            "Endpoint": None,
+            "HorizontalPodAutoscaler": SkipResource,
             "ImageStream": None,
             "ImageStreamTag": None,
             "Job": SkipResource,
@@ -140,7 +141,8 @@ class K8Resource:
         yield from resource.triples()
 
     def get_app_uri(self, metadata):
-        app = metadata.get("labels", {}).get("app")
+        labels = metadata.get("labels", {})
+        app = labels.get("app") or labels.get("application")
         return URIRef(self.ns + f"/Application/{app}") if app else None
 
     def __init__(self, manifest=None, ns: str = None) -> None:
@@ -301,8 +303,9 @@ class DC(K8Resource):
             image_url._replace(path=strip_oci_image_tag(image_url.path)).geturl()
         )
         if image_url.netloc:
-            yield URIRef(image_url.netloc), RDF.type, NS_K8S.Registry
-            yield URIRef(image_url.netloc), NS_K8S.hasChild, image_uri
+            registry_uri = URIRef(image_url.scheme + "://" + image_url.netloc)
+            yield registry_uri, RDF.type, NS_K8S.Registry
+            yield registry_uri, NS_K8S.hasChild, image_uri
 
         yield image_uri, RDF.type, NS_K8S.Image
         if container_uri:

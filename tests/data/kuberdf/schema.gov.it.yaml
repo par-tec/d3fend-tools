@@ -1,0 +1,945 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+metadata:
+  name: autoscaling-dati-semantic-webvowl
+  namespace: ndc-dev
+spec:
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: dati-semantic-webvowl
+    apiVersion: apps.openshift.io/v1
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-frontend
+  namespace: ndc-dev
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-webvowl
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-webvowl
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    deploymentConfig: dati-semantic-webvowl
+  template:
+    metadata:
+      name: dati-semantic-webvowl
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-webvowl
+        deploymentConfig: dati-semantic-webvowl
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          # readinessProbe:  # FIXME
+          #   httpGet:
+          #     path: /onto/CPV
+          #     port: 8080
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 2
+          #   periodSeconds: 8
+          #   successThreshold: 1
+          #   failureThreshold: 300
+          # livenessProbe: # FIXME
+          #   httpGet:
+          #     path: /onto/CPV
+          #     port: 8080
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 2
+          #   periodSeconds: 8
+          #   successThreshold: 1
+          #   failureThreshold: 300
+          terminationMessagePath: /dev/termination-log
+          name: dati-semantic-webvowl
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-webvowl:20221124-8-f196be9
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 75
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dati-semantic-webvowl
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-webvowl
+spec:
+  lookupPolicy:
+    local: false
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-webvowl
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-webvowl
+spec:
+  host: webvowl-ndc-dev.apps.cloudpub.testedev.istat.it
+  to:
+    kind: Service
+    name: dati-semantic-webvowl
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-webvowl
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-webvowl
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    deploymentConfig: dati-semantic-webvowl
+  sessionAffinity: None
+---
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+metadata:
+  name: autoscaling-dati-semantic-backend
+  namespace: ndc-dev
+spec:
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: dati-semantic-backend
+    apiVersion: apps.openshift.io/v1
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-backend
+  namespace: ndc-dev
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-backend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-backend
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    deploymentConfig: dati-semantic-backend
+  template:
+    metadata:
+      name: dati-semantic-backend
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-backend
+        deploymentConfig: dati-semantic-backend
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 2
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 60
+            timeoutSeconds: 2
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: dati-semantic-backend
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-backend:20220630-271-f91b4d8
+          env:
+            - name: XDG_CONFIG_HOME
+              value: /tmp/
+            - name: SPRING_PROFILES_ACTIVE
+              value: dev
+            - name: SPRING_ELASTICSEARCH_REST_URIS
+              value: http://elasticsearch-dev-external-service:9200
+            - name: SPRING_ELASTICSEARCH_REST_USERNAME
+              value: ndc_svil_elastic
+            - name: SPRING_ELASTICSEARCH_REST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elastic-dev
+                  key: elastic-dev
+            - name: VIRTUOSO_SPARQL
+              value: http://virtuoso-dev-external-service:8890/sparql-auth
+            - name: VIRTUOSO_SPARQL_GRAPH_STORE
+              value: http://virtuoso-dev-external-service:8890/sparql-graph-crud-auth
+            - name: VIRTUOSO_USERNAME
+              value: sv_ndc_virtuoso_app
+            - name: VIRTUOSO_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: virtuoso-sql
+                  key: virtuoso-dev
+            - name: HARVESTER_REPOSITORIES
+              value: "https://github.com/teamdigitale/openapi,https://github.com/italia/daf-ontologie-vocabolari-controllati"
+            - name: HARVESTER_ENDPOINT_ENABLED
+              value: "true"
+            - name: NDC_BASEURL
+              value: https://ndc-dev.apps.cloudpub.testedev.istat.it/api
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:mysql://db-testedev-mysql.mysql.database.azure.com:3306/sv_ndc_harvest?useSSL=true
+            - name: SPRING_DATASOURCE_USERNAME
+              value: sv_ndc_harvest_app
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: mysql-dev
+                  name: mysql-dev
+            - name: LOGGING_LEVEL_IT_GOV_INNOVAZIONE_NDC
+              value: debug
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 75
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dati-semantic-backend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-backend
+spec:
+  lookupPolicy:
+    local: false
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-backend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-backend
+  annotations:
+    haproxy.router.openshift.io/rewrite-target: /
+spec:
+  host: ndc-dev.apps.cloudpub.testedev.istat.it
+  path: "/api"
+  to:
+    kind: Service
+    name: dati-semantic-backend
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-backend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-backend
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    deploymentConfig: dati-semantic-backend
+  sessionAffinity: None
+---
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+metadata:
+  name: autoscaling-dati-semantic-frontend
+  namespace: ndc-dev
+spec:
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: dati-semantic-frontend
+    apiVersion: apps.openshift.io/v1
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-frontend
+  namespace: ndc-dev
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dati-semantic-frontend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-frontend
+spec:
+  lookupPolicy:
+    local: false
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-frontend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-frontend
+spec:
+  host: ndc-dev.apps.cloudpub.testedev.istat.it
+  to:
+    kind: Service
+    name: dati-semantic-frontend
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-frontend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-frontend
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    deploymentConfig: dati-semantic-frontend
+  sessionAffinity: None
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-frontend
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-frontend
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    deploymentConfig: dati-semantic-frontend
+  template:
+    metadata:
+      name: dati-semantic-frontend
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-frontend
+        deploymentConfig: dati-semantic-frontend
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 100m
+              memory: 100Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+          readinessProbe:
+            httpGet:
+              path: /index.html
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 8
+            successThreshold: 1
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /index.html
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 8
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          name: dati-semantic-frontend
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-frontend:20221129-872-25aff16
+          env:
+            - name: API_URL
+              value: /api
+            - name: NDC_MAINTENANCE_MESSAGE
+              value: >-
+                Questa è la versione di sviluppo di schema.gov.it, e questo è un messaggio di maintenance di esempio.
+            - name: SPARQL_ENDPOINT_URL
+              value: https://virtuoso-dev-external-service-ndc-dev.apps.cloudpub.testedev.istat.it/sparql
+            - name: MATOMO_SITE_ID
+              value: "35"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 75
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+metadata:
+  name: autoscaling-dati-semantic-lode
+  namespace: ndc-dev
+spec:
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: dati-semantic-lode
+    apiVersion: apps.openshift.io/v1
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-frontend
+  namespace: ndc-dev
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  lookupPolicy:
+    local: false
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  host: lode-ndc-dev.apps.cloudpub.testedev.istat.it
+  to:
+    kind: Service
+    name: dati-semantic-lode
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    deploymentConfig: dati-semantic-lode
+  sessionAffinity: None
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    deploymentConfig: dati-semantic-lode
+  template:
+    metadata:
+      name: dati-semantic-lode
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-lode
+        deploymentConfig: dati-semantic-lode
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          # readinessProbe:  # FIXME
+          #   httpGet:
+          #     path: /onto/CPV
+          #     port: 8080
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 2
+          #   periodSeconds: 8
+          #   successThreshold: 1
+          #   failureThreshold: 300
+          # livenessProbe: # FIXME
+          #   httpGet:
+          #     path: /onto/CPV
+          #     port: 8080
+          #     scheme: HTTP
+          #   initialDelaySeconds: 10
+          #   timeoutSeconds: 2
+          #   periodSeconds: 8
+          #   successThreshold: 1
+          #   failureThreshold: 300
+          terminationMessagePath: /dev/termination-log
+          name: dati-semantic-lode
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-lode:20221128-14-7db975f
+          env:
+            - name: EXTERNAL_URL
+              value: "https://lode-ndc-dev.apps.cloudpub.testedev.istat.it/lode"
+            - name: WEBVOWL_URL
+              value: "https://webvowl-ndc-dev.apps.cloudpub.testedev.istat.it/#iri="
+              # - name: MATOMO_SITE_ID  # FIXME
+              #   value: "35"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 75
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v2beta2
+metadata:
+  name: autoscaling-dati-semantic-lodview
+  namespace: ndc-dev
+spec:
+  scaleTargetRef:
+    kind: DeploymentConfig
+    name: dati-semantic-lodview
+    apiVersion: apps.openshift.io/v1
+  minReplicas: 1
+  maxReplicas: 2
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: configmap-frontend
+  namespace: ndc-dev
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-lodview
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lodview
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    deploymentConfig: dati-semantic-lodview
+  template:
+    metadata:
+      name: dati-semantic-lodview
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-lodview
+        deploymentConfig: dati-semantic-lodview
+    spec:
+      containers:
+        - resources:
+            limits:
+              cpu: 800m
+              memory: 2048Mi
+            requests:
+              cpu: 250m
+              memory: 512Mi
+          readinessProbe: # FIXME
+            httpGet:
+              path: /onto/CPV
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 8
+            successThreshold: 1
+            failureThreshold: 300
+          livenessProbe: # FIXME
+            httpGet:
+              path: /onto/CPV
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 2
+            periodSeconds: 8
+            successThreshold: 1
+            failureThreshold: 300
+          terminationMessagePath: /dev/termination-log
+          name: dati-semantic-lodview
+          ports: # FIXME
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-lodview:20221121-42-053c762
+          env: # FIXME with correct URLs, URI SPACE and PUBLIC URL.
+            - name: LodViewhttpRedirectSuffix
+              value: ""
+            - name: "LodViewendpoint"
+              value: http://virtuoso-dev-external-service:8890/sparql
+            - name: MATOMO_SITE_ID
+              value: "35"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 75
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+
+---
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: dati-semantic-lodview
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lodview
+spec:
+  lookupPolicy:
+    local: false
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-lodview
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lodview
+spec:
+  # TODO: consider publishing this application
+  #       on a separate domain, e.g. lod-ndc-dev...
+  host: lod-ndc-dev.apps.cloudpub.testedev.istat.it
+  to:
+    kind: Service
+    name: dati-semantic-lodview
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-lodview
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lodview
+spec:
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  selector:
+    deploymentConfig: dati-semantic-lodview
+  sessionAffinity: None
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: elasticsearch-dev-external-service
+subsets:
+  - addresses:
+      - ip: 10.242.0.5
+    ports:
+      - port: 9200
+
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: elasticsearch-dev-external-service
+  namespace: ndc-dev
+  labels:
+    application: elasticsearch-dev-external-service
+spec:
+  to:
+    kind: Service
+    name: elasticsearch-dev-external-service
+    weight: 100
+  port:
+    targetPort: 9200
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-dev-external-service
+  namespace: ndc-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 9200
+      targetPort: 9200
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: mysql-dev-external-service
+subsets:
+  - addresses:
+      - ip: 10.242.0.132
+    ports:
+      - port: 3306
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: mysql-dev-external-service
+  namespace: ndc-dev
+  labels:
+    application: mysql-dev-external-service
+spec:
+  to:
+    kind: Service
+    name: mysql-dev-external-service
+    weight: 100
+  port:
+    targetPort: 3306
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-dev-external-service
+  namespace: ndc-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 3306
+      targetPort: 3306
+
+---
+# This endpoint references an external IP.
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: virtuoso-dev-external-service
+subsets:
+  - addresses:
+      - ip: 10.242.0.4
+    ports:
+      - port: 8890
+
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: virtuoso-dev-external-service
+  namespace: ndc-dev
+  labels:
+    application: virtuoso-dev-external-service
+spec:
+  to:
+    kind: Service
+    name: virtuoso-dev-external-service
+    weight: 100
+  port:
+    targetPort: 8890
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: virtuoso-dev-external-service
+  namespace: ndc-dev
+spec:
+  ports:
+    - protocol: TCP
+      port: 8890
+      targetPort: 8890

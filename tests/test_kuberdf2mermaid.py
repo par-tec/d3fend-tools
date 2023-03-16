@@ -18,6 +18,12 @@ TESTCASES = yaml.safe_load(
     (Path(__file__).parent / "data" / "as_mermaid" / "testcases-rdf.yaml").read_text()
 )["testcases"]
 
+TESTCASES_RENDER = yaml.safe_load(
+    (
+        Path(__file__).parent / "data" / "as_mermaid" / "testcases-render.yaml"
+    ).read_text()
+)["testcases"]
+
 ICON_MAP = {
     "urn:k8s:Service": "fa:fa-network-wired",
     "urn:k8s:Port": "fa:fa-ethernet",
@@ -87,3 +93,41 @@ def test_rdf_to_mermaid_contains(test_name, test_data):
     mermaid = RDF2Mermaid(g)
     mermaid_text = mermaid.render().splitlines()
     assert set(mermaid_text) >= set(contains)
+
+
+def _wrap_md(mermaid_text, title=""):
+    return f"# {title}\n\n\n```mermaid\n{mermaid_text}\n```\n"
+
+
+@pytest.mark.parametrize("graph_ttl", Path(".").glob("**/*.ttl"))
+def test_ttl_to_mermaid(graph_ttl):
+    test_name = graph_ttl.stem
+    g = Graph()
+    g.parse(data=graph_ttl.read_text(), format="turtle")
+    mermaid = RDF2Mermaid(g)
+    mermaid_text = mermaid.render()
+    dpath = (
+        Path(__file__).parent / "data" / "as_mermaid" / f"deleteme-out-{test_name}.md"
+    )
+    dpath.write_text(_wrap_md(mermaid_text, title=test_name))
+
+
+import kuberdf
+
+
+def test_external_file():
+    TEST_KUBERDF_FILE = os.environ.get("TEST_KUBERDF_FILE")
+    if not TEST_KUBERDF_FILE:
+        pytest.skip("TEST_KUBERDF_FILE not set")
+    infile = Path(TEST_KUBERDF_FILE)
+    test_name = infile.stem
+    dpath = (
+        Path(__file__).parent / "data" / "as_mermaid" / f"deleteme-out-{infile.stem}.md"
+    )
+    kuberdf.parse_resources((infile,), dpath)
+    graph_ttl = dpath.with_suffix(".ttl")
+    g = Graph()
+    g.parse(data=graph_ttl.read_text(), format="turtle")
+    mermaid = RDF2Mermaid(g)
+    mermaid_text = mermaid.render()
+    dpath.write_text(_wrap_md(mermaid_text, title=test_name))
