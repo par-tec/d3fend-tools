@@ -51,4 +51,4 @@ jobs:
           -e HOME=/tmp \
           -e USER=nobody \
           -e BANDIT_CONFIG_FILE=/code/.bandit.yaml \
-          ghcr.io/par-tec/super-sast:latest 
+          ghcr.io/par-tec/super-sast:latest

@@ -1,13 +1,11 @@
-# .github
+# D3fend Tools
 
-Repository for boilerplate workflows and CI for python projects.
+D3FEND is a MITRE knowledge base for cybersecurity that categorizes digital artifacts,
+offensive and defensive techniques.
 
-```bash
-.bandit.yaml
-.pre-commit-config.yaml
-.github
-└── workflows
-```
+This repository contains tools to help you use the D3FEND knowledge base
+to classify your digital platforms described in terms of various Description Languages/Infrastructure as Code (IaC) tools,
+such as Kubernetes manifest files and Mermaid JS.
 
 ## Contributing
 
