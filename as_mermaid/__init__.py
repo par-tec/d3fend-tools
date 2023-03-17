@@ -158,11 +158,18 @@ class RDF2Mermaid:
                     dst = RDF2Mermaid.sanitize_uri(dst)
                     if link == NS_K8S.exposes:
                         src, dst = dst, src
-                    if "configmap" in dst.lower() or "secret" in dst.lower():
+                        link = "exposed by"
+                    elif link == NS_K8S.executes:
+                        pass
+                        # src, dst = dst, src
+                        # link = "executed by"
+                    elif "configmap" in dst.lower() or "secret" in dst.lower():
                         src, dst = dst, src
-                        arrow = "-.-"
-                        link = "is accessed by"
-                    self.lines.append(f"""{src} {arrow} |{str(link)[8:]}| {dst}""")
+                        arrow = "-.->"
+                        link = "accessed by"
+                    else:
+                        link = str(link)[8:]
+                    self.lines.append(f"""{src} {arrow} |{link}| {dst}""")
         log.info("Parsed %s lines.", len(self.lines))
 
     def render(self):
