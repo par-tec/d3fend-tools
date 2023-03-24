@@ -1,0 +1,70 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  host: lode-ndc-dev.apps.cloudpub.testedev.istat.it
+  to:
+    kind: Service
+    name: dati-semantic-lode
+    weight: 100
+  port:
+    targetPort: 443
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+    - protocol: TCP
+      port: 443
+      targetPort: 8443
+  selector:
+    deploymentConfig: dati-semantic-lode
+  sessionAffinity: None
+---
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  name: dati-semantic-lode
+  namespace: ndc-dev
+  labels:
+    application: dati-semantic-lode
+spec:
+  replicas: 1
+  selector:
+    deploymentConfig: dati-semantic-lode
+  template:
+    metadata:
+      name: dati-semantic-lode
+      creationTimestamp: null
+      labels:
+        application: dati-semantic-lode
+        deploymentConfig: dati-semantic-lode
+    spec:
+      containers:
+        - resources:
+          name: dati-semantic-lode
+          ports:
+            - name: webcache
+              containerPort: 8080
+              protocol: TCP
+            - name: pcsync-https
+              containerPort: 8443
+              protocol: TCP
+          image: >-
+            ghcr.io/teamdigitale/dati-semantic-lode:20221124-8-f196be9

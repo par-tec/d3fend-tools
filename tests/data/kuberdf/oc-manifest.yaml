@@ -39,11 +39,17 @@ spec:
             - name: console-serving-cert
               readOnly: true
               mountPath: /var/serving-cert
+            - name: datastore
+              mountPath: /datastore
+
       volumes:
         - name: console-serving-cert
           secret:
             secretName: console-serving-cert
             defaultMode: 420
+        - name: datastore
+          persistentVolumeClaim:
+            claimName: console-demo-plugin
       restartPolicy: Always
       dnsPolicy: ClusterFirst
   strategy:

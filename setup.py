@@ -26,9 +26,12 @@ setuptools.setup(
     package_data={
         "": [
             "mermaidrdf/*.yaml",
+            "mermaidrdf/*.ttl",
             "oasrdf/*.yaml",
             "kuberdf/*.yaml",
             "kuberdf/*.ttl",
+            "d3fendtools/*.yaml",
+            "d3fendtools/*.ttl",
         ]
     },
 )

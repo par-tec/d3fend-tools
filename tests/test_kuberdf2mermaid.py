@@ -8,6 +8,7 @@ import yaml
 from rdflib import Graph
 from rdflib.namespace import RDF
 
+import kuberdf
 from as_mermaid import RDF2Mermaid
 from kuberdf import NS_K8S, parse_manifest_as_graph
 
@@ -35,37 +36,6 @@ ICON_MAP = {
     "urn:k8s:Image": "fa:fa-docker",
     "urn:k8s:Application": "fa:fa-cubes",
 }
-
-
-def test_file():
-
-    TEST_KUBERDF_FILE = os.environ.get("TEST_KUBERDF_FILE")
-    if not TEST_KUBERDF_FILE:
-        pytest.skip("TEST_KUBERDF_FILE not set")
-    kube_yaml = Path(TEST_KUBERDF_FILE)
-    assert kube_yaml.is_file()
-    t0 = time()
-    log.info(f"Testing {kube_yaml}")
-    g = parse_manifest_as_graph(
-        manifest_text=kube_yaml.read_text(), manifest_format=kube_yaml.suffix[1:]
-    )
-    log.info(f"Loaded {kube_yaml} in {time()-t0}s")
-    assert len(g) > 1000
-
-    x = Graph()
-    # Add all g triples to x
-    for s, p, o in g:
-        if (p, o) == (RDF.type, NS_K8S.Namespace):
-            x.add((s, p, o))
-        if "ws" in f"{s}{o}":
-            x.add((s, p, o))
-    assert len(x) < len(g)
-    # convert x to mermaid
-    mermaid = RDF2Mermaid(x)
-    mermaid_text = mermaid.render()
-    mermaid_text.splitlines()
-
-    raise NotImplementedError
 
 
 @pytest.mark.parametrize(
@@ -112,7 +82,34 @@ def test_ttl_to_mermaid(graph_ttl):
     dpath.write_text(_wrap_md(mermaid_text, title=test_name))
 
 
-import kuberdf
+def test_file():
+    TEST_KUBERDF_FILE = os.environ.get("TEST_KUBERDF_FILE")
+    if not TEST_KUBERDF_FILE:
+        pytest.skip("TEST_KUBERDF_FILE not set")
+    kube_yaml = Path(TEST_KUBERDF_FILE)
+    assert kube_yaml.is_file()
+    t0 = time()
+    log.info(f"Testing {kube_yaml}")
+    g = parse_manifest_as_graph(
+        manifest_text=kube_yaml.read_text(), manifest_format=kube_yaml.suffix[1:]
+    )
+    log.info(f"Loaded {kube_yaml} in {time()-t0}s")
+    assert len(g) > 1000
+
+    x = Graph()
+    # Add all g triples to x
+    for s, p, o in g:
+        if (p, o) == (RDF.type, NS_K8S.Namespace):
+            x.add((s, p, o))
+        if "ws" in f"{s}{o}":
+            x.add((s, p, o))
+    assert len(x) < len(g)
+    # convert x to mermaid
+    mermaid = RDF2Mermaid(x)
+    mermaid_text = mermaid.render()
+    mermaid_text.splitlines()
+
+    raise NotImplementedError
 
 
 def test_external_file():

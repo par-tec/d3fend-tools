@@ -11,7 +11,7 @@ testcases:
 
         <https://docker.io/ioggstream/python> a k8s:Image .
       contains:
-        - 'https:__docker.io_ioggstream_python[("fa:fa-docker python")]'
+        - 'https:__docker.io_ioggstream_python[("fab:fa-docker python")]'
   test_rdf_to_mermaid:
     svc:
       turtle: |-
@@ -104,12 +104,11 @@ testcases:
       - graph
       - 'urn:k8s:default_Service_async-api(("fa:fa-network-wired async-api \napp:"))'
       - urn:k8s:default_Service_async-api --> |accesses| TCP:__app=async-api:8080
-      - "urn:k8s:default_DeploymentConfig_rest-api[\"\u27F3 rest-api app:\"]"
+      - "subgraph urn:k8s:default_DeploymentConfig_rest-api[\"\u27F3 rest-api app:\"]"
+      - "subgraph urn:k8s:default_DeploymentConfig_async-api[\"\u27F3 async-api app:\"]"
+      - "subgraph urn:k8s:default_DeploymentConfig_messaging-api[\"\u27F3 messaging-api app:\"]"
       - urn:k8s:default_DeploymentConfig_rest-api --> |executes| urn:k8s:default_container_rest-api
-      - "urn:k8s:default_DeploymentConfig_messaging-api[\"\u27F3 messaging-api app:\"\
-        ]"
       - urn:k8s:default_DeploymentConfig_messaging-api --> |executes| urn:k8s:default_container_messaging-api
-      - "urn:k8s:default_DeploymentConfig_async-api[\"\u27F3 async-api app:\"]"
       - urn:k8s:default_DeploymentConfig_async-api --> |executes| urn:k8s:default_container_async-api
       # Subgraphs.
       - subgraph urn:k8s:default_Application_async-api["fa:fa-cubes async-api"]
@@ -156,11 +155,11 @@ testcases:
             k8s:hasImage <ghcr.io/ioggstream/image:latest> .
       expected:
       - graph
-      - TCP:__deploymentconfig=async-api:8080["fa:fa-ethernet deploymentconfig=async-api:8080"]
-      - TCP:__app=async-api:8080["fa:fa-ethernet app=async-api:8080"]
-      - "urn:k8s:default_DeploymentConfig_async-api[\"\u27F3 async-api app:\"]"
-      - 'https:__docker.io_kafka-2_async-api[("fa:fa-docker async-api@fafafa")]'
+      - "subgraph urn:k8s:default_DeploymentConfig_async-api[\"\u27F3 async-api app:\"]"
+      - TCP:__deploymentconfig=async-api:8080(["fa:fa-ethernet deploymentconfig=async-api:8080"])
+      - TCP:__app=async-api:8080(["fa:fa-ethernet app=async-api:8080"])
       - urn:k8s:default_DeploymentConfig_async-api --> |executes| urn:k8s:default_container_async-api
       - urn:k8s:default_container_async-api[["fa:fa-cube async-api"]]
-      - urn:k8s:default_container_async-api --> |exposes| TCP:__app=async-api:8080
-      - urn:k8s:default_container_async-api --> |exposes| TCP:__deploymentconfig=async-api:8080
+      - 'https:__docker.io_kafka-2_async-api[("fab:fa-docker async-api@fafafa")]'
+      - TCP:__app=async-api:8080 -.-o |exposed by| urn:k8s:default_container_async-api
+      - TCP:__app=async-api:8080 -.-o |exposed by| TCP:__deploymentconfig=async-api:8080

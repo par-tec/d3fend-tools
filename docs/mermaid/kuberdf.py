@@ -2,6 +2,7 @@ import json
 import logging
 from pathlib import Path
 from time import time
+from typing import Iterable
 from urllib.parse import urlparse
 
 import yaml
@@ -23,13 +24,13 @@ def strip_oci_image_tag(image: str) -> str:
     return image.rsplit(":")[0].split("@sha256", 1)[0]
 
 
-def parse_manifests(
-    manifests: Path, outfile: str, ns_from_file=False, jsonld_output=False
+def parse_resources(
+    resources: Iterable[Path], outfile: str, ns_from_file=False, jsonld_output=False
 ):
     g = Graph()
     g.parse(data=(Path(__file__).parent / "ontology.ttl").read_text(), format="turtle")
     g.bind("k8s", NS_K8S)
-    for f in manifests:
+    for f in resources:
         ns = f.stem if ns_from_file else None
         log.info(f"Parsing {f} with namespace {ns}")
         parse_manifest_as_graph(f.read_text(), g=g, manifest_format=f.suffix[1:])
@@ -71,9 +72,11 @@ def parse_manifest_as_graph(
     g = g or Graph()
     g.bind("k8s", NS_K8S)
     for manifest in parser_f(manifest_text):
+        if not manifest:
+            continue
         if "kind" not in manifest:
             continue
-        for triple in parse_resource(manifest):
+        for triple in K8Resource.parse_resource(manifest):
             g.add(triple)
     return g
 
@@ -110,7 +113,8 @@ class K8Resource:
             "Deployment": DC,
             "DeploymentConfig": DC,
             "Endpoints": None,
-            "HorizontalPodAutoscaler": None,
+            "Endpoint": None,
+            "HorizontalPodAutoscaler": SkipResource,
             "ImageStream": None,
             "ImageStreamTag": None,
             "Job": SkipResource,
@@ -124,8 +128,23 @@ class K8Resource:
         clz = classmap.get(kind) or K8Resource
         return clz(manifest, ns=ns)
 
+    @staticmethod
+    def parse_resource(manifest: dict, ns=None):
+        """Parse an openshift manifest file
+        and convert it to an RDF resource
+        """
+        resource = K8Resource.factory(manifest, ns=ns)
+        try:
+            if resource.namespace.startswith(("kube-system", "openshift-")):
+                # Ignore kube-system and openshift- namespaces
+                return
+        except AttributeError:
+            pass
+        yield from resource.triples()
+
     def get_app_uri(self, metadata):
-        app = metadata.get("labels", {}).get("app")
+        labels = metadata.get("labels", {})
+        app = labels.get("app") or labels.get("application")
         return URIRef(self.ns + f"/Application/{app}") if app else None
 
     def __init__(self, manifest=None, ns: str = None) -> None:
@@ -226,6 +245,7 @@ class Route(K8Resource):
             if k == "to":
                 rel_kind = v["kind"]
                 rel_name = v["name"]
+
                 yield self.uri, NS_K8S.accesses, self.ns + f"/{rel_kind}/{rel_name}"
                 # yield self.ns + f"/{rel_kind}/{rel_name}", RDF.type, NS_K8S[rel_kind]
                 # rel_port = self.spec.get("port", {}).get("targetPort")
@@ -250,7 +270,7 @@ class Service(K8Resource):
             host_u = URIRef(f"{port['protocol']}://{self.name}:{port['port']}")
             yield self.uri, NS_K8S.hasHost, host_u
             yield host_u, RDF.type, NS_K8S.Host
-            yield self.uri, NS_K8S.Port, Literal(
+            yield self.uri, NS_K8S.portForward, Literal(
                 "{port}-{protocol}>{targetPort}".format(**port)
             )
             service_port = self.uri + f":{port['port']}"
@@ -260,7 +280,9 @@ class Service(K8Resource):
             if selector := self.spec.get("selector"):
                 k, v = next(iter(selector.items()))
                 port_u = URIRef(f"{{protocol}}://{k}={v}:{{targetPort}}".format(**port))
+                yield port_u, RDF.type, NS_K8S.Selector
                 yield self.uri, NS_K8S.accesses, port_u
+                yield self.uri, NS_K8S.hasSelector, port_u
             else:
                 # yield an Endpoint with the same name as the service
                 # and on the default namespace.
@@ -286,8 +308,9 @@ class DC(K8Resource):
             image_url._replace(path=strip_oci_image_tag(image_url.path)).geturl()
         )
         if image_url.netloc:
-            yield URIRef(image_url.netloc), RDF.type, NS_K8S.Registry
-            yield URIRef(image_url.netloc), NS_K8S.hasChild, image_uri
+            registry_uri = URIRef(image_url.scheme + "://" + image_url.netloc)
+            yield registry_uri, RDF.type, NS_K8S.Registry
+            yield registry_uri, NS_K8S.hasChild, image_uri
 
         yield image_uri, RDF.type, NS_K8S.Image
         if container_uri:
@@ -324,7 +347,13 @@ class DC(K8Resource):
                 yield self.uri, NS_K8S.accesses, s_volume
                 yield s_volume, RDF.type, NS_K8S.ConfigMap
             elif "hostPath" in volume:
-                if self.namespace.startswith(("kube-system", "openshift-", "rook-")):
+                if self.namespace.startswith(
+                    (
+                        "kube-system",
+                        # "openshift-",
+                        "rook-",
+                    )
+                ):
                     # Ignore hostPath volumes in kube-system
                     continue
                 raise NotImplementedError
@@ -380,20 +409,6 @@ class DC(K8Resource):
                     pass
 
 
-def parse_resource(manifest: dict, ns=None) -> K8Resource:
-    """Parse an openshift manifest file
-    and convert it to an RDF resource
-    """
-    resource = K8Resource.factory(manifest, ns=ns)
-    try:
-        if resource.namespace.startswith(("kube-system", "openshift-")):
-            # Ignore kube-system and openshift- namespaces
-            return
-    except AttributeError:
-        pass
-    yield from resource.triples()
-
-
 class K8List(K8Resource):
     def __init__(self, manifest=None, ns: str = None) -> None:
         """A List is a special resource, don't call super.__init__"""
@@ -408,7 +423,7 @@ class K8List(K8Resource):
 
     def triples(self):
         for item in self.items:
-            yield from parse_resource(item, ns=self.namespace)
+            yield from K8Resource.parse_resource(item, ns=self.namespace)
 
 
 class ReplicationController(DC):

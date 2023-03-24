@@ -105,7 +105,7 @@ testcases:
               protocol: TCP
               targetPort: 8081
       expected:
-        - ["urn:k8s:default/Service/myapp", "urn:k8s:Port", "8081-TCP>8081"]
+        - ["urn:k8s:default/Service/myapp", "urn:k8s:portForward", "8081-TCP>8081"]
   test_service:
     external_name:
       manifest: |-
@@ -151,7 +151,7 @@ testcases:
           type: NodePort
       expected:
         [
-          ["urn:k8s:default/Service/myapp", "urn:k8s:Port", "8081-TCP>8081"],
+          ["urn:k8s:default/Service/myapp", "urn:k8s:portForward", "8081-TCP>8081"],
           [
             "TCP://myapp:8081",
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",

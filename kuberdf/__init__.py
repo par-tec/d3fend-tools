@@ -10,6 +10,7 @@ from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
 
 log = logging.getLogger(__name__)
 NS_K8S = Namespace("urn:k8s:")
+NS_D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
 
 
 def dontyield(*a, **kw):
@@ -72,6 +73,8 @@ def parse_manifest_as_graph(
     g = g or Graph()
     g.bind("k8s", NS_K8S)
     for manifest in parser_f(manifest_text):
+        if not manifest:
+            continue
         if "kind" not in manifest:
             continue
         for triple in K8Resource.parse_resource(manifest):
@@ -106,12 +109,14 @@ class K8Resource:
     @staticmethod
     def factory(manifest, ns=None):
         classmap = {
+            "Build": SkipResource,
             "BuildConfig": BuildConfig,
             "ConsolePlugin": None,
+            "CronJob": CronJob,
             "Deployment": DC,
             "DeploymentConfig": DC,
-            "Endpoints": None,
             "Endpoint": None,
+            "Endpoints": None,
             "HorizontalPodAutoscaler": SkipResource,
             "ImageStream": None,
             "ImageStreamTag": None,
@@ -233,7 +238,7 @@ class Route(K8Resource):
             if k == "host":
                 host_u = URIRef(f"TCP://{v}{self.spec.get('path', '')}:443")
                 yield host_u, RDF.type, NS_K8S.Host
-                yield host_u, NS_K8S.accesses, self.uri
+                yield host_u, NS_D3F.accesses, self.uri
                 yield self.uri, NS_K8S.hasHost, host_u
                 yield host_u, NS_K8S.hasNamespace, self.ns
                 if self.ns:  # FIXME: Add tests
@@ -243,7 +248,10 @@ class Route(K8Resource):
             if k == "to":
                 rel_kind = v["kind"]
                 rel_name = v["name"]
-                yield self.uri, NS_K8S.accesses, self.ns + f"/{rel_kind}/{rel_name}"
+
+                rel_port = self.spec.get("port", {}).get("targetPort")
+                rel_port = f":{rel_port}" if rel_port else ""
+                yield self.uri, NS_D3F.accesses, self.ns + f"/{rel_kind}/{rel_name}{rel_port}"
                 # yield self.ns + f"/{rel_kind}/{rel_name}", RDF.type, NS_K8S[rel_kind]
                 # rel_port = self.spec.get("port", {}).get("targetPort")
                 # dport = URIRef(f"TCP://{rel_name}:{rel_port}")
@@ -260,32 +268,51 @@ class Service(K8Resource):
             host_u = URIRef(f"fixme://{external_name}")
 
             yield host_u, RDF.type, NS_K8S.Host
-            yield host_u, NS_K8S.accesses, self.uri
+            yield host_u, NS_D3F.accesses, self.uri
             yield self.uri, NS_K8S.hasHost, host_u
 
         for port in self.spec.get("ports", []):
+            # Explicit internal TCP connections.
             host_u = URIRef(f"{port['protocol']}://{self.name}:{port['port']}")
-            yield self.uri, NS_K8S.hasHost, host_u
             yield host_u, RDF.type, NS_K8S.Host
-            yield self.uri, NS_K8S.Port, Literal(
+            yield self.uri, NS_K8S.hasHost, host_u
+            yield self.uri, NS_K8S.portForward, Literal(
                 "{port}-{protocol}>{targetPort}".format(**port)
             )
+
+            # Service port forwarded to selectors.
             service_port = self.uri + f":{port['port']}"
+            yield service_port, RDF.type, NS_K8S.Port
             yield self.uri, NS_K8S.hasPort, service_port
-            yield service_port, RDF.type, NS_K8S.Host
+            yield self.uri, NS_K8S.hasChild, service_port
 
             if selector := self.spec.get("selector"):
                 k, v = next(iter(selector.items()))
-                port_u = URIRef(f"{{protocol}}://{k}={v}:{{targetPort}}".format(**port))
-                yield self.uri, NS_K8S.accesses, port_u
+                # Kubernetes by default exposes all ports on a service
+                endpoint_u = URIRef(
+                    f"{{protocol}}://{k}={v}:{{targetPort}}".format(**port)
+                )
+                yield endpoint_u, RDF.type, NS_K8S.Endpoints
+
+                # Service port accesses a selector-based Endpoint.
+                yield service_port, NS_D3F.accesses, endpoint_u
             else:
                 # yield an Endpoint with the same name as the service
                 # and on the default namespace.
                 endpoint_u = URIRef(f"urn:k8s:default/Endpoints/{self.name}")
-                yield self.uri, NS_K8S.accesses, endpoint_u
+                yield self.uri, NS_D3F.accesses, endpoint_u
+
+            # Connect host to Endpoint
+            yield host_u, NS_D3F.accesses, endpoint_u
+            yield self.uri, NS_K8S.hasChild, host_u
 
 
 class DC(K8Resource):
+    """
+    DeploymentConfig
+    $.spec.template.spec.containers[*]
+    """
+
     @staticmethod
     def parse_image(image, container_uri=None):
         image_url_type = len(image.split("/"))
@@ -310,6 +337,7 @@ class DC(K8Resource):
         yield image_uri, RDF.type, NS_K8S.Image
         if container_uri:
             yield container_uri, NS_K8S.hasImage, image_uri
+            yield container_uri, NS_D3F.runs, image_uri
 
     def triple_spec(self):
         if not (template := self.spec.get("template")):
@@ -324,25 +352,35 @@ class DC(K8Resource):
                 pvc = volume["persistentVolumeClaim"]["claimName"]
                 s_volume = self.ns + f"/PersistentVolumeClaim/{pvc}"
                 yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_K8S.accesses, s_volume
+                yield self.uri, NS_D3F.accesses, s_volume
                 yield s_volume, RDF.type, NS_K8S.PersistentVolumeClaim
                 # XXX: the volume can be mounted in multiple applications.
                 if template_app:
                     yield template_app, NS_K8S.hasChild, s_volume
+                else:
+                    yield self.ns, NS_K8S.hasChild, s_volume
             elif "secret" in volume:
                 secret = volume["secret"]["secretName"]
                 s_volume = self.ns + f"/Secret/{secret}"
                 yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_K8S.accesses, s_volume
+                yield self.uri, NS_D3F.reads, s_volume
                 yield s_volume, RDF.type, NS_K8S.Secret
+                yield self.ns, NS_K8S.hasChild, s_volume
             elif "configMap" in volume:
                 configmap = volume["configMap"]["name"]
                 s_volume = self.ns + f"/ConfigMap/{configmap}"
                 yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_K8S.accesses, s_volume
+                yield self.uri, NS_D3F.reads, s_volume
                 yield s_volume, RDF.type, NS_K8S.ConfigMap
+                yield self.ns, NS_K8S.hasChild, s_volume
             elif "hostPath" in volume:
-                if self.namespace.startswith(("kube-system", "openshift-", "rook-")):
+                if self.namespace.startswith(
+                    (
+                        "kube-system",
+                        # "openshift-",
+                        "rook-",
+                    )
+                ):
                     # Ignore hostPath volumes in kube-system
                     continue
                 raise NotImplementedError
@@ -359,7 +397,7 @@ class DC(K8Resource):
 
         for container in containers:
             s_container = self.uri + f'/Container/{container["name"]}'
-            yield self.uri, NS_K8S.executes, s_container
+            yield self.uri, NS_D3F.runs, s_container
             yield s_container, RDF.type, NS_K8S.Container
             yield s_container, RDFS.label, Literal(container["name"])
             yield self.uri, NS_K8S.hasChild, s_container
@@ -367,15 +405,16 @@ class DC(K8Resource):
                 yield self.app, NS_K8S.hasChild, s_container
 
             if "image" in container:
-                yield from DC.parse_image(container["image"], container_uri=s_container)
-
+                image = DC.parse_image(container["image"], container_uri=s_container)
+                yield from image
             if "ports" in container:
                 for port in container["ports"]:
                     protocol = port.get("protocol", "tcp").upper()
                     for k, v in template_labels.items():
                         port_u = URIRef(f"{protocol}://{k}={v}:{port['containerPort']}")
-                        yield s_container, NS_K8S.exposes, port_u
-                        yield port_u, RDF.type, NS_K8S.Port
+                        yield port_u, RDF.type, NS_K8S.Endpoints
+                        yield port_u, NS_D3F.accesses, s_container
+                        yield self.uri, NS_K8S.hasChild, port_u
                         if template_app:
                             yield template_app, NS_K8S.hasChild, port_u
 
@@ -389,13 +428,29 @@ class DC(K8Resource):
                         host_u = self.ns + f"/Service/{host_u}"
 
                     yield host_u, RDF.type, NS_K8S.Host
-                    yield s_container, NS_K8S.accesses, host_u
+                    yield s_container, NS_D3F.accesses, host_u
                 except (
                     KeyError,
                     AttributeError,
                     ValueError,  # parse_url
                 ):
                     pass
+
+
+class CronJob(DC):
+    """
+    CronJob
+    $.spec.jobTemplate.spec.template.spec.containers[*]
+    """
+
+    def __init__(self, *a, **k) -> None:
+        DC.__init__(self, *a, **k)
+        self.spec = self.spec["jobTemplate"]["spec"]
+
+    def triples_spec(self):
+        yield from super().triple_spec()
+        jobs_u = self.ns + "/Jobs"
+        yield jobs_u, NS_K8S.hasChild, self.uri
 
 
 class K8List(K8Resource):

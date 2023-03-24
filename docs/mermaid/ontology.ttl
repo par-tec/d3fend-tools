@@ -37,7 +37,7 @@ k8s:Port        a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Route       a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Secret      a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Service     a rdfs:Class; rdfs:subClassOf k8s:Kind .
-
+k8s:Selector   a rdfs:Class; rdfs:subClassOf k8s:Kind .
 # Non-kinds
 k8s:Registry     a rdfs:Class .
 
@@ -54,5 +54,6 @@ k8s:ImageStream rdfs:subClassOf d3f:ContainerImage .
 k8s:PersistentVolumeClaim rdfs:subClassOf d3f:Storage .
 k8s:Port rdfs:subClassOf d3f:NetworkService .
 k8s:Secret rdfs:subClassOf d3f:Credential, d3f:ConfigurationResource .
+k8s:Selector rdfs:subClassOf d3f:NetworkService .  # new
 k8s:Service rdfs:subClassOf d3f:NetworkService .
 k8s:Registry rdfs:subClassOf d3f:Storage .
