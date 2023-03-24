@@ -8,9 +8,8 @@ import yaml
 from rdflib import Graph
 from rdflib.namespace import RDF
 
-import kuberdf
-from as_mermaid import RDF2Mermaid
-from kuberdf import NS_K8S, parse_manifest_as_graph
+from d3fendtools import kuberdf
+from d3fendtools.as_mermaid import RDF2Mermaid
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -90,7 +89,7 @@ def test_file():
     assert kube_yaml.is_file()
     t0 = time()
     log.info(f"Testing {kube_yaml}")
-    g = parse_manifest_as_graph(
+    g = kuberdf.parse_manifest_as_graph(
         manifest_text=kube_yaml.read_text(), manifest_format=kube_yaml.suffix[1:]
     )
     log.info(f"Loaded {kube_yaml} in {time()-t0}s")
@@ -99,7 +98,7 @@ def test_file():
     x = Graph()
     # Add all g triples to x
     for s, p, o in g:
-        if (p, o) == (RDF.type, NS_K8S.Namespace):
+        if (p, o) == (RDF.type, kuberdf.NS_K8S.Namespace):
             x.add((s, p, o))
         if "ws" in f"{s}{o}":
             x.add((s, p, o))

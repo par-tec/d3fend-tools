@@ -5,7 +5,7 @@ import pytest
 import yaml
 from rdflib import Graph, URIRef
 
-from kuberdf import DC, K8Resource, parse_manifest_as_graph, parse_resources
+from d3fendtools.kuberdf import DC, K8Resource, parse_manifest_as_graph, parse_resources
 
 log = logging.getLogger(__name__)
 

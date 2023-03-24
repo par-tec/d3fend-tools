@@ -20,10 +20,16 @@ def shorten_d3fend():
 if __name__ == "__main__":
 
     FILES = (
-        {"src": "kuberdf/__init__.py", "dst": "docs/mermaid/kuberdf.py"},
-        {"src": "kuberdf/ontology.ttl", "dst": "docs/mermaid/ontology.ttl"},
-        {"src": "mermaidrdf/__init__.py", "dst": "docs/mermaid/mermaidrdf.py"},
-        {"src": "mermaidrdf/mermaidrdf.yaml", "dst": "docs/mermaid/mermaidrdf.yaml"},
+        {"src": "d3fendtools/kuberdf/__init__.py", "dst": "docs/mermaid/kuberdf.py"},
+        {"src": "d3fendtools/kuberdf/ontology.ttl", "dst": "docs/mermaid/ontology.ttl"},
+        {
+            "src": "d3fendtools/mermaidrdf/__init__.py",
+            "dst": "docs/mermaid/mermaidrdf.py",
+        },
+        {
+            "src": "d3fendtools/mermaidrdf/mermaidrdf.yaml",
+            "dst": "docs/mermaid/mermaidrdf.yaml",
+        },
     )
     for f in FILES:
         shutil.copy(f["src"], f["dst"])

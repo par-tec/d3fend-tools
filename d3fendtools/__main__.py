@@ -4,8 +4,7 @@ from pathlib import Path
 import click
 from rdflib import Graph
 
-import kuberdf
-import mermaidrdf
+from d3fendtools import as_mermaid, kuberdf, mermaidrdf
 
 log = logging.getLogger(__name__)
 
@@ -79,16 +78,10 @@ def main(basepath, destfile, resource_type, ns_from_file, mermaid, ignore, match
         log.info("Converting to Mermaid")
         g = Graph()
         g.parse(Path(destfile).with_suffix(".ttl"), format="turtle")
-        mermaid = mermaidrdf.MermaidRDF(g)
+        mermaid = as_mermaid.RDF2Mermaid(g)
         mermaid_text = mermaid.render()
-        Path(destfile).with_suffix(".md").write_text(
-            f"""# Sample {destfile}
-
-```mermaid
-{mermaid_text}
-```
-"""
-        )
+        markdown_text = f"# Sample {destfile}\n\n```mermaid\n\n{mermaid_text}\n ```\n"
+        Path(destfile).with_suffix(".md").write_text(markdown_text)
 
 
 if __name__ == "__main__":

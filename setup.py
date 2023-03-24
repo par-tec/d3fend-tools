@@ -24,14 +24,14 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     package_data={
-        "": [
+        "d3fendtools": [
             "mermaidrdf/*.yaml",
             "mermaidrdf/*.ttl",
             "oasrdf/*.yaml",
             "kuberdf/*.yaml",
             "kuberdf/*.ttl",
-            "d3fendtools/*.yaml",
-            "d3fendtools/*.ttl",
+            "*.yaml",
+            "*.ttl",
         ]
     },
 )

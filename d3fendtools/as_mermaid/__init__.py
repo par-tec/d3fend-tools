@@ -5,7 +5,7 @@ from pathlib import Path
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS
 
-from kuberdf import NS_D3F, NS_K8S
+from d3fendtools.kuberdf import NS_D3F, NS_K8S
 
 log = logging.getLogger(__name__)
 

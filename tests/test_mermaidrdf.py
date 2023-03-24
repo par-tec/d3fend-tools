@@ -6,7 +6,12 @@ import pytest
 import yaml
 from rdflib import Graph
 
-from mermaidrdf import extract_mermaid, mermaid_to_rdf, parse_line2, parse_mermaid
+from d3fendtools.mermaidrdf import (
+    extract_mermaid,
+    mermaid_to_rdf,
+    parse_line2,
+    parse_mermaid,
+)
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)

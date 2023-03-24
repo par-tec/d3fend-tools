@@ -5,7 +5,7 @@ from time import time
 
 from rdflib import Graph
 
-import mermaidrdf
+from . import mermaidrdf
 
 log = logging.getLogger(__name__)
 HEADERS = ["node", "relation", "artifact", "technique"]

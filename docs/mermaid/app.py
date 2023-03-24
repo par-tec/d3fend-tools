@@ -3,12 +3,11 @@ import re
 import unicodedata
 from time import time
 
+import kuberdf
+import mermaidrdf
 import yaml
 from rdflib import Graph
 from rdflib.namespace import RDF
-
-import kuberdf
-import mermaidrdf
 
 log = logging.getLogger(__name__)
 HEADERS = ["node", "relation", "artifact", "technique"]
