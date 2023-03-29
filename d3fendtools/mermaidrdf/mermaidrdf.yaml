@@ -1624,7 +1624,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:TaskSchedule
   labels:
-  - fa-clock
+  - fa:fa-clock
 - artifacts:
   - d3f:ContainerOrchestrationSoftware
   - d3f:ContainerImage
@@ -1633,12 +1633,15 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:Email
   - d3f:MailNetworkTraffic
+  - d3f:MailService
+  - d3f:MessageTransferAgent
+  - d3f:Mailbox
   labels:
   - fa:fa-envelope
 - artifacts:
   - d3f:InternetNetworkTraffic
   labels:
-  - fa:fa-globe
+  - fa:fa-cloud fa:fa-globe
 - artifacts:
   - d3f:User
   labels:
@@ -1681,6 +1684,65 @@ FONTAWESOME_MAP:
   - d3f:EncryptedTunnels
   labels:
   - "\U0001F512"
+- artifacts:
+  - d3f:VPNServer
+  labels:
+  - fa:fa-lock
+- artifacts:
+  - d3f:MailServer
+  labels:
+  - fa:fa-envelope fa:fa-server
+- artifacts:
+  - d3f:NetworkTrafficPolicyMapping
+  labels:
+  - "fa:fa-network-wired \U0001F500"
+- artifacts:
+  - d3f:AsymmetricKey
+  - d3f:PrivateKey
+  - d3f:PublicKey
+  - d3f:SymmetricKey
+  labels:
+  - fa:fa-key
+- artifacts:
+  - d3f:Certificate
+  labels:
+  - fa:fa-certificate
+- artifacts:
+  - d3f:CertificateAuthority
+  labels:
+  - fa:fa-certificate fa:fa-lock
+- artifacts:
+  - d3f:CertificateRevocationList
+  labels:
+  - fa:fa-certificate fa:fa-ban
+- artifacts:
+  - d3f:ReverseProxyServer
+  labels:
+  - "fa:fa-network-wired \u21F6"
+- artifacts:
+  - d3f:DNSServer
+  labels:
+  - fa:fa-globe
+- artifacts:
+  - d3f:VirtualizationSoftware
+  labels:
+  - fa:fa-server fa:fa-cube
+- artifacts:
+  - d3f:Database
+  labels:
+  - fa:fa-database
+- artifacts:
+  - d3f:ContainerRuntime
+  labels:
+  - fa:fa-cubes
+- artifacts:
+  - d3f:Server
+  labels:
+  - fa:fa-server
+- artifacts:
+  - d3f:NetworkLink
+  labels:
+  - fa:fa-ethernet fa:fa-link
 INFERRED_RELATIONS:
 - predicates:
   - :{subject} d3f:produces d3f:LoginSession .

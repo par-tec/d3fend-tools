@@ -6058,3 +6058,28 @@
         }
         ];
         }
+
+function provideCompletionItems(model, position) {
+    var textUntilPosition = model.getValueInRange({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+    });
+    var match = textUntilPosition.match(
+        /d3f:/
+    );
+    if (!match) {
+        return { suggestions: [] };
+    }
+    var word = model.getWordUntilPosition(position);
+    var range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn,
+    };
+    return {
+        suggestions: createD3fCompletion(range),
+    };
+}

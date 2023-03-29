@@ -2,9 +2,10 @@ import logging
 import re
 from collections import defaultdict
 from pathlib import Path
+from typing import List
 
 import yaml
-from rdflib import Graph, Namespace
+from rdflib import RDFS, Graph, Namespace
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -45,17 +46,87 @@ D3F_INFERRED_RELATIONS = defaultdict(
 )
 
 
+class D3fendMermaid:
+    """A class to generate a d3fend graph from a mermaid/markdown text."""
+
+    def __init__(self, text, ontology=None) -> None:
+        self.text = text
+        self.ontology = ontology or Graph()
+        self.annotations = None
+        self.hypergraph = None
+        self.g = Graph()
+        self.g.bind("", NS_DEFAULT)
+        self.g.bind("d3f", NS_D3F)
+        self.g.bind("rdfs", RDFS)
+        self._turtle = None
+
+    @staticmethod
+    def _extract(text):
+        if text.strip().startswith("graph"):
+            return [text]
+        return extract_mermaid(text)
+
+    def parse(self):
+        turtle = """
+        @prefix : <https://par-tec.it/example#> .
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+        @prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
+        """
+        for mermaid_text in self._extract(self.text):
+            triples = mermaid_to_triples(mermaid_text)
+            turtle += "\n".join(triples)
+        self.g.parse(data=turtle, format="turtle")
+        return None
+
+    def serialize(self, format="turtle"):
+        if self._turtle is None:
+            self._turtle = self.g.serialize(format="turtle")
+        return self._turtle
+
+    def annotate(self):
+        if self.hypergraph is None:
+            g = Graph()
+            g = self.g | self.ontology
+            annotations = g.query(
+                """
+                PREFIX : <https://par-tec.it/example#>
+
+                CONSTRUCT {
+                ?s a ?parent
+                } WHERE {
+                    ?s a :Node, ?typ .
+                    ?typ rdfs:subClassOf* d3f:DigitalArtifact .
+                    ?typ rdfs:subClassOf ?parent
+                }
+            """,
+                initNs={
+                    "d3f": NS_D3F,
+                },
+            )
+            self.annotations = annotations.graph
+            g = self.g | annotations.graph
+            log.info("Annotated graph has %s triples", len(g) - len(self.g))
+            self.hypergraph = g | self.ontology
+        return self.hypergraph
+
+
 def visualize_d3fend(mermaid_text):
     """Replace every occurrence of a d3f: entity with a fontawesome icon
     from FONTAWESOME_MAP."""
-    for needle in re.findall("(d3f:[a-zA-Z-0-9]+)", mermaid_text):
-        for label, icons in FONTAWESOME_MAP.items():
-            if needle in icons:
-                mermaid_text = mermaid_text.replace(needle, label[0])
-    return mermaid_text
+    lines = []
+    for line in mermaid_text.splitlines():
+        for needle in set(re.findall("(d3f:[a-zA-Z-0-9]+)", line)):
+            for label, icons in FONTAWESOME_MAP.items():
+                tooltip_label = f"""<a title='{needle}'>{label[0]}</a>"""
+                if needle in icons:
+                    line = line.replace(needle, tooltip_label)
+        lines.append(line)
+    return "\n".join(lines)
 
 
-def parse_resources(resources, outfile=None, **options):
+def parse_resources(resources: List[Path], outfile=None, **options):
+    """This is the core function that parses a list of files and returns
+    a turtle string. If outfile is specified, the turtle string is also."""
     turtle = ""
     for f in resources:
         mermaid_graphs = extract_mermaid(f.read_text())
@@ -66,7 +137,8 @@ def parse_resources(resources, outfile=None, **options):
     return turtle
 
 
-def mermaid_to_rdf(mermaid):
+def mermaid_to_triples(mermaid):
+    """Parse a mermaid text and return a yields RDF triples."""
     mermaid = mermaid.strip()
     # Ensure that the mermaid text starts with "graph "
     if not mermaid.startswith(("graph ", "graph")):
@@ -80,18 +152,9 @@ def mermaid_to_rdf(mermaid):
 
 
 def parse_mermaid(text: str):
-    g = Graph()
-    g.bind("", NS_DEFAULT)
-    g.bind("d3f", NS_D3F)
-    g.bind("rdfs", "http://www.w3.org/2000/01/rdf-schema#")
-    turtle = """@prefix : <https://par-tec.it/example#> .
-    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-    @prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
-    """ + "\n".join(
-        mermaid_to_rdf(text)
-    )
-    g.parse(data=turtle, format="turtle")
-    return g.serialize(format="turtle")
+    mermaid = D3fendMermaid(text)
+    mermaid.parse()
+    return mermaid.serialize()
 
 
 def render_node(id_, label, sep):
@@ -157,7 +220,11 @@ def parse_line(line):
 
     node_id0, arrow0, relation0 = None, None, None
     for node, arrow, relation in parsed_line:
-        id_, _, sep, label, _ = RE_NODE.match(node).groups()
+        parsed_node = RE_NODE.match(node)
+        if not parsed_node:
+            continue
+
+        id_, _, sep, label, _ = parsed_node.groups()
         # Remove the trailing and leading quotes from the nodes
         node_id, node1_rdf = render_node(id_=id_, label=label, sep=sep)
         yield from node1_rdf

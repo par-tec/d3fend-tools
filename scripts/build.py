@@ -68,7 +68,35 @@ def _monaco_completion(g):
         )
 
     js_text = generate_monaco_completion(items)
-    Path("docs/mermaid/monaco-completion.js").write_text(js_text)
+    Path("docs/mermaid/monaco-completion.js").write_text(
+        js_text
+        + """
+function provideCompletionItems(model, position) {
+    var textUntilPosition = model.getValueInRange({
+        startLineNumber: 1,
+        startColumn: 1,
+        endLineNumber: position.lineNumber,
+        endColumn: position.column,
+    });
+    var match = textUntilPosition.match(
+        /d3f:/
+    );
+    if (!match) {
+        return { suggestions: [] };
+    }
+    var word = model.getWordUntilPosition(position);
+    var range = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn,
+    };
+    return {
+        suggestions: createD3fCompletion(range),
+    };
+}
+    """
+    )
 
 
 def _d3fend_short(g):
@@ -138,6 +166,10 @@ if __name__ == "__main__":
         {
             "src": "d3fendtools/mermaidrdf/mermaidrdf.yaml",
             "dst": "docs/mermaid/mermaidrdf.yaml",
+        },
+        {
+            "src": "d3fendtools/d3fend.py",
+            "dst": "docs/mermaid/d3fend.py",
         },
     )
     for f in FILES:

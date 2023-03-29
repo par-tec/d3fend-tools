@@ -3,9 +3,9 @@ import re
 import unicodedata
 from time import time
 
+import d3fend
 import mermaidrdf
 from rdflib import Graph
-from rdflib.namespace import RDF
 
 log = logging.getLogger(__name__)
 HEADERS = ["node", "relation", "artifact", "technique"]
@@ -14,15 +14,49 @@ flip_mermaid = mermaidrdf.flip_mermaid
 filter_mermaid = mermaidrdf.filter_mermaid
 
 
-def rdf_to_mermaid_filtered(g, match=""):
-    x = Graph()
-    # Add all g triples to x
-    for s, p, o in g:
-        if (p, o) == (RDF.type,):
-            x.add((s, p, o))
-        if match in f"{s}{o}":
-            x.add((s, p, o))
-    return rdf_to_mermaid(x)
+MERMAID_INIT_TEXT = """
+graph
+
+a[d3f:WebServerApplication] -->|d3f:Email| SMTP[d3f:MailServer]
+
+"""
+
+x = """
+graph LR
+
+%% 1. Design here your architecture using MermaidJS syntax.
+%% 2. Click on the "D3FEND" tab to see the possible attack paths.
+%% 3. Explore the other features selecting the other tabs!
+
+%% The simple arrow maps to d3f:accesses
+Client --> WebMail
+
+%% Font-awesome icons can be used to indicate that
+%%   a node is a class (e.g. fa-react maps to a WebUI)
+WebMail[WebMail fab:fa-react fa:fa-envelope]
+
+%% Font-Awesome icons can indicate that a node
+%%   accesses specific resources
+%%   (e.g. fa-envelope represent a d3f:Email)
+WebMail -->|fa:fa-envelope| IMAP[IMAP fa:fa-envelope fa:fa-folder]
+WebMail -->|fa:fa-envelope| SMTP[SMTP fa:fa-envelope fa:fa-folder]
+IMAP --> Mailstore[Mailstore fa:fa-envelope fa:fa-folder]
+
+%% Associated d3f:DigitalArtifacts can be referenced via URIs too.
+Authorization[d3f:AuthorizationService fa:fa-user-secret] --> |d3f:authenticates| Client
+IMAP --o Authorization
+SMTP --o Authorization
+
+%% You can detail the kind of traffic using d3f: entities.
+WebMail --> |d3f:DatabaseQuery| MySQL
+
+MySQL[(UserPreferences fa:fa-user-secret)] --> DataVolume[(Tablespace fa:fa-hard-drive d3f:Volume)]
+
+"""
+
+
+class Status:
+    pass
 
 
 def initialize_graph(ontologies):
@@ -75,96 +109,10 @@ def guess_content(text):
     return None
 
 
-def attack_summary(g: Graph):
-    ret = list(
-        g.query(
-            """
-        prefix : <https://par-tec.it/example#>
-        prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>
-        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-        SELECT DISTINCT
-            ?node ?relation ?artifact ?attack_id ?attack_label ?attack
-        WHERE {
-            ?node a :Node .
-            ?node ?relation ?artifact .
-            ?attack d3f:attack-id ?attack_id .
-            ?attack ?attacks ?artifact .
-            ?attack rdfs:label ?attack_label .
-            }
-        """
-        )
-    )
-
-    return [HEADERS] + [render_row(row) for row in ret]
-
-
-def d3fend_summary(g: Graph):
-    ret = list(
-        g.query(
-            """
-        prefix : <https://par-tec.it/example#>
-        prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>
-        prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-
-        SELECT DISTINCT
-            ?node ?relation ?artifact ?d3fend_id ?d3fend_label ?d3fend
-        WHERE {
-            ?node a :Node .
-            ?node ?relation ?artifact .
-            ?d3fend d3f:d3fend-id ?d3fend_id .
-            ?d3fend ?defends ?artifact .
-            ?d3fend rdfs:label ?d3fend_label .
-            }
-        """
-        )
-    )
-
-    return [HEADERS] + [render_row(row) for row in ret]
-
-
-def d3fend_summary_html(g: Graph, aggregate=False):
-    return f_summary_html(g, aggregate, d3fend_summary)
-
-
-def attack_summary_html(g: Graph, aggregate=False):
-    return f_summary_html(g, aggregate, attack_summary)
-
-
-def f_summary_html(g: Graph, aggregate=False, summary_function=d3fend_summary):
-    try:
-        import pandas as pd
-
-        rows = summary_function(g)
-        df = pd.DataFrame(data=rows[1:], columns=rows[0])
-        if aggregate:
-            df = df.groupby(["node", "artifact", "technique"], as_index=False).agg(
-                ",".join
-            )
-        df = df[HEADERS]
-        html = df.to_html(
-            formatters=[markdown_link_to_html_link] * len(HEADERS), escape=False
-        )
-    except Exception as e:
-        log.exception(e)
-        html = "<pre>" + str(e) + "</pre>"
-    return html
-
-
-def list_as_html_table(rows):
-    html = "<table>"
-    for row in rows:
-        html += "<tr>"
-        try:
-            cells = render_row(row)
-            for cell in cells:
-                cell = markdown_link_to_html_link(cell)
-                html += f"<td>{cell}</td>"
-        except Exception as e:
-            log.exception(row + " " + str(e))
-        html += "</tr>"
-    html += "</table>"
-    return html
+d3fend_summary = d3fend.d3fend_summary
+d3fend_summary_html = d3fend.d3fend_summary_html
+attack_summary = d3fend.attack_summary
+attack_summary_html = d3fend.attack_summary_html
 
 
 def markdown_link_to_html_link(markdown_link):

@@ -16,6 +16,7 @@
       "./mermaidrdf.py",
       "./mermaidrdf.yaml",
       "./app.py",
+      "./d3fend.py",
       "./ontology.ttl",
       "./d3fend-short.ttl"]
     </py-config>
@@ -46,45 +47,12 @@
       monaco editor with d3fend customization
     -->
 		<script src="monaco-completion.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-		<script>
-			require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' } });
-
-			require(['vs/editor/editor.main'], function () {
-				monaco.languages.registerCompletionItemProvider("python", {
-					provideCompletionItems: function (model, position) {
-						var textUntilPosition = model.getValueInRange({
-							startLineNumber: 1,
-							startColumn: 1,
-							endLineNumber: position.lineNumber,
-							endColumn: position.column,
-						});
-						var match = textUntilPosition.match(
-							/d3f:/
-						);
-						if (!match) {
-							return { suggestions: [] };
-						}
-						var word = model.getWordUntilPosition(position);
-						var range = {
-							startLineNumber: position.lineNumber,
-							endLineNumber: position.lineNumber,
-							startColumn: word.startColumn,
-							endColumn: word.endColumn,
-						};
-						return {
-							suggestions: createD3fCompletion(range),
-						};
-					},
-				});
-
-				var editor = monaco.editor.create(document.getElementById('mermaid'), {
-					value: 'graph \n \n a-->b',
-					language: 'python',
-				});
-			});
-		</script>
-
+    <script>
+      (async() => {
+      //  codemirror = await import('https://cdn.jsdelivr.net/npm/codemirror@6.0.1/+esm');
+        monaco = await import('https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/+esm');
+      })();
+    </script>
 
     <!-- Styles & co
       * load font-awesome locally to be independent from FA CDN;
@@ -99,7 +67,7 @@
         max-height: 100vh;
         overflow: hidden !important;
       }
-      textarea {
+      #mermaid {
         box-sizing: content-box;
         font-family: monospace;
         font-size: 16px;
@@ -107,7 +75,7 @@
         color: white;
         background-color: #333;
         width: 100%;
-        height: 100%;
+        height: 85%;
         max-height: 80vh;
       }
       /* This is the pandas dataframe class. */
@@ -135,14 +103,15 @@
       #inputTabContent {
         overflow: hidden !important;
       }
+      .scrollable-tab {
+        overflow: auto !important;
+        height: 85%;
+      }
       .mainPanel-normal {
         max-height: calc(100vh - 100px);
       }
       .mainPanel-full {
         max-height: 100vh;
-      }
-      #turtle-graph {
-        max-height: 85%;
       }
     </style>
   </head>
@@ -161,7 +130,7 @@
   <div class="tab-content" id="inputTabContent">
 
     <div class="tab-pane fade show active" id="tab-input-mermaid" role="tabpanel" aria-labelledby="tab-input-mermaid-tab">
-      <div id="mermaid" style="height: 70%"></div>
+      <div id="mermaid"></div>
     </div>
 
 </div> <!-- tab-list -->
@@ -174,7 +143,7 @@
     <li class="nav-item"><a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Diagram</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab-attack-tab" data-bs-toggle="tab" href="#tab-attack" role="tab" aria-controls="tab-attack" aria-selected="false">ATT&CK</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab-d3fend-tab" data-bs-toggle="tab" href="#tab-d3fend" role="tab" aria-controls="tab-d3fend" aria-selected="false">D3FEND</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab3-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
+    <li class="nav-item"><a class="nav-link text-white" id="tab-rdf-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab40-tab" data-bs-toggle="tab" href="#tab40" role="tab" aria-controls="tab40" aria-selected="false">Console</i></a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab50-tab" data-bs-toggle="tab" href="#tab50" role="tab" aria-controls="tab50" aria-selected="false">Help</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab100-tab" data-bs-toggle="tab" href="#tab100" role="tab" aria-controls="tab100" aria-selected="false"><i class="fab fa-github"></i></a></li>
@@ -202,13 +171,13 @@
     <div class="tab-pane p-4 fade" id="tab-attack" role="tabpanel" aria-labelledby="tab-attack-tab">
       <p>ATT&CK Summary with artifacts and attacks.</p>
       <p><button class="fas fa-copy float-end" id="attack-summary-copy"></button> </p>
-      <div id="attack-summary">att&ck summary placeholder </div>
+      <div id="attack-summary" class="scrollable-tab">att&ck summary placeholder </div>
     </div>
 
-    <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab30-tab">
+    <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab-rdf-tab">
       <p>This is a description of your IT architecture in <a href="https://en.wikipedia.org/wiki/Resource_Description_Framework" target="_blank" rel="noopener noreferrer">RDF</a> format. Nodes are described using MITRE categories. </p>
       <p><button class="fas fa-copy float-end" id="turtle-graph-copy"></button></p>
-      <pre class="result" id="turtle-graph" style="border-color: blue">graph placeholder</pre>
+      <pre class="result scrollable-tab" id="turtle-graph" style="border-color: blue">graph placeholder</pre>
     </div>
 
     <div class="tab-pane p-4 fade" id="tab40" role="tabpanel" aria-labelledby="tab40-tab">
@@ -217,8 +186,9 @@
         Currently it does only show the returned value of the last python line, so statements such as print(), while evaluated, are not shown.
         </p>
         <py-repl output="replOutput">
+g1 = status["d3fend"].g
 d3f = dict(g1.namespaces())["d3f"]
-nodes = g.query("""
+nodes = ontology.query("""
     PREFIX d3f: <%s>
     SELECT ?s
     WHERE {
@@ -280,7 +250,7 @@ list(nodes)
     <div class="tab-pane p-4 fade" id="tab-d3fend" role="tabpanel" aria-labelledby="tab-d3fend-tab">
       <p>D3FEND Summary with artifacts and defeses.</p>
       <p><button class="fas fa-copy float-end" id="d3fend-summary-copy"></button> </p>
-      <div id="d3fend-summary">d3f summary placeholder </div>
+      <div id="d3fend-summary" class="scrollable-tab">d3f summary placeholder </div>
     </div>
 
   </div><!-- tab-content -->
@@ -311,6 +281,7 @@ log.info(f"mermaid: {dir(mermaid)}")
 mermaidAPI = mermaid.default.mermaidAPI
 mermaidAPI.initialize(**{
   "maxTextSize": 100_000,
+  "securityLevel": "loose",
   "flowchart": {
     "useMaxWidth": False,
     "htmlLabels": False,
@@ -320,12 +291,7 @@ CONFIG = {
   "strip_prefix": True,  # "urn:k8s:"
 }
 
-# Set the value of monaco editor.
-
-
-g = app.initialize_graph(["ontology.ttl","d3fend-short.ttl"])
-g1 = None
-last_update = time()
+ontology = app.initialize_graph(["ontology.ttl","d3fend-short.ttl"])
 # Publish information in the global namespace
 #   to be accessible from the console.
 text_mmd = ""
@@ -333,8 +299,12 @@ text_mmd = ""
 status = {
   "mermaid": {
     "last-rendered-unfilter-text": None,
-    "diagram-text": None
-  }
+    "diagram-text": None,
+  },
+  "editor": None,
+  "d3fend": None,
+  "last_update": time(),
+  "graph": None,
 }
 
 def _copy_element_to_clipboard_with_js(element_id):
@@ -371,67 +341,68 @@ def _copy_text_to_clipboard(text):
 
 def mmd_to_graph(event):
   """Generate a d3f graph from mermaid text.
-    This only works in "mermaid" mode.
   """
-  global g1, status
+  global status
   log.warning("mmd_to_graph: %s" % (event,))
-  if time() - last_update < 1:
+  if time() - status["last_update"] < 1:
     log.warning("Skipping update, too fast.")
     return
 
-  if g1 and (status["mermaid"]["last-rendered-unfilter-text"] == Element("mermaid").value):
+  if hasattr(status["d3fend"], 'g') and (status["mermaid"]["last-rendered-unfilter-text"] == status["editor"].getValue()):
     log.warning(f"No change in mermaid text.")
     return
-  status["mermaid"]["last-rendered-unfilter-text"] = Element("mermaid").value
+  status["mermaid"]["last-rendered-unfilter-text"] = status["editor"].getValue()
 
   log.warning("Creating RDF graph..")
   t0 = time()
   log.warning("Load graph from mermaid.")
   try:
-    graph_ttl = app.content_to_rdf(Element("mermaid").value)
-    Element("turtle-graph").write(graph_ttl)
-    log.warning("Created RDF graph in %d.." % (time()-t0,))
-    g1 = rdflib.Graph()
-    g1.parse(data=graph_ttl, format="turtle")
+    status["d3fend"] = app.mermaidrdf.D3fendMermaid(
+      status["editor"].getValue(),
+      ontology=ontology
+    )
+    status["d3fend"].parse()
+    log.warning("Loaded %s rdf entries in %d.." % (len(status["d3fend"].g), time()-t0,))
   except Exception as e:
     log.exception("Failed to create RDF graph: %s" % (e,))
-    log.info("Original mermaid text: %s" % (Element("mermaid").value,))
-    g1 = None
+    log.info("Original mermaid text: %s" % (status["editor"].getValue(),))
 
 def update_graph_and_render_mermaid(event):
-  global g, g1, status
+  global ontology, status
   log.warning("update_graph_and_render_mermaid: %s" % (event,))
 
-  if hasattr(event, "inputType") and len(Element("mermaid").value) > 6000:
+  if hasattr(event, "inputType") and len(status["editor"].getValue()) > 6000:
     log.warning("Skipping update, too big.")
     return
 
-  # Populate g1 from the mermaid text.
+  # Populate the graph from the mermaid text.
   mmd_to_graph(event)
   render_mmd(event)
 
-def create_report(event):
-  # Reload g1 from the mermaid text.
+
+def create_report(event, id_, f):
+  # Reload the graph from the mermaid text.
   mmd_to_graph(event)
 
   # Generate the d3fend tables.
   t0 = time()
-  for (id_, f) in [("attack", app.attack_summary_html), ("d3fend", app.d3fend_summary_html)]:
-    try:
-      html = f(g + g1, aggregate=True)
-      Element(f"{id_}-summary").clear()
-      Element(f"{id_}-summary").element.innerHTML = html
-    except Exception as e:
-     log.error(f"Error in {id_} summary: {e}")
+  _g = status["d3fend"].annotate()
+  try:
+    html = f(_g, aggregate=True)
+    Element(f"{id_}-summary").clear()
+    Element(f"{id_}-summary").element.innerHTML = html
+  except Exception as e:
+    log.error(f"Error in {id_} summary: {e}")
   log.warning("Created summary in %d.." % (time()-t0,))
+
 
 def render_mmd(event):
   """Render the `mermaid-graph` with `mermaid`.text"""
-  global text_mmd, g, g1, status
+  global text_mmd, ontology, status
   log.warning(f"render_mmd: event {event}")
-  text = Element("mermaid").value
-  flip = Element("mermaid-chk-flip").element.checked
   try:
+    text = status["editor"].getValue()
+    flip = Element("mermaid-chk-flip").element.checked
     content_type = app.guess_content(text)
     if content_type == "markdown":
       log.warning("Markdown detected.")
@@ -442,7 +413,7 @@ def render_mmd(event):
     else:
       log.warning("Unknown content.")
       text_mmd = text
-    text_mmd = app.render_unicode_emojis(text_mmd)
+    text_mmd = app.render_unicode_emojis(text_mmd)  # FIXME: removeme
     #
     # Filter text_mmd matching mermaid_filter or subgraph
     #
@@ -478,12 +449,6 @@ def render_mmd(event):
   except Exception as e:
     log.exception(f"Error in mermaid: {e}")
 
-
-def resolve_unicode():
-  text_mmd = text_mmd.replace("u:u-gear", "\N{GEAR}")
-  raise NotImplementedError
-
-
 def refresh_mermaid_on_input(event):
   log.warning(dir(event))
   if (event.key == "Enter"):
@@ -492,21 +457,43 @@ def refresh_mermaid_on_input(event):
     # Trigger the button element with a click
     js.document.getElementById("mermaid-btn-redraw").click()
 
+def _create_monaco(init_text=app.MERMAID_INIT_TEXT):
+  eid = js.document.getElementById("mermaid")
+  lang = "python"
+  js.monaco.languages.registerCompletionItemProvider(
+    lang,
+    **{"provideCompletionItems": js.provideCompletionItems}
+  )
+  editor = js.monaco.editor.create(eid, **{
+    "value": init_text,
+    "language": lang,
+    "theme": "vs-dark",
+    "automaticLayout": False,
+  })
+  status["editor"] = editor
+
+
+def event_listener(element_id, event_type):
+  def decorator(callback):
+    Element(element_id).element.addEventListener(event_type, create_proxy(callback))
+  return decorator
 
 initialized = False
 if not initialized:
+  _create_monaco()
   render_mmd(None)
 
   # Register events.
-  js.document.getElementById("mermaid").addEventListener(
+  Element("mermaid").element.addEventListener(
     "input", create_proxy(update_graph_and_render_mermaid)
   )
 
   # when pressing enter on mermaid-filter, run update_graph_and_render_mermaid
-  js.document.getElementById("mermaid-filter").addEventListener(
+  Element("mermaid-filter").element.addEventListener(
     "keypress", create_proxy(refresh_mermaid_on_input)
   )
   # when pressing mermaid-btn-fullscreen set the mermaid-graph class to full
+  @event_listener("mermaid-btn-fullscreen", "click")
   def _toggle_fullscreen(event):
     global CONFIG
     log.warning("Toggle fullscreen")
@@ -524,10 +511,6 @@ if not initialized:
       inputCol.remove_class("visually-hidden")
       header.remove_class("visually-hidden")
 
-
-  js.document.getElementById("mermaid-btn-fullscreen").addEventListener(
-    "click", create_proxy(_toggle_fullscreen)
-  )
   js.document.getElementById("mermaid-chk-flip").addEventListener(
     "click", create_proxy(render_mmd)
   )
@@ -537,12 +520,27 @@ if not initialized:
       "click", create_proxy(render_mmd)
     )
 
-  js.document.getElementById("tab-attack-tab").addEventListener(
-    "click", create_proxy(create_report)
-  )
-  js.document.getElementById("tab-d3fend-tab").addEventListener(
-    "click", create_proxy(create_report)
-  )
+  @event_listener("tab-attack-tab", "click")
+  def create_report_attack(event):
+    return create_report(event, "attack", app.attack_summary_html)
+
+  @event_listener("tab-d3fend-tab", "click")
+  def create_report_d3fend(event):
+    return create_report(event, "d3fend", app.d3fend_summary_html)
+
+  @event_listener("tab-rdf-tab", "click")
+  def _show_turtle_graph(event):
+    if status["d3fend"] is None:
+      render_mmd(event)
+
+    try:
+      graph_ttl = status["d3fend"].g.serialize()
+    except Exception as e:
+      log.warning(f"Error in _show_turtle_graph: {e}")
+      graph_ttl = "Uninitialized graph"
+    Element("turtle-graph").write(graph_ttl)
+
+
   # Copy to clipboard.
   js.document.getElementById("attack-summary-copy").addEventListener(
     "click", create_proxy(lambda event: _copy_element_to_clipboard_with_js("attack-summary"))
