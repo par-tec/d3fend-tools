@@ -3,9 +3,7 @@ import re
 import unicodedata
 from time import time
 
-import kuberdf
 import mermaidrdf
-import yaml
 from rdflib import Graph
 from rdflib.namespace import RDF
 
@@ -20,7 +18,7 @@ def rdf_to_mermaid_filtered(g, match=""):
     x = Graph()
     # Add all g triples to x
     for s, p, o in g:
-        if (p, o) == (RDF.type, kuberdf.NS_K8S.Namespace):
+        if (p, o) == (RDF.type,):
             x.add((s, p, o))
         if match in f"{s}{o}":
             x.add((s, p, o))
@@ -54,15 +52,9 @@ def markdown_to_rdf(text):
     return turtle
 
 
-def rdf_to_mermaid(g: Graph):
-    mermaid = mermaidrdf.MermaidRDF(g)
-    return mermaid.render()
-
-
 def content_to_rdf(text):
     dispatch_table = {
         "mermaid": mermaidrdf.parse_mermaid,
-        "kubernetes": kuberdf.parse_manifest,
         "markdown": markdown_to_rdf,
     }
     text_type = guess_content(text)
@@ -73,15 +65,13 @@ def content_to_rdf(text):
 
 
 def guess_content(text):
-    """Guess the content type of the text: mermaid or kubernetes manifest."""
+    """Guess the content type of the text: mermaid or markdown."""
     text = text.strip()
     if text.startswith("graph"):
         # XXX: we still need to strip '---\ntitle: ...\n---'
         return "mermaid"
     if "```mermaid" in text:
         return "markdown"
-    if any(("kind" in x for x in yaml.safe_load_all(text))):
-        return "kubernetes"
     return None
 
 

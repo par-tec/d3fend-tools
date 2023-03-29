@@ -1,6 +1,6 @@
 # dev files
-deleteme*
-DELETEME*
+*deleteme*
+*DELETEME*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -30,23 +30,40 @@ RE_NODE = re.compile(PAT_NODE)
 
 NS_DEFAULT = Namespace("https://par-tec.it/example#")
 NS_D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
+
+# Data from mermaidrdf.yaml
 DATAFILE = Path(__file__).parent / "mermaidrdf.yaml"
 DATA = yaml.safe_load(DATAFILE.read_text())
+D3F_PROPERTIES = set(DATA["D3F_PROPERTIES"])
+D3F_DIGITAL_ARTIFACTS = set(DATA["D3F_DIGITAL_ARTIFACTS"])
+D3F_DEFENSIVE_TECHNIQUES = set(DATA["D3F_DEFENSIVE_TECHNIQUES"])
+D3F_OFFENSIVE_TECHNIQUES = set(DATA["D3F_OFFENSIVE_TECHNIQUES"])
 SW_MAP = {tuple(x["labels"]): x["artifacts"] for x in DATA["SW_MAP"]}
 FONTAWESOME_MAP = {tuple(x["labels"]): x["artifacts"] for x in DATA["FONTAWESOME_MAP"]}
-D3F_PROPERTIES = set(DATA["D3F_PROPERTIES"])
 D3F_INFERRED_RELATIONS = defaultdict(
     list, **{x["relation"]: x["predicates"] for x in DATA["INFERRED_RELATIONS"]}
 )
 
 
-def parse_resources(resources, outfile, **options):
+def visualize_d3fend(mermaid_text):
+    """Replace every occurrence of a d3f: entity with a fontawesome icon
+    from FONTAWESOME_MAP."""
+    for needle in re.findall("(d3f:[a-zA-Z-0-9]+)", mermaid_text):
+        for label, icons in FONTAWESOME_MAP.items():
+            if needle in icons:
+                mermaid_text = mermaid_text.replace(needle, label[0])
+    return mermaid_text
+
+
+def parse_resources(resources, outfile=None, **options):
     turtle = ""
     for f in resources:
         mermaid_graphs = extract_mermaid(f.read_text())
         for graph in mermaid_graphs:
             turtle += "\n" + parse_mermaid(graph, **options)
-    Path(outfile).with_suffix(".ttl").write_text(turtle)
+    if outfile:
+        Path(outfile).with_suffix(".ttl").write_text(turtle)
+    return turtle
 
 
 def mermaid_to_rdf(mermaid):
@@ -62,7 +79,7 @@ def mermaid_to_rdf(mermaid):
             yield sentence
 
 
-def parse_mermaid(mermaid: str):
+def parse_mermaid(text: str):
     g = Graph()
     g.bind("", NS_DEFAULT)
     g.bind("d3f", NS_D3F)
@@ -71,7 +88,7 @@ def parse_mermaid(mermaid: str):
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     @prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
     """ + "\n".join(
-        mermaid_to_rdf(mermaid)
+        mermaid_to_rdf(text)
     )
     g.parse(data=turtle, format="turtle")
     return g.serialize(format="turtle")
@@ -165,11 +182,17 @@ def parse_line(line):
 
 
 def _parse_relation(src, dst, predicate, relation):
-    """Parse a relation between two nodes."""
+    """Parse a relation between two nodes.
+    @param src: the source node
+    @param dst: the destination node
+    @param predicate: the predicate inferred by the arrow shape
+    @param relation: the relation enclosed by pipes,
+                     e.g. a -->|| b.
+    """
     if not relation:
         yield f":{src} {predicate} :{dst} ."
         return
-    if relation.startswith("d3f:") and relation[4:] in D3F_PROPERTIES:
+    if relation in D3F_PROPERTIES or "d3f:" + relation in D3F_PROPERTIES:
         yield f":{src} {relation} :{dst} ."
 
         for predicate in D3F_INFERRED_RELATIONS[relation]:
@@ -183,9 +206,16 @@ def _parse_relation(src, dst, predicate, relation):
     # e.g. :App --> |via d3f:DatabaseQuery| :Database
     for needle in re.findall(r"(d3f:[A-Za-z0-9._\.-]+)", relation):
         # TODO verify that the relation is a valid d3f:DigitalArtifact.
-        yield f":{src} d3f:produces {needle} ."
-        yield f":{dst} d3f:uses {needle} ."
-        return
+        if needle in D3F_DIGITAL_ARTIFACTS:
+            yield f":{src} d3f:produces {needle} ."
+            yield f":{dst} d3f:uses {needle} ."
+            continue
+        if needle in D3F_DEFENSIVE_TECHNIQUES:
+            yield f":{src} d3f:implements {needle} ."
+            yield f":{dst} d3f:implements {needle} ."
+            continue
+        raise NotImplementedError(f"Unsupported relation: {needle}")
+        # return
 
     # Introduces a relation based on a specific d3f:DigitalArtifact,
     # e.g. :Client --> |via fa:fa-envelope| :MTA

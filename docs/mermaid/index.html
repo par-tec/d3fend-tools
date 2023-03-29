@@ -10,11 +10,11 @@
       "pandas",
       "rdflib",
     ]
+
     [[fetch]]
     files = [
       "./mermaidrdf.py",
       "./mermaidrdf.yaml",
-      "./kuberdf.py",
       "./app.py",
       "./ontology.ttl",
       "./d3fend-short.ttl"]
@@ -42,6 +42,50 @@
 
     </script>
 
+    <!--
+      monaco editor with d3fend customization
+    -->
+		<script src="monaco-completion.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script>
+			require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs' } });
+
+			require(['vs/editor/editor.main'], function () {
+				monaco.languages.registerCompletionItemProvider("python", {
+					provideCompletionItems: function (model, position) {
+						var textUntilPosition = model.getValueInRange({
+							startLineNumber: 1,
+							startColumn: 1,
+							endLineNumber: position.lineNumber,
+							endColumn: position.column,
+						});
+						var match = textUntilPosition.match(
+							/d3f:/
+						);
+						if (!match) {
+							return { suggestions: [] };
+						}
+						var word = model.getWordUntilPosition(position);
+						var range = {
+							startLineNumber: position.lineNumber,
+							endLineNumber: position.lineNumber,
+							startColumn: word.startColumn,
+							endColumn: word.endColumn,
+						};
+						return {
+							suggestions: createD3fCompletion(range),
+						};
+					},
+				});
+
+				var editor = monaco.editor.create(document.getElementById('mermaid'), {
+					value: 'graph \n \n a-->b',
+					language: 'python',
+				});
+			});
+		</script>
+
+
     <!-- Styles & co
       * load font-awesome locally to be independent from FA CDN;
       * load bootstrap-italia from CDN, instead :)
@@ -58,7 +102,7 @@
       textarea {
         box-sizing: content-box;
         font-family: monospace;
-        font-size: 14px;
+        font-size: 16px;
         border: solid 1px;
         color: white;
         background-color: #333;
@@ -86,7 +130,7 @@
         width: 100%;
       }
       #header {
-        max-height: 60px;
+        height: 70px;
       }
       #inputTabContent {
         overflow: hidden !important;
@@ -97,128 +141,29 @@
       .mainPanel-full {
         max-height: 100vh;
       }
+      #turtle-graph {
+        max-height: 85%;
+      }
     </style>
   </head>
   <body>
-    <div class="row" id="header" >
-      <h1>Design & D3FEND: an experimental webapp to support secure architectural design.
-      <a href="https://github.com/par-tec/neo4j-semantic-docker" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
-      </h1>
-      <p>Design your IT architecture using a MermaidJS graph in the left editor. Then click on the "D3FEND" tab to see the possible attack paths. Explore the other features selecting the other tabs!</p>
-    </div>
+<div class="row container-fluid" id="he ader" >
+  <h2>Design & D3FEND an experimental webapp to support secure architectural design.
+  <a href="https://github.com/par-tec/neo4j-semantic-docker" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
+  </h2>
+</div>
 
 <div class="row mainPanel-normal" style="height: 100%" id="mainPanel" >
   <div class="col-sm" id="inputCol">
     <ul class="nav nav-tabs bg-primary" id="inputTab" role="tablist">
       <li class="nav-item"><a class="nav-link active" id="tab-input-mermaid-tab" data-bs-toggle="tab" href="#tab-input-mermaid" role="tab" aria-controls="tab-input-mermaid" aria-selected="true">Mermaid</a></li>
-      <li class="nav-item"><a class="nav-link" id="tab-input-kube-tab" data-bs-toggle="tab" href="#tab-input-kube" role="tab" aria-controls="tab-input-kube" aria-selected="false">Kube</a></li>
     </ul>
   <div class="tab-content" id="inputTabContent">
 
     <div class="tab-pane fade show active" id="tab-input-mermaid" role="tabpanel" aria-labelledby="tab-input-mermaid-tab">
-      <textarea id="mermaid">
-graph LR
-
-%% Design here your architecture using MermaidJS syntax.
-
-%% The simple arrow maps to d3f:accesses
-Client --> WebMail
-
-%% Font-awesome icons can be used to indicate that
-%%   a node is a class (e.g. fa-react maps to a WebUI)
-WebMail[WebMail fab:fa-react fa:fa-envelope]
-
-%% Font-Awesome icons can indicate that a node
-%%   accesses specific resources
-%%   (e.g. fa-envelope represent a d3f:Email)
-WebMail -->|fa:fa-envelope| IMAP[IMAP fa:fa-envelope fa:fa-folder]
-WebMail -->|fa:fa-envelope| SMTP[SMTP fa:fa-envelope fa:fa-folder]
-IMAP --> Mailstore[Mailstore fa:fa-envelope fa:fa-folder]
-
-%% Associated d3f:DigitalArtifacts can be referenced via URIs too.
-Authorization[d3f:AuthorizationService fa:fa-user-secret] --> |d3f:authenticates| Client
-IMAP --o Authorization
-SMTP --o Authorization
-      </textarea>
+      <div id="mermaid" style="height: 70%"></div>
     </div>
 
-    <div class="tab-pane fade" id="tab-input-kube" role="tabpanel" aria-labelledby="tab-input-kube-tab">
-        <p>Here you can paste your kubernetes manifest file and generate mermaid graphs out of them.
-          <b>Importing a Kubernetes manifest file will only generate a nice mermaid diagram. It is useful for documentation purposes but not for security assessment.</b>
-          <button class="float-end" id="kubernetes-reload">import manifests</button>
-        </p>
-
-        <textarea id="kubernetes" style="height: 100%;">
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: console-demo-plugin
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: console-demo-plugin
-  namespace: console-demo-plugin
-  labels:
-    app: console-demo-plugin
-    app.kubernetes.io/component: console-demo-plugin
-    app.kubernetes.io/instance: console-demo-plugin
-    app.kubernetes.io/part-of: console-demo-plugin
-    app.openshift.io/runtime-namespace: console-demo-plugin
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: console-demo-plugin
-  template:
-    metadata:
-      labels:
-        app: console-demo-plugin
-    spec:
-      containers:
-        - name: console-demo-plugin
-          image: quay.io/jcaianirh/console-demo-plugin
-          ports:
-            - containerPort: 9001
-              protocol: TCP
-          imagePullPolicy: Always
-          args:
-            - '--ssl'
-            - '--cert=/var/serving-cert/tls.crt'
-            - '--key=/var/serving-cert/tls.key'
-      restartPolicy: Always
-      dnsPolicy: ClusterFirst
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    service.alpha.openshift.io/serving-cert-secret-name: console-serving-cert
-  name: console-demo-plugin
-  namespace: console-demo-plugin
-  labels:
-    app: console-demo-plugin
-    app.kubernetes.io/component: console-demo-plugin
-    app.kubernetes.io/instance: console-demo-plugin
-    app.kubernetes.io/part-of: console-demo-plugin
-spec:
-  ports:
-    - name: 9001-tcp
-      protocol: TCP
-      port: 9001
-      targetPort: 9001
-  selector:
-    app: console-demo-plugin
-  type: ClusterIP
-  sessionAffinity: None
-
-        </textarea>
-    </div> <!-- tab-input-kube -->
 </div> <!-- tab-list -->
 </div> <!-- col-sm -->
 
@@ -307,14 +252,17 @@ list(nodes)
 
         <p><h4>Font-awesome reference</h4>
         <ul>
-        <li>fa:fa-server - d3f:Server
-        <li>fa:fa-desktop - d3f:WebServerApplication
-        <li>fa:fa-envelope - d3f:Email
+        <li>fa:fa-server    - d3f:Server
+        <li>fa:fa-desktop   - d3f:WebServerApplication
+        <li>fa:fa-envelope  - d3f:Email
         <li>fa:fa-user-secret - d3f:UserAccount
-        <li>fa:fa-globe - d3f:InternetNetworkTraffic
+        <li>fa:fa-globe     - d3f:InternetNetworkTraffic
         <li>fab:fa-react, fab:fa-angular, fab:fa-vuejs - d3f:WebServerApplication, d3f:GraphicalUserInterface
-        <li>fa:fa-folder - d3f:FileSystem
-        <li>fab:fa-docker - d3f:ContainerProcess
+        <li>fa:fa-cube      - d3f:ContainerProcess
+        <li>fab:fa-docker   - d3f:ContainerProcess
+        <li>fa:folder-tree  - d3f:FileSystem
+        <li>fa:fa-hard-drive - d3f:Volume
+        <li>fa:fa-folder    - d3f:FileSystem
         </ul>
 
 
@@ -372,6 +320,9 @@ CONFIG = {
   "strip_prefix": True,  # "urn:k8s:"
 }
 
+# Set the value of monaco editor.
+
+
 g = app.initialize_graph(["ontology.ttl","d3fend-short.ttl"])
 g1 = None
 last_update = time()
@@ -415,8 +366,8 @@ def _copy_text_to_clipboard(text):
   log.info(f"Copying to clipboard: {text[:100]}..")
   blob = js.Blob.new([text], **{"type": type_})
   ci = js.ClipboardItem.new(**{type_: blob})
-  js.navigator.clipboard.write([ci])
-
+  ret = js.navigator.clipboard.write([ci])
+  log.info(ret.then(log.info, log.info))
 
 def mmd_to_graph(event):
   """Generate a d3f graph from mermaid text.
@@ -427,10 +378,6 @@ def mmd_to_graph(event):
   if time() - last_update < 1:
     log.warning("Skipping update, too fast.")
     return
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if kube_view:
-    log.warning("In kube view, skipping..")
-    return
 
   if g1 and (status["mermaid"]["last-rendered-unfilter-text"] == Element("mermaid").value):
     log.warning(f"No change in mermaid text.")
@@ -440,44 +387,23 @@ def mmd_to_graph(event):
   log.warning("Creating RDF graph..")
   t0 = time()
   log.warning("Load graph from mermaid.")
-  graph_ttl = app.content_to_rdf(Element("mermaid").value)
-  Element("turtle-graph").write(graph_ttl)
-  log.warning("Created RDF graph in %d.." % (time()-t0,))
-  g1 = rdflib.Graph()
-  g1.parse(data=graph_ttl, format="turtle")
-
-def kube_to_graph(event):
-  """Generate a d3f graph from kubernetes text.
-    This only works in "kubernetes" mode.
-  """
-  global g1
-  log.warning(f"event {event}")
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if not kube_view:
-    log.warning("Not in kube view, skipping..")
-    return
-
-  text = Element("kubernetes").value
-  # Always re-create the RDF graph.
-  log.warning("No RDF graph, creating one..")
-  t0 = time()
-  graph_ttl = app.content_to_rdf(text)
-  Element("turtle-graph").write(graph_ttl)
-  log.warning("Created RDF graph in %d.." % (time()-t0,))
-  g1 = rdflib.Graph()
-  g1.parse(data=graph_ttl, format="turtle")
+  try:
+    graph_ttl = app.content_to_rdf(Element("mermaid").value)
+    Element("turtle-graph").write(graph_ttl)
+    log.warning("Created RDF graph in %d.." % (time()-t0,))
+    g1 = rdflib.Graph()
+    g1.parse(data=graph_ttl, format="turtle")
+  except Exception as e:
+    log.exception("Failed to create RDF graph: %s" % (e,))
+    log.info("Original mermaid text: %s" % (Element("mermaid").value,))
+    g1 = None
 
 def update_graph_and_render_mermaid(event):
   global g, g1, status
   log.warning("update_graph_and_render_mermaid: %s" % (event,))
 
-  if hasattr(event, "inputType") and len(Element("mermaid").value) > 1000:
+  if hasattr(event, "inputType") and len(Element("mermaid").value) > 6000:
     log.warning("Skipping update, too big.")
-    return
-  # If toggle-kube-view is checked, don't update the graph.
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if kube_view:
-    log.warning("In kube view, skipping..")
     return
 
   # Populate g1 from the mermaid text.
@@ -485,16 +411,8 @@ def update_graph_and_render_mermaid(event):
   render_mmd(event)
 
 def create_report(event):
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if kube_view:
-    # Graph is already loaded.
-    if not g1:
-      log.error("Graph is not loaded.")
-      return
-    log.warning("Graph is already loaded.")
-  else:
-    # Reload g1 from the mermaid text.
-    mmd_to_graph(event)
+  # Reload g1 from the mermaid text.
+  mmd_to_graph(event)
 
   # Generate the d3fend tables.
   t0 = time()
@@ -544,6 +462,7 @@ def render_mmd(event):
         text_mmd = text_mmd.replace("graph TB", "graph LR")
         text_mmd = re.sub(r"subgraph\s+(.*?)\n", r"subgraph \1\n\ndirection TB\n\n", text_mmd)
 
+    text_mmd = app.mermaidrdf.visualize_d3fend(text_mmd)
     status["mermaid"]["diagram-text"] = text_mmd
     # _copy_text_to_clipboard_with_js(text_mmd)
     log.warning(f"mermaid text: {text_mmd[:100]}")
@@ -563,35 +482,6 @@ def render_mmd(event):
 def resolve_unicode():
   text_mmd = text_mmd.replace("u:u-gear", "\N{GEAR}")
   raise NotImplementedError
-
-def kube_to_mmd(event):
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if not kube_view:
-    log.warning("Not in kube view, skipping..")
-    return
-
-  kube_to_graph(event)
-  graph_to_mmd(event)
-
-def graph_to_mmd(event):
-  global g1, CONFIG, status
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if not kube_view:
-    log.warning("Not in kube view, skipping..")
-    return
-
-  if not g1:
-    log.error("No RDF graph..")
-    return
-
-  text_mmd = app.rdf_to_mermaid(g1)
-
-  if CONFIG["strip_prefix"]:
-    text_mmd = text_mmd.replace("urn:k8s:", "")
-  # Update the mermaid textarea
-  Element("mermaid").element.innerHTML = text_mmd
-  status["mermaid"]["last-rendered-unfilter-text"] = str(time())
-  render_mmd(None)
 
 
 def refresh_mermaid_on_input(event):
@@ -647,9 +537,6 @@ if not initialized:
       "click", create_proxy(render_mmd)
     )
 
-  js.document.getElementById("kubernetes-reload").addEventListener(
-    "click", create_proxy(kube_to_mmd)
-  )
   js.document.getElementById("tab-attack-tab").addEventListener(
     "click", create_proxy(create_report)
   )

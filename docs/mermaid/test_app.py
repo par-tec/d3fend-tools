@@ -1,11 +1,7 @@
 import os
-import tempfile
 from pathlib import Path
 
 import app
-import pandas as pd
-from app import d3fend_summary, initialize_graph, markdown_link_to_html_link
-from rdflib import Graph
 
 turtle_text = """
 @prefix : <https://par-tec.it/example#> .
@@ -137,24 +133,4 @@ def test_parse_markdown_to_mermaid():
     from app import markdown_to_mermaid
 
     markdown_to_mermaid(markdown_text)
-    raise NotImplementedError
-
-
-def test_as_graph():
-    g = Graph()
-    g.parse(data=turtle_text, format="turtle")
-    g.parse("d3fend-short.ttl", format="turtle")
-    html = d3fend_summary(g)
-    deleteme_html = tempfile.NamedTemporaryFile(suffix=".html")
-    deleteme_html.write_text(html)
-    raise NotImplementedError
-
-
-def test_d3fend_summary_pd():
-    g = initialize_graph(["d3fend-short.ttl"])
-    g.parse(data=turtle_text, format="turtle")
-    rows = d3fend_summary(g)
-    df = pd.DataFrame(rows[1:], columns=rows[0])
-    html = df.to_html(formatters=[markdown_link_to_html_link] * 4, escape=False)
-    assert html
     raise NotImplementedError

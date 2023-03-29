@@ -11,6 +11,7 @@ from d3fendtools.mermaidrdf import (
     mermaid_to_rdf,
     parse_line2,
     parse_mermaid,
+    parse_resources,
 )
 
 log = logging.getLogger(__name__)
@@ -21,6 +22,15 @@ TESTCASES = yaml.safe_load(
         Path(__file__).parent / "data" / "mermaidrdf" / "testcases-mermaid.yaml"
     ).read_text()
 )["testcases"]
+
+
+@pytest.mark.parametrize(
+    "file_mmd", (Path(__file__).parent / "data" / "mermaidrdf").glob("*.md")
+)
+def test_mermaid_to_rdf_file(file_mmd):
+    turtle = parse_resources([file_mmd], outfile=file_mmd.with_suffix(".deleteme.ttl"))
+
+    raise NotImplementedError
 
 
 @pytest.mark.parametrize(
