@@ -38,8 +38,24 @@ def d3fend_graph():
     return g
 
 
+def test_render_mermaid():
+    txt = """
+    graph
+    MySQL[(UserPreferences d3f:Process)] -->|d3f:Email| DataVolume[(Tablespace fa:fa-hard-drive d3f:Volume)]
+
+    subgraph a
+    end
+    subgraph b[foo d3f:Server]
+    end
+    """
+    m = D3fendMermaid(txt)
+    m.parse()
+    m.mermaid()
+    raise NotImplementedError
+
+
 def test_visualize_d3fend():
-    txt = """MySQL[(UserPreferences fa:fa-user-secret)] -->|d3f:Email| DataVolume[(Tablespace fa:fa-hard-drive d3f:Volume)]"""
+    txt = """MySQL[(UserPreferences d3f:Process)] -->|d3f:Email| DataVolume[(Tablespace fa:fa-hard-drive d3f:Volume)]"""
     ret = visualize_d3fend(txt)
     assert "title='d3f:Email'" in ret
 

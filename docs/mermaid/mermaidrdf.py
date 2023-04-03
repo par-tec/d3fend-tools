@@ -11,10 +11,12 @@ log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 MERMAID_KEYWORDS = (
-    "subgraph",
+    #   "subgraph",
     "end",
+    "direction",
     "classDef",
     "class",
+    "linkStyle",
 )
 PAT_LABEL = r"(.*?)"
 PAT_OPEN = r"|".join((r"\[\[", r"\[\(", r"\(\(", r"\{\{", r"\[\/"))
@@ -52,11 +54,14 @@ class D3fendMermaid:
     def __init__(self, text, ontology=None) -> None:
         self.text = text
         self.ontology = ontology or Graph()
-        self.annotations = Graph()
+        self.annotations = None
+        self.hypergraph = None
         self.g = Graph()
         self.g.bind("", NS_DEFAULT)
         self.g.bind("d3f", NS_D3F)
         self.g.bind("rdfs", RDFS)
+        self._turtle = None
+        self._out = None
 
     @staticmethod
     def _extract(text):
@@ -77,31 +82,85 @@ class D3fendMermaid:
         return None
 
     def serialize(self, format="turtle"):
-        return self.g.serialize(format=format)
+        if self._turtle is None:
+            self._turtle = self.g.serialize(format=format)
+        return self._turtle
 
     def annotate(self):
-        g = Graph()
-        g = self.g | self.ontology
-        annotations = g.query(
-            """
-            PREFIX : <https://par-tec.it/example#>
+        if self.hypergraph is None:
+            g = Graph()
+            g = self.g | self.ontology
+            annotations = g.query(
+                """
+                PREFIX : <https://par-tec.it/example#>
 
-            CONSTRUCT {
-            ?s a ?parent
-            } WHERE {
-                ?s a :Node, ?typ .
-                ?typ rdfs:subClassOf* d3f:DigitalArtifact .
-                ?typ rdfs:subClassOf ?parent
-            }
-        """,
-            initNs={
-                "d3f": NS_D3F,
-            },
-        )
-        self.annotations = annotations.graph
-        g = self.g | annotations.graph
-        log.info("Annotated graph has %s triples", len(g) - len(self.g))
-        return g | self.ontology
+                CONSTRUCT {
+                ?s a ?parent
+                } WHERE {
+                    ?s a :Node, ?typ .
+                    ?typ rdfs:subClassOf* d3f:DigitalArtifact .
+                    ?typ rdfs:subClassOf ?parent
+                }
+            """,
+                initNs={
+                    "d3f": NS_D3F,
+                },
+            )
+            self.annotations = annotations.graph
+            g = self.g | annotations.graph
+            log.info("Annotated graph has %s triples", len(g) - len(self.g))
+            self.hypergraph = g | self.ontology
+        return self.hypergraph
+
+    def mermaid(self):
+        if self._out is None:
+            out = ""
+            text = self._extract(self.text)[0]
+            for line in text.splitlines():
+                out += "\n"
+                line = line.strip()
+                if not line:
+                    continue
+
+                if line.startswith(MERMAID_KEYWORDS):
+                    out += line
+                    continue
+
+                if line.startswith("graph"):
+                    out += line
+                    continue
+
+                parsed_line = parse_line2(line)
+                for node, arrow, relation in parsed_line:
+                    if node.startswith("subgraph "):
+                        node = node[9:]
+                        out += "subgraph "
+
+                    parsed_node = RE_NODE.match(node)
+                    if not parsed_node:
+                        out += line
+                        continue
+
+                    id_, _, sep_l, label, sep_r = parsed_node.groups()
+
+                    label = (
+                        visualize_d3fend(label).strip("'").strip('"') if label else ""
+                    )
+                    label = f'"{label}"' if label else ""
+                    arrow = arrow or ""
+                    sep_l = sep_l or ""
+                    sep_r = sep_r or ""
+                    relation = (
+                        visualize_d3fend(relation).strip("'").strip('"')
+                        if relation
+                        else ""
+                    )
+                    relation = f'|"{relation}"|' if relation else ""
+
+                    out += f"""{id_}{sep_l}{label}{sep_r} {arrow} {relation} """
+                out = out.strip(" ")
+            self._out = out.strip()
+        return self._out
 
 
 def visualize_d3fend(mermaid_text):
@@ -111,7 +170,14 @@ def visualize_d3fend(mermaid_text):
     for line in mermaid_text.splitlines():
         for needle in set(re.findall("(d3f:[a-zA-Z-0-9]+)", line)):
             for label, icons in FONTAWESOME_MAP.items():
-                tooltip_label = f"""<a title='{needle}'>{label[0]}</a>"""
+                if needle in D3F_DIGITAL_ARTIFACTS:
+                    url = f"https://next.d3fend.mitre.org/dao/artifact/{needle}/"
+                elif needle in D3F_DEFENSIVE_TECHNIQUES:
+                    url = f"https://next.d3fend.mitre.org/dao/technique/{needle}/"
+                else:
+                    url = ""
+
+                tooltip_label = f"""<a title='{needle}' href='{url}' target='_blank'  rel='noopener noreferrer'>{label[0]}</a>"""
                 if needle in icons:
                     line = line.replace(needle, tooltip_label)
         lines.append(line)

@@ -413,7 +413,7 @@ def render_mmd(event):
     else:
       log.warning("Unknown content.")
       text_mmd = text
-    text_mmd = app.render_unicode_emojis(text_mmd)  # FIXME: removeme
+    # text_mmd = app.mermaidrdf.D3fendMermaid(text_mmd).mermaid()
     #
     # Filter text_mmd matching mermaid_filter or subgraph
     #
@@ -433,7 +433,7 @@ def render_mmd(event):
         text_mmd = text_mmd.replace("graph TB", "graph LR")
         text_mmd = re.sub(r"subgraph\s+(.*?)\n", r"subgraph \1\n\ndirection TB\n\n", text_mmd)
 
-    text_mmd = app.mermaidrdf.visualize_d3fend(text_mmd)
+    text_mmd = app.mermaidrdf.D3fendMermaid(text_mmd).mermaid()
     status["mermaid"]["diagram-text"] = text_mmd
     # _copy_text_to_clipboard_with_js(text_mmd)
     log.warning(f"mermaid text: {text_mmd[:100]}")
@@ -469,6 +469,7 @@ def _create_monaco(init_text=app.MERMAID_INIT_TEXT):
     "language": lang,
     "theme": "vs-dark",
     "automaticLayout": False,
+    "acceptSuggestionOnEnter": False,
   })
   status["editor"] = editor
 

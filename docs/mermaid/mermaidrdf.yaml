@@ -1622,6 +1622,51 @@ D3F_PROPERTIES:
 - d3f:writes
 FONTAWESOME_MAP:
 - artifacts:
+  - d3f:DNSServer
+  labels:
+  - fa:fa-globe
+- artifacts:
+  - d3f:VirtualizationSoftware
+  labels:
+  - fa:fa-server fa:fa-cube
+- artifacts:
+  - d3f:Database
+  labels:
+  - fa:fa-database
+- artifacts:
+  - d3f:ContainerRuntime
+  labels:
+  - fa:fa-docker
+- artifacts:
+  - d3f:Server
+  labels:
+  - fa:fa-server
+- artifacts:
+  - d3f:Authentication
+  labels:
+  - fa:fa-user-lock
+- artifacts:
+  - d3f:Log
+  - d3f:LogFile
+  labels:
+  - fa:fa-scroll
+- artifacts:
+  - d3f:Configuration
+  labels:
+  - fa:fa-file
+- artifacts:
+  - d3f:Process
+  labels:
+  - "\u2699\uFE0F"
+- artifacts:
+  - d3f:ContainerProcess
+  labels:
+  - fa:fa-cube
+- artifacts:
+  - d3f:ExecutableScript
+  labels:
+  - fa:fa-file-code
+- artifacts:
   - d3f:TaskSchedule
   labels:
   - fa:fa-clock
@@ -1633,11 +1678,15 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:Email
   - d3f:MailNetworkTraffic
+  labels:
+  - fa:fa-envelope
+- artifacts:
   - d3f:MailService
   - d3f:MessageTransferAgent
   - d3f:Mailbox
+  - d3f:MailServer
   labels:
-  - fa:fa-envelope
+  - "\U0001F4EC"
 - artifacts:
   - d3f:InternetNetworkTraffic
   labels:
@@ -1649,23 +1698,46 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:UserAccount
   labels:
-  - fa:fa-user-lock
+  - fa:fa-user
 - artifacts:
   - d3f:Browser
   labels:
   - fab:fa-firefox
 - artifacts:
-  - d3f:ContainerProcess
+  - d3f:MobilePhone
+  - d3f:TabletComputer
   labels:
-  - fa:fa-cube
+  - fa:fa-mobile
 - artifacts:
-  - d3f:ExecutableScript
+  - d3f:LaptopComputer
   labels:
-  - fa:fa-file-code
+  - fa:fa-laptop
+- artifacts:
+  - d3f:DesktopComputer
+  labels:
+  - fa:fa-desktop
+- artifacts:
+  - d3f:FileSystem
+  labels:
+  - fa:fa-folder-tree
 - artifacts:
   - d3f:Volume
   labels:
-  - fa:fa-database
+  - fa:fa-hockey-puck
+- artifacts:
+  - d3f:VirtualMemorySpace
+  - d3f:MemoryPool
+  - d3f:MemoryManagementUnit
+  labels:
+  - fa:fa-memory
+- artifacts:
+  - d3f:FlashMemory
+  labels:
+  - fa:fa-sd-card
+- artifacts:
+  - d3f:Partition
+  labels:
+  - fa:fa-hdd
 - artifacts:
   - d3f:WebApplicationFirewall
   - d3f:ApplicationLayerFirewall
@@ -1687,11 +1759,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:VPNServer
   labels:
-  - fa:fa-lock
-- artifacts:
-  - d3f:MailServer
-  labels:
-  - fa:fa-envelope fa:fa-server
+  - "fa:fa-lock \u21CB"
 - artifacts:
   - d3f:NetworkTrafficPolicyMapping
   labels:
@@ -1718,31 +1786,27 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:ReverseProxyServer
   labels:
-  - "fa:fa-network-wired \u21F6"
+  - "fa:fa-network-wired \u15D5"
 - artifacts:
-  - d3f:DNSServer
+  - d3f:Network
   labels:
-  - fa:fa-globe
-- artifacts:
-  - d3f:VirtualizationSoftware
-  labels:
-  - fa:fa-server fa:fa-cube
-- artifacts:
-  - d3f:Database
-  labels:
-  - fa:fa-database
-- artifacts:
-  - d3f:ContainerRuntime
-  labels:
-  - fa:fa-cubes
-- artifacts:
-  - d3f:Server
-  labels:
-  - fa:fa-server
+  - fa:fa-network-wired
 - artifacts:
   - d3f:NetworkLink
   labels:
   - fa:fa-ethernet fa:fa-link
+- artifacts:
+  - d3f:WirelessRouter
+  labels:
+  - fa:fa-wifi
+- artifacts:
+  - d3f:WirelessAccessPoint
+  labels:
+  - fa:fa-tower-cell
+- artifacts:
+  - d3f:PhysicalLocation
+  labels:
+  - fa:fa-building
 INFERRED_RELATIONS:
 - predicates:
   - :{subject} d3f:produces d3f:LoginSession .
@@ -1750,79 +1814,6 @@ INFERRED_RELATIONS:
   - :{subject} d3f:produces d3f:AuthenticationLog .
   relation: d3f:authenticates
 SW_MAP:
-- artifacts:
-  - d3f:NetworkNode
-  labels:
-  - fa-router
-- artifacts:
-  - d3f:AuthorizationServer
-  - d3f:AuthenticationService
-  labels:
-  - auth0
-  - okta
-  - keycloak
-  - oauth
-- artifacts:
-  - d3f:ApplicationLayerFirewall
-  - d3f:MailService
-  labels:
-  - avas
-  - clamav
-  - antispam
-- artifacts:
-  - d3f:DNSServer
-  labels:
-  - dns
-  - bind
-- artifacts:
-  - d3f:DatabaseServer
-  labels:
-  - elasticsearch
-  - solr
-- artifacts:
-  - d3f:WebServerApplication
-  - d3f:GraphicalUserInterface
-  labels:
-  - fa:fa-desktop
-- artifacts:
-  - d3f:FileSystem
-  labels:
-  - fa:fa-folder
-- artifacts:
-  - d3f:Server
-  labels:
-  - fa:fa-server
-- artifacts:
-  - d3f:WebServerApplication
-  - d3f:GraphicalUserInterface
-  labels:
-  - fab:fa-angular
-  - fab:fa-react
-  - fab:fa-vuejs
-- artifacts:
-  - d3f:ContainerProcess
-  labels:
-  - fab:fa-cube
-- artifacts:
-  - d3f:OperatingSystem
-  labels:
-  - fab:fa-linux
-  - fab:fa-ubuntu
-  - fab:fa-redhat
-- artifacts:
-  - d3f:ExecutableScript
-  labels:
-  - fab:fa-python
-  - fab:fa-php
-- artifacts:
-  - d3f:VersionControlSystem
-  labels:
-  - gitlab
-  - github
-  - bitbucket
-  - fab:fa-github
-  - fab:fa-gitlab
-  - fab:fa-git
 - artifacts:
   - d3f:MailService
   labels:
@@ -1867,11 +1858,59 @@ SW_MAP:
   - kafka
   - pulsar
 - artifacts:
-  - d3f:ContainerProcess
+  - d3f:AuthorizationServer
+  - d3f:AuthenticationService
   labels:
-  - "\u2699"
-  - fa:fa-cube
+  - auth0
+  - okta
+  - keycloak
+  - oauth
 - artifacts:
-  - d3f:FileSystem
+  - d3f:ApplicationLayerFirewall
+  - d3f:MailService
   labels:
-  - fa:fa-folder-tree
+  - avas
+  - clamav
+  - antispam
+- artifacts:
+  - d3f:DNSServer
+  labels:
+  - dns
+  - bind
+- artifacts:
+  - d3f:DatabaseServer
+  labels:
+  - elasticsearch
+  - solr
+- artifacts:
+  - d3f:WebServerApplication
+  - d3f:GraphicalUserInterface
+  labels:
+  - fa:fa-desktop
+- artifacts:
+  - d3f:WebServerApplication
+  - d3f:GraphicalUserInterface
+  labels:
+  - fab:fa-angular
+  - fab:fa-react
+  - fab:fa-vuejs
+- artifacts:
+  - d3f:OperatingSystem
+  labels:
+  - fab:fa-linux
+  - fab:fa-ubuntu
+  - fab:fa-redhat
+- artifacts:
+  - d3f:ExecutableScript
+  labels:
+  - fab:fa-python
+  - fab:fa-php
+- artifacts:
+  - d3f:VersionControlSystem
+  labels:
+  - gitlab
+  - github
+  - bitbucket
+  - fab:fa-github
+  - fab:fa-gitlab
+  - fab:fa-git
