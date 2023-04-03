@@ -1,5 +1,7 @@
 import json
+import shlex
 import shutil
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -151,12 +153,17 @@ def generate_files():
     _d3fend_short(g)
     _mermaidrdf_yaml(g)
     _monaco_completion(g)
+    subprocess.run(shlex.split("python setup.py bdist_wheel"))
 
 
 if __name__ == "__main__":
 
     generate_files()
     FILES = (
+        {
+            "src": "dist/d3fendtools-0.0.1-py3-none-any.whl",
+            "dst": "docs/kube/static/d3fendtools-0.0.1-py3-none-any.whl",
+        },
         {"src": "d3fendtools/kuberdf/__init__.py", "dst": "docs/mermaid/kuberdf.py"},
         {"src": "d3fendtools/kuberdf/ontology.ttl", "dst": "docs/mermaid/ontology.ttl"},
         {
@@ -170,6 +177,24 @@ if __name__ == "__main__":
         {
             "src": "d3fendtools/d3fend.py",
             "dst": "docs/mermaid/d3fend.py",
+        },
+        {"src": "d3fendtools/kuberdf/__init__.py", "dst": "docs/kube/kuberdf.py"},
+        {"src": "d3fendtools/kuberdf/ontology.ttl", "dst": "docs/kube/ontology.ttl"},
+        {
+            "src": "d3fendtools/mermaidrdf/__init__.py",
+            "dst": "docs/kube/mermaidrdf.py",
+        },
+        {
+            "src": "d3fendtools/mermaidrdf/mermaidrdf.yaml",
+            "dst": "docs/kube/mermaidrdf.yaml",
+        },
+        {
+            "src": "d3fendtools/d3fend.py",
+            "dst": "docs/kube/d3fend.py",
+        },
+        {
+            "src": "d3fendtools/as_mermaid/__init__.py",
+            "dst": "docs/kube/as_mermaid.py",
         },
     )
     for f in FILES:

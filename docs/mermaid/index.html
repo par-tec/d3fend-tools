@@ -118,7 +118,7 @@
   <body>
 <div class="row container-fluid" id="he ader" >
   <h2>Design & D3FEND an experimental webapp to support secure architectural design.
-  <a href="https://github.com/par-tec/neo4j-semantic-docker" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
+  <a href="https://github.com/par-tec/design-d3fend" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
   </h2>
 </div>
 
@@ -128,7 +128,6 @@
       <li class="nav-item"><a class="nav-link active" id="tab-input-mermaid-tab" data-bs-toggle="tab" href="#tab-input-mermaid" role="tab" aria-controls="tab-input-mermaid" aria-selected="true">Mermaid</a></li>
     </ul>
   <div class="tab-content" id="inputTabContent">
-
     <div class="tab-pane fade show active" id="tab-input-mermaid" role="tabpanel" aria-labelledby="tab-input-mermaid-tab">
       <div id="mermaid"></div>
     </div>
@@ -207,34 +206,18 @@ list(nodes)
 
         <ul>
         <li>The first step is to represent your components and their relationships in a mermaid graph.
-        <li>You can classify your components using font-awesome icons (see the <a href="https://fontawesome.com/icons?d=gallery">gallery</a>). For example the <code>fa:fa-envelope</code> icon is used to reference is an email.
+        <li>You can classify your components using the d3fend vocabulary that is available via auto-complete. For example, you can type <code>d3f:mail CTRL+space</code> and the auto-complete will suggest the possible choices. For example, a Client that sends emails to a MTA can be represented as follows:
 
-        <pre>Client -->|fa:fa-envelope| MTA</pre>
+        <pre>Client -->|d3f:Email| MTA</pre>
 
         The application is capable to label major sofware applications (e.g. nginx, postfix, ...) and to map them to the corresponding D3FEND classes (e.g. <code>d3f:MailTransferAgent</code>).
 
-        You can also use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
+        You can also use some icons from font-awesome (see the <a href="https://fontawesome.com/icons?d=gallery&m=free">gallery</a>) to make your diagram more fancy. For example you can use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
 
         <li>Once you have created your mermaid graph, you can click on the D3FEND tab to see the corresponding D3FEND graph. The D3FEND graph is represented as a turtle file. You can copy and paste it in your favorite RDF editor (e.g. <a href="https://www.w3.org/RDF/Validator/">W3C RDF validator</a>).
 
         <li>The "Summary" tabs shows a table with the main entities of the D3FEND graph and the attacks associated with the specific DigitalArtifacts. The table contains hyperlinks to the corresponding D3FEND classes and ATT&CK techniques.
         </p>
-
-        <p><h4>Font-awesome reference</h4>
-        <ul>
-        <li>fa:fa-server    - d3f:Server
-        <li>fa:fa-desktop   - d3f:WebServerApplication
-        <li>fa:fa-envelope  - d3f:Email
-        <li>fa:fa-user-secret - d3f:UserAccount
-        <li>fa:fa-globe     - d3f:InternetNetworkTraffic
-        <li>fab:fa-react, fab:fa-angular, fab:fa-vuejs - d3f:WebServerApplication, d3f:GraphicalUserInterface
-        <li>fa:fa-cube      - d3f:ContainerProcess
-        <li>fab:fa-docker   - d3f:ContainerProcess
-        <li>fa:folder-tree  - d3f:FileSystem
-        <li>fa:fa-hard-drive - d3f:Volume
-        <li>fa:fa-folder    - d3f:FileSystem
-        </ul>
-
 
         </p>
 
@@ -243,12 +226,12 @@ list(nodes)
         <h4>Open Source</h4>
         <p>This tool is Open Source, contributions are welcome.
         <ul>
-        <li>Source code: <a href="https://github.com/par-tec/neo4j-semantic-docker" target="_blank" rel="noopener noreferrer">github.com/par-tec/neo4j-semantic-docker</a>
+        <li>Source code: <a href="https://github.com/par-tec/design-d3fend" target="_blank" rel="noopener noreferrer">github.com/par-tec/design-d3fend</a>
         </p>
         </ul>
     </div>
     <div class="tab-pane p-4 fade" id="tab-d3fend" role="tabpanel" aria-labelledby="tab-d3fend-tab">
-      <p>D3FEND Summary with artifacts and defeses.</p>
+      <p>D3FEND Summary with artifacts and defenses.</p>
       <p><button class="fas fa-copy float-end" id="d3fend-summary-copy"></button> </p>
       <div id="d3fend-summary" class="scrollable-tab">d3f summary placeholder </div>
     </div>
@@ -455,7 +438,7 @@ def refresh_mermaid_on_input(event):
     # Cancel the default action, if needed
     event.preventDefault()
     # Trigger the button element with a click
-    js.document.getElementById("mermaid-btn-redraw").click()
+    Element("mermaid-btn-redraw").element.click()
 
 def _create_monaco(init_text=app.MERMAID_INIT_TEXT):
   eid = js.document.getElementById("mermaid")

@@ -55,10 +55,6 @@ MySQL[(UserPreferences fa:fa-user-secret)] --> DataVolume[(Tablespace fa:fa-hard
 """
 
 
-class Status:
-    pass
-
-
 def initialize_graph(ontologies):
     ts = time()
     log.info("Loading ontologies..")
