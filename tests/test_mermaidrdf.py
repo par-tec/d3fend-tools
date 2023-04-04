@@ -8,7 +8,6 @@ from rdflib import Graph
 
 from d3fendtools.d3fend import attack_summary
 from d3fendtools.mermaidrdf import (
-    D3F_DIGITAL_ARTIFACTS,
     D3fendMermaid,
     extract_mermaid,
     mermaid_to_triples,
@@ -47,6 +46,8 @@ def test_render_mermaid():
     end
     subgraph b[foo d3f:Server]
     end
+    foo(("fa:fa-network-wired console-demo-plugin \\napp.kubernetes.io/component:"))
+    bar({fa:fa-car})
     """
     m = D3fendMermaid(txt)
     m.parse()
@@ -137,15 +138,6 @@ def test_attack_summary_is_consistent(file_mmd, d3fend_graph):
     } LIMIT 50
     """
     raise NotImplementedError
-    nodes = g.query("SELECT ?node ?type WHERE {?node a :Node; rdf:type ?type . }")
-    for node, rdf_type in nodes:
-        if rdf_type.fragment == "Node":
-            continue
-        if "d3f:" + rdf_type.fragment in D3F_DIGITAL_ARTIFACTS:
-            print(
-                f"""click {node.fragment} href "https://next.d3fend.mitre.org/dao/artifact/{rdf_type}/" _blank """
-            )
-    raise NotImplementedError
 
 
 @pytest.mark.parametrize(
@@ -229,3 +221,16 @@ def test_g1():
         Path(tmp_ttl).write_text(turtle)
         g = Graph()
         g.parse(tmp_ttl, format="turtle")
+
+
+def test_all_referenced_icons_are_visible():
+    """Create a mermaid text containing the icosn in FONTAWESOME_MAP."""
+    from d3fendtools.mermaidrdf import FONTAWESOME_MAP
+
+    out = ""
+    for labels, artifacts in FONTAWESOME_MAP.items():
+        artifact = artifacts[0].replace(":", "_")
+        labels = labels[0]
+        out += f"""{artifact}("{labels}")\n"""
+    out = f"```mermaid\n\ngraph LR\n{out}\n\n```\n"
+    Path("/tmp/icons.md").write_text(out)

@@ -11,6 +11,7 @@ from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
 log = logging.getLogger(__name__)
 NS_K8S = Namespace("urn:k8s:")
 NS_D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
+NS_DEFAULT = Namespace("https://par-tec.it/example#")
 
 
 def dontyield(*a, **kw):
@@ -18,6 +19,52 @@ def dontyield(*a, **kw):
 
 
 skip_resource_instances = dontyield
+
+
+class D3fendKube:
+    def __init__(self, text, ontology=None) -> None:
+        self.text = text
+        self.ontology = ontology or Graph()
+        self.annotations = None
+        self.hypergraph = None
+        self.g = Graph()
+        self.g.bind("", NS_DEFAULT)
+        self.g.bind("d3f", NS_D3F)
+        self.g.bind("rdfs", RDFS)
+        self._turtle = None
+        self._out = None
+
+    def parse(self):
+        raise NotImplementedError
+
+    def annotate(self):
+        if self.hypergraph is None:
+            g = Graph()
+            g = self.g | self.ontology
+            annotations = g.query(
+                """
+                PREFIX : <https://par-tec.it/example#>
+
+                CONSTRUCT {
+                ?s a ?parent
+                } WHERE {
+                    ?s a :Node, ?typ .
+                    ?typ rdfs:subClassOf* d3f:DigitalArtifact .
+                    ?typ rdfs:subClassOf ?parent
+                }
+            """,
+                initNs={
+                    "d3f": NS_D3F,
+                },
+            )
+            self.annotations = annotations.graph
+            g = self.g | annotations.graph
+            log.info("Annotated graph has %s triples", len(g) - len(self.g))
+            self.hypergraph = g | self.ontology
+        return self.hypergraph
+
+    def mermaid(self):
+        raise NotImplementedError
 
 
 def strip_oci_image_tag(image: str) -> str:

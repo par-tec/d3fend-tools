@@ -9,16 +9,18 @@
       "pyyaml",
       "pandas",
       "rdflib",
-      "/static/d3fendtools-0.0.1-py3-none-any.whl"
+      "static/d3fendtools-0.0.1-py3-none-any.whl"
     ]
+
     [[fetch]]
     files = [
-      "./mermaidrdf.py",
-      "./mermaidrdf.yaml",
-      "./kuberdf.py",
       "./app.py",
-      "./ontology.ttl",
-      "./d3fend-short.ttl"]
+      "./static/ontology.ttl",
+      "./static/d3fend-short.ttl",
+      "./static/examples/mermaid/application.md",
+      "./static/examples/mermaid/network.md",
+      "./static/examples/mermaid/webmail.md",
+      ]
     </py-config>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -43,6 +45,16 @@
 
     </script>
 
+    <!--
+      monaco editor with d3fend customization
+    -->
+		<script src="static/monaco-completion.js"></script>
+    <script>
+      (async() => {
+        monaco = await import('https://cdn.jsdelivr.net/npm/monaco-editor@0.36.1/+esm');
+      })();
+    </script>
+
     <!-- Styles & co
       * load font-awesome locally to be independent from FA CDN;
       * load bootstrap-italia from CDN, instead :)
@@ -52,14 +64,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.3.2/dist/css/bootstrap-italia.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-italia@2.3.2/dist/js/bootstrap-italia.bundle.min.js"></script>
     <style type="text/css">
-      textarea {
-        box-sizing: content-box;
-        font-family: monospace;
-        font-size: 14px;
-        border: solid 1px;
-        color: white;
-        background-color: #333;
-      }
       body {
         max-height: 100vh;
         overflow: hidden !important;
@@ -88,7 +92,7 @@
       }
       .diagram-full {
         height: 100%;
-        width: 2000px;
+        width: calc(100% * 1.19);
       }
       .diagram-normal {
         height: 100%;
@@ -104,114 +108,66 @@
         overflow: auto !important;
         height: 85%;
       }
-      .mainPanel-normal {
+      .main-panel-normal {
         max-height: calc(100vh - 100px);
+        height: 100%;
       }
-      .mainPanel-full {
+      .main-panel-full {
         max-height: 100vh;
+      }
+      .mw-50 {
+        max-width: 50%;
       }
     </style>
   </head>
-  <body>
-<div class="row container-fluid" id="he ader" >
+  <body class="">
+<div class="row bg-primary text-white" id="he ader" >
   <h2>Design & D3FEND an experimental webapp to support secure architectural design.
-  <a href="https://github.com/par-tec/design-d3fend" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
+  <a href="https://github.com/par-tec/d3fend-tools" target="_blank" rel="noopener noreferrer"><i class="fab fa-github float-end"></i></a>
   </h2>
 </div>
 
-<div class="row" style="height: 100%" id="mainPanel">
-  <div class="col-sm" id="inputCol">
-    <ul class="nav nav-tabs bg-primary" id="inputTab" role="tablist">
-      <li class="nav-item"><a class="nav-link active" id="tab-input-kube-tab" data-bs-toggle="tab" href="#tab-input-kube" role="tab" aria-controls="tab-input-kube" aria-selected="true">Kube</a></li>
-    </ul>
-  <div class="tab-content" id="inputTabContent">
-    <div class="tab-pane p-4 fade show active" id="tab-input-kube" role="tabpanel" aria-labelledby="tab-input-kube-tab">
-        <p>Here you can paste your kubernetes manifest file and generate mermaid graphs out of them.
-          <b>Importing a Kubernetes manifest file will only generate a nice mermaid diagram. It is useful for documentation purposes but not for security assessment.</b>
-          <button class="float-end" id="kubernetes-reload">import manifests</button>
-        </p>
-        <textarea id="kubernetes" style="height: 80%;">
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: console-demo-plugin
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: console-demo-plugin
-  namespace: console-demo-plugin
-  labels:
-    app: console-demo-plugin
-    app.kubernetes.io/component: console-demo-plugin
-    app.kubernetes.io/instance: console-demo-plugin
-    app.kubernetes.io/part-of: console-demo-plugin
-    app.openshift.io/runtime-namespace: console-demo-plugin
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: console-demo-plugin
-  template:
-    metadata:
-      labels:
-        app: console-demo-plugin
-    spec:
-      containers:
-        - name: console-demo-plugin
-          image: quay.io/jcaianirh/console-demo-plugin
-          ports:
-            - containerPort: 9001
-              protocol: TCP
-          imagePullPolicy: Always
-          args:
-            - '--ssl'
-            - '--cert=/var/serving-cert/tls.crt'
-            - '--key=/var/serving-cert/tls.key'
-      restartPolicy: Always
-      dnsPolicy: ClusterFirst
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 25%
-      maxSurge: 25%
----
-apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    service.alpha.openshift.io/serving-cert-secret-name: console-serving-cert
-  name: console-demo-plugin
-  namespace: console-demo-plugin
-  labels:
-    app: console-demo-plugin
-    app.kubernetes.io/component: console-demo-plugin
-    app.kubernetes.io/instance: console-demo-plugin
-    app.kubernetes.io/part-of: console-demo-plugin
-spec:
-  ports:
-    - name: 9001-tcp
-      protocol: TCP
-      port: 9001
-      targetPort: 9001
-  selector:
-    app: console-demo-plugin
-  type: ClusterIP
-  sessionAffinity: None
+<div id="main-panel" class="row main-panel-normal" >
+  <div id="input-panel" class="col-sm mw-50 h-100" >
 
-        </textarea>
-    </div> <!-- tab-input-kube -->
-</div> <!-- tab-list -->
+    <div id="inputTabContent bg-primary">
+
+      <div class="h4 text-white bg-primary">Mermaid
+        <div class="float-end">
+          <div class="btn-group large">
+            <button type="button" class="shadow-none btn text-white dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Examples
+            </button>
+            <div class="dropdown-menu">
+              <div class="link-list-wrapper">
+                <ul class="link-list">
+                  <li><a class="dropdown-item list-item large" id="example-application" href="#"><span>Application</span></a></li>
+                  <li><span class="divider"></span></li>
+                  <li><a class="dropdown-item list-item large" id="example-network"     href="#"><span>Network</span></a></li>
+                  <li><span class="divider"></span></li>
+                  <li><a class="dropdown-item list-item large" id="example-webmail"     href="#"><span>WebMail</span></a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab-input-mermaid">
+        <div id="mermaid"></div>
+      </div>
+
+  </div> <!-- tab-list -->
 </div> <!-- col-sm -->
 
 
 
-<div class="col-sm">
+<div id="tools-panel" class="col-sm mw-50 h-100">
   <ul class="nav nav-tabs bg-primary" id="myTab" role="tablist">
     <li class="nav-item"><a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Diagram</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab-attack-tab" data-bs-toggle="tab" href="#tab-attack" role="tab" aria-controls="tab-attack" aria-selected="false">ATT&CK</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab-d3fend-tab" data-bs-toggle="tab" href="#tab-d3fend" role="tab" aria-controls="tab-d3fend" aria-selected="false">D3FEND</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab3-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
+    <li class="nav-item"><a class="nav-link text-white" id="tab-rdf-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab40-tab" data-bs-toggle="tab" href="#tab40" role="tab" aria-controls="tab40" aria-selected="false">Console</i></a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab50-tab" data-bs-toggle="tab" href="#tab50" role="tab" aria-controls="tab50" aria-selected="false">Help</a></li>
     <li class="nav-item"><a class="nav-link text-white" id="tab100-tab" data-bs-toggle="tab" href="#tab100" role="tab" aria-controls="tab100" aria-selected="false"><i class="fab fa-github"></i></a></li>
@@ -234,19 +190,23 @@ spec:
         </div>
       </div>
       <p id="mermaid-graph" class="diagram-normal"></p>
-      <textarea id="mermaid" style="visibility: hidden"></textarea>
     </div>
 
     <div class="tab-pane p-4 fade" id="tab-attack" role="tabpanel" aria-labelledby="tab-attack-tab">
       <p>ATT&CK Summary with artifacts and attacks.</p>
       <p><button class="fas fa-copy float-end" id="attack-summary-copy"></button> </p>
-      <div id="attack-summary">att&ck summary placeholder </div>
+      <div id="attack-summary" class="scrollable-tab">att&ck summary placeholder </div>
+    </div>
+    <div class="tab-pane p-4 fade" id="tab-d3fend" role="tabpanel" aria-labelledby="tab-d3fend-tab">
+      <p>D3FEND Summary with artifacts and defenses.</p>
+      <p><button class="fas fa-copy float-end" id="d3fend-summary-copy"></button> </p>
+      <div id="d3fend-summary" class="scrollable-tab">d3f summary placeholder </div>
     </div>
 
-    <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab30-tab">
+    <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab-rdf-tab">
       <p>This is a description of your IT architecture in <a href="https://en.wikipedia.org/wiki/Resource_Description_Framework" target="_blank" rel="noopener noreferrer">RDF</a> format. Nodes are described using MITRE categories. </p>
       <p><button class="fas fa-copy float-end" id="turtle-graph-copy"></button></p>
-      <pre class="result" id="turtle-graph" style="border-color: blue">graph placeholder</pre>
+      <pre class="result scrollable-tab" id="turtle-graph" style="border-color: blue">graph placeholder</pre>
     </div>
 
     <div class="tab-pane p-4 fade" id="tab40" role="tabpanel" aria-labelledby="tab40-tab">
@@ -255,8 +215,9 @@ spec:
         Currently it does only show the returned value of the last python line, so statements such as print(), while evaluated, are not shown.
         </p>
         <py-repl output="replOutput">
+g1 = status["d3fend"].g
 d3f = dict(g1.namespaces())["d3f"]
-nodes = g.query("""
+nodes = ontology.query("""
     PREFIX d3f: <%s>
     SELECT ?s
     WHERE {
@@ -266,7 +227,7 @@ nodes = g.query("""
 """ % d3f)
 list(nodes)
         </py-repl>
-        <div id="replOutput"></div>
+        <pre id="replOutput"></pre>
     </div>
 
     <div class="tab-pane p-4 fade" id="tab50" role="tabpanel" aria-labelledby="tab50-tab">
@@ -275,46 +236,47 @@ list(nodes)
 
         <ul>
         <li>The first step is to represent your components and their relationships in a mermaid graph.
-        <li>You can classify your components using font-awesome icons (see the <a href="https://fontawesome.com/icons?d=gallery">gallery</a>). For example the <code>fa:fa-envelope</code> icon is used to reference is an email.
+        <li>You can classify your components using the d3fend vocabulary that is available via auto-complete. For example, you can type <code>d3f:mail CTRL+space</code> and the auto-complete will suggest the possible choices. For example, a Client that sends emails to a MTA can be represented as follows:
 
         <pre>Client -->|d3f:Email| MTA</pre>
 
         The application is capable to label major sofware applications (e.g. nginx, postfix, ...) and to map them to the corresponding D3FEND classes (e.g. <code>d3f:MailTransferAgent</code>).
 
-        You can also use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
+        You can also use some icons from font-awesome (see the <a href="https://fontawesome.com/icons?d=gallery&m=free">gallery</a>) to make your diagram more fancy. For example you can use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
 
         <li>Once you have created your mermaid graph, you can click on the D3FEND tab to see the corresponding D3FEND graph. The D3FEND graph is represented as a turtle file. You can copy and paste it in your favorite RDF editor (e.g. <a href="https://www.w3.org/RDF/Validator/">W3C RDF validator</a>).
 
         <li>The "Summary" tabs shows a table with the main entities of the D3FEND graph and the attacks associated with the specific DigitalArtifacts. The table contains hyperlinks to the corresponding D3FEND classes and ATT&CK techniques.
         </p>
 
+        </p>
+
     </div>
-    <div class="tab-pane p-4 fade" id="tab100" role="tabpanel" aria-labelledby="tab100-tab">
+    <div class="tab-pane p-4 fade" id="tab100" role="tabpanel" aria-labelledby="tab100-tab">ß
         <h4>Open Source</h4>
         <p>This tool is Open Source, contributions are welcome.
         <ul>
-        <li>Source code: <a href="https://github.com/par-tec/design-d3fend" target="_blank" rel="noopener noreferrer">github.com/par-tec/design-d3fend</a>
+        <li>Source code: <a href="https://github.com/par-tec/d3fend-tools" target="_blank" rel="noopener noreferrer">github.com/par-tec/d3fend-tools</a>
         </p>
         </ul>
     </div>
-    <div class="tab-pane p-4 fade" id="tab-d3fend" role="tabpanel" aria-labelledby="tab-d3fend-tab">
-      <p>D3FEND Summary with artifacts and defemses.</p>
-      <p><button class="fas fa-copy float-end" id="d3fend-summary-copy"></button> </p>
-      <div id="d3fend-summary">d3f summary placeholder </div>
-    </div>
 
   </div><!-- tab-content -->
-
 </div><!-- row -->
+</div><!-- container -->
+<div class="row alert" id="error-panel"></div>
+
 <py-script>
 import logging
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
+
 # Pyodide imports
 import pyodide_js
 from pyodide import create_proxy
 log.info(f"{pyodide_js.version= }")
 import js
+from pathlib import Path
 
 from time import time
 import re
@@ -340,9 +302,7 @@ CONFIG = {
   "strip_prefix": True,  # "urn:k8s:"
 }
 
-g = app.initialize_graph(["ontology.ttl","d3fend-short.ttl"])
-g1 = None
-last_update = time()
+ontology = app.initialize_graph(["static/ontology.ttl","static/d3fend-short.ttl"])
 # Publish information in the global namespace
 #   to be accessible from the console.
 text_mmd = ""
@@ -350,76 +310,63 @@ text_mmd = ""
 status = {
   "mermaid": {
     "last-rendered-unfilter-text": None,
-    "diagram-text": None
-  }
+    "diagram-text": None,
+  },
+  "editor": None,
+  "d3fend": None,
+  "last_update": time(),
+  "graph": None,
 }
 
-def _copy_element_to_clipboard_with_js(element_id):
-  """Copy text to clipboard using javascript.
 
-    :param id_: id of the element to copy
-     When a js object is not available in pyodide, we can use
-     the inherited `proxy.new` method to call the constructor.
-
-     Dictionaries are passed as keyword arguments using the `**` syntax.
+def mmd_to_graph(event):
+  """Generate a d3f graph from mermaid text.
   """
-  type_ = "text/html"
-  text = Element(element_id).element.innerHTML
-  log.info(f"Copying to clipboard: {text[:100]}..")
-  blob = js.Blob.new([text], **{"type": type_})
-  ci = js.ClipboardItem.new(**{type_: blob})
-  js.navigator.clipboard.write([ci])
+  global status
+  log.warning("mmd_to_graph: %s" % (event,))
+  if time() - status["last_update"] < 1:
+    log.warning("Skipping update, too fast.")
+    return
 
-def _copy_text_to_clipboard(text):
-  """Copy text to clipboard using javascript.
+  if hasattr(status["d3fend"], 'g') and (status["mermaid"]["last-rendered-unfilter-text"] == status["editor"].getValue()):
+    log.warning(f"No change in mermaid text.")
+    return
+  status["mermaid"]["last-rendered-unfilter-text"] = status["editor"].getValue()
 
-    :param id_: id of the element to copy
-     When a js object is not available in pyodide, we can use
-     the inherited `proxy.new` method to call the constructor.
-
-     Dictionaries are passed as keyword arguments using the `**` syntax.
-  """
-  type_ = "text/plain"
-  log.info(f"Copying to clipboard: {text[:100]}..")
-  blob = js.Blob.new([text], **{"type": type_})
-  ci = js.ClipboardItem.new(**{type_: blob})
-  js.navigator.clipboard.write([ci])
-
-
-
-def kube_to_graph(event):
-  """Generate a d3f graph from kubernetes text.
-    This only works in "kubernetes" mode.
-  """
-  global g1
-  log.warning(f"event {event}")
-
-  text = Element("kubernetes").value
-  # Always re-create the RDF graph.
-  log.warning("No RDF graph, creating one..")
+  log.warning("Creating RDF graph..")
   t0 = time()
-  graph_ttl = app.content_to_rdf(text)
-  Element("turtle-graph").write(graph_ttl)
-  log.warning("Created RDF graph in %d.." % (time()-t0,))
-  g1 = rdflib.Graph()
-  g1.parse(data=graph_ttl, format="turtle")
+  log.warning("Load graph from mermaid.")
+  try:
+    status["d3fend"] = app.mermaidrdf.D3fendMermaid(
+      status["editor"].getValue(),
+      ontology=ontology
+    )
+    status["d3fend"].parse()
+    log.warning("Loaded %s rdf entries in %d.." % (len(status["d3fend"].g), time()-t0,))
+    Element("error-panel").clear()
+
+  except Exception as e:
+    msg = "Failed to create RDF graph: %s" % (e,)
+    log.exception(msg)
+    log.info("Original mermaid text: %s" % (status["editor"].getValue(),))
+
 
 def update_graph_and_render_mermaid(event):
-  global g, g1, status
+  global status
   log.warning("update_graph_and_render_mermaid: %s" % (event,))
 
-  if hasattr(event, "inputType") and len(Element("mermaid").value) > 1000:
+  if hasattr(event, "inputType") and len(status["editor"].getValue()) > 6000:
     log.warning("Skipping update, too big.")
     return
-  # If toggle-kube-view is checked, don't update the graph.
-  kube_view = js.document.querySelector("#toggle-kube-view").checked
-  if kube_view:
-    log.warning("In kube view, skipping..")
-    return
 
-  # Populate g1 from the mermaid text.
+  refresh_all(event)
+
+
+def refresh_all(event):
+  # Populate the graph from the mermaid text.
   mmd_to_graph(event)
   render_mmd(event)
+
 
 def create_report(event, id_, f):
   # Reload the graph from the mermaid text.
@@ -432,77 +379,39 @@ def create_report(event, id_, f):
     html = f(_g, aggregate=True)
     Element(f"{id_}-summary").clear()
     Element(f"{id_}-summary").element.innerHTML = html
+    app.alert_clear()
+
   except Exception as e:
     log.error(f"Error in {id_} summary: {e}")
+    app.alert(f"Error in {id_} summary: {e}")
   log.warning("Created summary in %d.." % (time()-t0,))
 
+
 def render_mmd(event):
-  """Render the `mermaid-graph` with `mermaid`.text"""
-  global text_mmd, g, g1, status
+  """Render the `mermaid-graph` with `mermaid`.text.
+      This does not update the RDF graph.
+  """
+  global status
   log.warning(f"render_mmd: event {event}")
-  text = Element("mermaid").value
-  flip = Element("mermaid-chk-flip").element.checked
   try:
-    content_type = app.guess_content(text)
-    if content_type == "markdown":
-      log.warning("Markdown detected.")
-      text_mmd = app.markdown_to_mermaid(text)
-    elif content_type == "mermaid":
-      log.warning("Mermaid detected.")
-      text_mmd = text
-    else:
-      log.warning("Unknown content.")
-      text_mmd = text
-    text_mmd = app.render_unicode_emojis(text_mmd)
-    #
-    # Filter text_mmd matching mermaid_filter or subgraph
-    #
-    mermaid_filter = Element("mermaid-filter").value
-    if mermaid_filter:
-      log.warning(f"Filtering mermaid text with {mermaid_filter}")
-      text_mmd = app.filter_mermaid(text_mmd, mermaid_filter)
-      status["mermaid"]["diagram-text"] = text_mmd
-
-    # Flip the graph switching TD with LR
-    log.warning(f"Flip: {flip}")
-    if flip:
-      if "graph LR" in text_mmd:
-        text_mmd = text_mmd.replace("graph LR", "graph TB")
-        text_mmd = re.sub(r"subgraph\s+(.*?)\n", r"subgraph \1\n\ndirection LR\n\n", text_mmd)
-      else:
-        text_mmd = text_mmd.replace("graph TB", "graph LR")
-        text_mmd = re.sub(r"subgraph\s+(.*?)\n", r"subgraph \1\n\ndirection TB\n\n", text_mmd)
-
+    text_mmd, mermaid_svg = app.generate_diagram_mmd(
+      text=status["editor"].getValue(),
+      filter_=Element("mermaid-filter").element.value,
+      flip=Element("mermaid-chk-flip").element.checked,
+      mermaidAPI=mermaidAPI,
+    )
     status["mermaid"]["diagram-text"] = text_mmd
-    # _copy_text_to_clipboard_with_js(text_mmd)
-    log.warning(f"mermaid text: {text_mmd[:100]}")
-    mmd = mermaidAPI.render('mermaid-diagram-svg', text_mmd)
-    js.document.getElementById("mermaid-graph").innerHTML = mmd
+    js.document.getElementById("mermaid-graph").innerHTML = mermaid_svg
 
     # Enable zooming via d3 library.
     svgs = js.d3.selectAll("svg")
     for svg in svgs:
       js.mermaid_enable_zoom(svg)
-
-
+    app.alert_clear()
   except Exception as e:
     log.exception(f"Error in mermaid: {e}")
+    app.alert(f"Error in mermaid: {e}")
 
-
-def graph_to_mmd(event):
-  global g1, CONFIG, status
-  if not g1:
-    log.error("No RDF graph..")
-    return
-
-  text_mmd = app.rdf_to_mermaid(g1)
-
-  if CONFIG["strip_prefix"]:
-    text_mmd = text_mmd.replace("urn:k8s:", "")
-  # Update the mermaid textarea
-  Element("mermaid").element.innerHTML = text_mmd
-  status["mermaid"]["last-rendered-unfilter-text"] = str(time())
-  render_mmd(None)
 
 def refresh_mermaid_on_input(event):
   log.warning(dir(event))
@@ -512,39 +421,46 @@ def refresh_mermaid_on_input(event):
     # Trigger the button element with a click
     Element("mermaid-btn-redraw").element.click()
 
-def event_listener(element_id, event_type):
-  def decorator(callback):
-    Element(element_id).element.addEventListener(event_type, create_proxy(callback))
-  return decorator
+
+def _create_monaco(init_text=app.MERMAID_INIT_TEXT):
+  eid = js.document.getElementById("mermaid")
+  lang = "python"
+  js.monaco.languages.registerCompletionItemProvider(
+    lang,
+    **{"provideCompletionItems": js.provideCompletionItems}
+  )
+  editor = js.monaco.editor.create(eid, **{
+    "value": init_text,
+    "language": lang,
+    "theme": "vs-dark",
+    "automaticLayout": False,
+    "acceptSuggestionOnEnter": False,
+  })
+  editor.layout(**{
+      "width": Element("tab-input-mermaid").element.clientWidth,
+      "height": Element("input-panel").element.clientHeight - 100,
+  })
+  status["editor"] = editor
+
 
 initialized = False
 if not initialized:
+  _create_monaco()
   render_mmd(None)
 
   # Register events.
+  Element("mermaid").element.addEventListener(
+    "input", create_proxy(update_graph_and_render_mermaid)
+  )
+
   # when pressing enter on mermaid-filter, run update_graph_and_render_mermaid
   Element("mermaid-filter").element.addEventListener(
     "keypress", create_proxy(refresh_mermaid_on_input)
   )
-  # when pressing mermaid-btn-fullscreen set the mermaid-graph class to full
-  @event_listener("mermaid-btn-fullscreen", "click")
-  def _toggle_fullscreen(event):
-    global CONFIG
-    log.warning("Toggle fullscreen")
-    mermaid_graph = Element("mermaid-graph")
-    inputCol = Element("inputCol")
-    header = Element("header")
-    if "diagram-normal" in mermaid_graph.element.classList:
-      mermaid_graph.remove_class("diagram-normal")
-      mermaid_graph.add_class("diagram-full")
-      inputCol.add_class("visually-hidden")
-      header.add_class("visually-hidden")
-    else:
-      mermaid_graph.add_class("diagram-normal")
-      mermaid_graph.remove_class("diagram-full")
-      inputCol.remove_class("visually-hidden")
-      header.remove_class("visually-hidden")
 
+  Element("mermaid-btn-fullscreen").element.addEventListener(
+    "click", create_proxy(app.mermaid_toggle_fullscreen)
+  )
 
   js.document.getElementById("mermaid-chk-flip").addEventListener(
     "click", create_proxy(render_mmd)
@@ -555,28 +471,44 @@ if not initialized:
       "click", create_proxy(render_mmd)
     )
 
-  @event_listener("kubernetes-reload", "click")
-  def kube_to_mmd(event):
-    kube_to_graph(event)
-    graph_to_mmd(event)
-
-  @event_listener("tab-attack-tab", "click")
+  @app.event_listener("tab-attack-tab", "click")
   def create_report_attack(event):
     return create_report(event, "attack", app.attack_summary_html)
 
-  @event_listener("tab-d3fend-tab", "click")
+  @app.event_listener("tab-d3fend-tab", "click")
   def create_report_d3fend(event):
     return create_report(event, "d3fend", app.d3fend_summary_html)
 
+  @app.event_listener("tab-rdf-tab", "click")
+  def _show_turtle_graph(event):
+    if status["d3fend"] is None:
+      render_mmd(event)
+
+    try:
+      graph_ttl = status["d3fend"].g.serialize()
+    except Exception as e:
+      log.warning(f"Error in _show_turtle_graph: {e}")
+      graph_ttl = "Uninitialized graph"
+    Element("turtle-graph").write(graph_ttl)
+
+  for example_md in ("application.md", "network.md", "webmail.md",
+   # "lan.md", "diagram.md"
+   ):
+    fpath = Path("static/examples/mermaid") / example_md
+    @app.event_listener(f"example-{fpath.stem}", "click")
+    def _set_content(event, example_md=example_md, fpath=fpath):
+      status["editor"].setValue(fpath.read_text())
+      refresh_all(event)
+
   # Copy to clipboard.
   js.document.getElementById("attack-summary-copy").addEventListener(
-    "click", create_proxy(lambda event: _copy_element_to_clipboard_with_js("attack-summary"))
+    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("attack-summary"))
     )
   js.document.getElementById("d3fend-summary-copy").addEventListener(
-    "click", create_proxy(lambda event: _copy_element_to_clipboard_with_js("d3fend-summary"))
+    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("d3fend-summary"))
   )
   js.document.getElementById("turtle-graph-copy").addEventListener(
-    "click", create_proxy(lambda event: _copy_element_to_clipboard_with_js("turtle-graph"))
+    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("turtle-graph"))
   )
 
 

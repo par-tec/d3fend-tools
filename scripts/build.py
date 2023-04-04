@@ -70,7 +70,7 @@ def _monaco_completion(g):
         )
 
     js_text = generate_monaco_completion(items)
-    Path("docs/mermaid/monaco-completion.js").write_text(
+    Path("docs/static/monaco-completion.js").write_text(
         js_text
         + """
 function provideCompletionItems(model, position) {
@@ -112,7 +112,7 @@ def _d3fend_short(g):
     for x in subset:
         for t in x:
             short_graph.add(t)
-    short_graph.serialize("docs/mermaid/d3fend-short.ttl")
+    short_graph.serialize("docs/static/d3fend-short.ttl")
 
 
 def _mermaidrdf_yaml(g):
@@ -162,39 +162,19 @@ if __name__ == "__main__":
     FILES = (
         {
             "src": "dist/d3fendtools-0.0.1-py3-none-any.whl",
-            "dst": "docs/kube/static/d3fendtools-0.0.1-py3-none-any.whl",
-        },
-        {"src": "d3fendtools/kuberdf/__init__.py", "dst": "docs/mermaid/kuberdf.py"},
-        {"src": "d3fendtools/kuberdf/ontology.ttl", "dst": "docs/mermaid/ontology.ttl"},
-        {
-            "src": "d3fendtools/mermaidrdf/__init__.py",
-            "dst": "docs/mermaid/mermaidrdf.py",
+            "dst": "docs/static/d3fendtools-0.0.1-py3-none-any.whl",
         },
         {
-            "src": "d3fendtools/mermaidrdf/mermaidrdf.yaml",
-            "dst": "docs/mermaid/mermaidrdf.yaml",
+            "src": "tests/data/mermaidrdf/application.md",
+            "dst": "docs/static/examples/mermaid/application.md",
         },
         {
-            "src": "d3fendtools/d3fend.py",
-            "dst": "docs/mermaid/d3fend.py",
-        },
-        {"src": "d3fendtools/kuberdf/__init__.py", "dst": "docs/kube/kuberdf.py"},
-        {"src": "d3fendtools/kuberdf/ontology.ttl", "dst": "docs/kube/ontology.ttl"},
-        {
-            "src": "d3fendtools/mermaidrdf/__init__.py",
-            "dst": "docs/kube/mermaidrdf.py",
+            "src": "tests/data/mermaidrdf/network.md",
+            "dst": "docs/static/examples/mermaid/network.md",
         },
         {
-            "src": "d3fendtools/mermaidrdf/mermaidrdf.yaml",
-            "dst": "docs/kube/mermaidrdf.yaml",
-        },
-        {
-            "src": "d3fendtools/d3fend.py",
-            "dst": "docs/kube/d3fend.py",
-        },
-        {
-            "src": "d3fendtools/as_mermaid/__init__.py",
-            "dst": "docs/kube/as_mermaid.py",
+            "src": "tests/data/mermaidrdf/webmail.md",
+            "dst": "docs/static/examples/mermaid/webmail.md",
         },
     )
     for f in FILES:

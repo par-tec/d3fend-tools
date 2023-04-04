@@ -43,8 +43,8 @@ class RDF2Mermaid:
         "urn:k8s:Pod": "fa:fa-cube",
         "urn:k8s:Port": "fa:fa-ethernet",
         "urn:k8s:Secret": "fa:fa-key",
-        "urn:k8s:Service": "fa:fa-network-wired",
-        "urn:k8s:Registry": "fab:fa-docker fa:fa-database",
+        "urn:k8s:Service": "fa:fa-sitemap",
+        "urn:k8s:Registry": "fab:fa-docker fa:fa-boxes-stacked",
         "urn:k8s:Route": "fa:fa-route",
     }
     # NB: A node connected with another is always rendered.

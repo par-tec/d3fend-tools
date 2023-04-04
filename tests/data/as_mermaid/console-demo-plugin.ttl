@@ -1,0 +1,68 @@
+@prefix k8s: <urn:k8s:> .
+@prefix ns1: <http://d3fend.mitre.org/ontologies/d3fend.owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://quay.io> a k8s:Registry ;
+    k8s:hasChild <https://quay.io/jcaianirh/console-demo-plugin> .
+
+k8s:cluster k8s:hasChild k8s:console-demo-plugin,
+        k8s:default .
+
+<urn:k8s:console-demo-plugin/Application/console-demo-plugin> a k8s:Application ;
+    k8s:hasChild <TCP://app=console-demo-plugin:9001>,
+        <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin>,
+        <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin/Container/console-demo-plugin>,
+        <urn:k8s:console-demo-plugin/Service/console-demo-plugin> .
+
+<TCP://console-demo-plugin:9001> a k8s:Host ;
+    ns1:accesses <TCP://app=console-demo-plugin:9001> .
+
+<urn:k8s:console-demo-plugin/Deployment/console-demo-plugin> a k8s:Deployment ;
+    rdfs:label "app.kubernetes.io/component: console-demo-plugin",
+        "app.kubernetes.io/instance: console-demo-plugin",
+        "app.kubernetes.io/part-of: console-demo-plugin",
+        "app.openshift.io/runtime-namespace: console-demo-plugin",
+        "app: console-demo-plugin",
+        "dc/console-demo-plugin" ;
+    ns1:runs <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin/Container/console-demo-plugin> ;
+    k8s:hasChild <TCP://app=console-demo-plugin:9001>,
+        <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin/Container/console-demo-plugin> ;
+    k8s:hasNamespace k8s:console-demo-plugin .
+
+<urn:k8s:console-demo-plugin/Service/console-demo-plugin> a k8s:Service ;
+    rdfs:label "app.kubernetes.io/component: console-demo-plugin",
+        "app.kubernetes.io/instance: console-demo-plugin",
+        "app.kubernetes.io/part-of: console-demo-plugin",
+        "app: console-demo-plugin",
+        "svc/console-demo-plugin" ;
+    k8s:hasChild <TCP://console-demo-plugin:9001>,
+        <urn:k8s:console-demo-plugin/Service/console-demo-plugin:9001> ;
+    k8s:hasHost <TCP://console-demo-plugin:9001> ;
+    k8s:hasNamespace k8s:console-demo-plugin ;
+    k8s:hasPort <urn:k8s:console-demo-plugin/Service/console-demo-plugin:9001> ;
+    k8s:portForward "9001-TCP>9001" .
+
+<urn:k8s:console-demo-plugin/Service/console-demo-plugin:9001> a k8s:Port ;
+    ns1:accesses <TCP://app=console-demo-plugin:9001> .
+
+<https://quay.io/jcaianirh/console-demo-plugin> a k8s:Image .
+
+k8s:console-demo-plugin a k8s:Namespace ;
+    rdfs:label "console-demo-plugin" ;
+    k8s:hasChild <urn:k8s:console-demo-plugin/Application/console-demo-plugin>,
+        <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin>,
+        <urn:k8s:console-demo-plugin/Service/console-demo-plugin> .
+
+k8s:default a k8s:Namespace ;
+    rdfs:label "default",
+        "ns/console-demo-plugin" ;
+    k8s:hasChild k8s:default ;
+    k8s:hasNamespace k8s:default .
+
+<TCP://app=console-demo-plugin:9001> a k8s:Endpoints ;
+    ns1:accesses <urn:k8s:console-demo-plugin/Deployment/console-demo-plugin/Container/console-demo-plugin> .
+
+<urn:k8s:console-demo-plugin/Deployment/console-demo-plugin/Container/console-demo-plugin> a k8s:Container ;
+    rdfs:label "console-demo-plugin" ;
+    ns1:runs <https://quay.io/jcaianirh/console-demo-plugin> ;
+    k8s:hasImage <https://quay.io/jcaianirh/console-demo-plugin> .

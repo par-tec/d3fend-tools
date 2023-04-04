@@ -12,6 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 MERMAID_KEYWORDS = (
     #   "subgraph",
+    r"%%",
     "end",
     "direction",
     "classDef",
@@ -22,8 +23,10 @@ PAT_LABEL = r"(.*?)"
 PAT_OPEN = r"|".join((r"\[\[", r"\[\(", r"\(\(", r"\{\{", r"\[\/"))
 PAT_CLOSE = r"|".join((r"\]\]", r"\)\]", r"\)\)", r"\}\}", r"\/\]"))
 PAT_NODE = (
-    r"([a-zA-Z0-9_:/.]+(?:[-=][a-zA-Z0-9_:/.]+)*)"
-    r"(([\(\[\{\/]{1,2})" + PAT_LABEL + r"([\)\]\}\/]{1,2}))?"
+    r"^([a-zA-Z0-9_:/.µ]+(?:[-=][a-zA-Z0-9_:/.µ]+)*)"
+    r"("
+    r"([\(\[\{\/]{1,2})" + PAT_LABEL + r"([\)\]\}\/]{1,2})"
+    r")?$"
 )
 PAT_ARROW = r"\s*(-->|--o|-[.-]+-[>ox]?)" + r"\s*" + r"(?:\|(.*)?\|)?\s*"
 PAT_LINE = rf"{PAT_NODE}({PAT_ARROW}{PAT_NODE})*"
@@ -113,6 +116,7 @@ class D3fendMermaid:
         return self.hypergraph
 
     def mermaid(self):
+        """Replace every mermaid node with a more readable one."""
         if self._out is None:
             out = ""
             text = self._extract(self.text)[0]
@@ -130,6 +134,9 @@ class D3fendMermaid:
                     out += line
                     continue
 
+                # Strip %% comments after line.
+                line = line.split(r"%%")[0].strip()
+
                 parsed_line = parse_line2(line)
                 for node, arrow, relation in parsed_line:
                     if node.startswith("subgraph "):
@@ -138,6 +145,7 @@ class D3fendMermaid:
 
                     parsed_node = RE_NODE.match(node)
                     if not parsed_node:
+                        raise NotImplementedError(f"Cannot parse node {node}")
                         out += line
                         continue
 
@@ -377,16 +385,29 @@ def filter_mermaid(text, mermaid_filter, skip_filter=None):
     log.warning(f"Filtering mermaid text with {mermaid_filter}")
     re_mermaid_filter = re.compile(f"""^.*({mermaid_filter}).*""", re.I)
     ret = []
-    subgraphs = re.findall(r"(\nsubgraph.*?\nend)", text, re.DOTALL)
+    subgraphs = re.findall(r"(\n\s*subgraph.*?\n\s*end\b)", text, re.DOTALL)
     matching_subgraphs = []
     for subgraph in subgraphs:
         if re.match(".*" + mermaid_filter + ".*", subgraph, re.DOTALL):
             subgraph_name = re.search(r"subgraph\s+([^[]+)\s*", subgraph).group(1)
             matching_subgraphs.append(subgraph_name)
+
     nodes = set()
     for line in text.splitlines():
         if skip_filter and re.match(".*" + skip_filter + ".*", line):
             log.debug("Skipping line: " + line)
+            continue
+
+        if line.startswith(
+            (
+                "subgraph ",
+                "graph",
+                "classDef ",
+                "class ",
+                "click ",
+            )
+        ):
+            ret.append(line)
             continue
 
         s_p_o = RE_LINE.match(line)
@@ -394,10 +415,6 @@ def filter_mermaid(text, mermaid_filter, skip_filter=None):
         s, o = s_p_o[0], s_p_o[8]
         items = {s, o}
         log.debug(f"Extracting resources from line: (s={s}, o={o}")
-
-        if s in ("subgraph", "graph", "classDef", "class", "click"):
-            ret.append(line)
-            continue
 
         # Don't render empty subgraphs.
         if s == "end":

@@ -1622,9 +1622,21 @@ D3F_PROPERTIES:
 - d3f:writes
 FONTAWESOME_MAP:
 - artifacts:
+  - d3f:SoftwarePackage
+  labels:
+  - fa:fa-box fa:fa-box-archive
+- artifacts:
+  - d3f:WebServerApplication
+  labels:
+  - '{fab:fa-whmcs}'
+- artifacts:
+  - d3f:SoftwareArtifactServer
+  labels:
+  - fa:fa-boxes
+- artifacts:
   - d3f:DNSServer
   labels:
-  - fa:fa-globe
+  - fa:fa-atlas
 - artifacts:
   - d3f:VirtualizationSoftware
   labels:
@@ -1636,7 +1648,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:ContainerRuntime
   labels:
-  - fa:fa-docker
+  - fab:fa-docker
 - artifacts:
   - d3f:Server
   labels:
@@ -1667,6 +1679,10 @@ FONTAWESOME_MAP:
   labels:
   - fa:fa-file-code
 - artifacts:
+  - d3f:DocumentFile
+  labels:
+  - fab:fa-readme
+- artifacts:
   - d3f:TaskSchedule
   labels:
   - fa:fa-clock
@@ -1692,17 +1708,35 @@ FONTAWESOME_MAP:
   labels:
   - fa:fa-cloud fa:fa-globe
 - artifacts:
-  - d3f:User
+  - d3f:AuthorizationService
   labels:
-  - fa:fa-user
+  - fab:fa-openid
 - artifacts:
+  - d3f:User
   - d3f:UserAccount
   labels:
   - fa:fa-user
 - artifacts:
+  - d3f:PrivilegedUserAccount
+  labels:
+  - fa:fa-user-plus
+- artifacts:
   - d3f:Browser
   labels:
   - fab:fa-firefox
+- artifacts:
+  - d3f:Session
+  - d3f:SessionCookie
+  labels:
+  - fa:fa-cookie
+- artifacts:
+  - d3f:SSHSession
+  labels:
+  - fa:fa-terminal fa:fa-lock
+- artifacts:
+  - d3f:RDPSession
+  labels:
+  - fa:fa-desktop fa:fa-lock
 - artifacts:
   - d3f:MobilePhone
   - d3f:TabletComputer
@@ -1719,7 +1753,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:FileSystem
   labels:
-  - fa:fa-folder-tree
+  - fa:fa-folder
 - artifacts:
   - d3f:Volume
   labels:
@@ -1755,7 +1789,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:EncryptedTunnels
   labels:
-  - "\U0001F512"
+  - fab:fa-expeditedssl
 - artifacts:
   - d3f:VPNServer
   labels:
@@ -1784,10 +1818,6 @@ FONTAWESOME_MAP:
   labels:
   - fa:fa-certificate fa:fa-ban
 - artifacts:
-  - d3f:ReverseProxyServer
-  labels:
-  - "fa:fa-network-wired \u15D5"
-- artifacts:
   - d3f:Network
   labels:
   - fa:fa-network-wired
@@ -1795,6 +1825,11 @@ FONTAWESOME_MAP:
   - d3f:NetworkLink
   labels:
   - fa:fa-ethernet fa:fa-link
+- artifacts:
+  - d3f:Router
+  - d3f:ReverseProxyServer
+  labels:
+  - fab:fa-uncharted
 - artifacts:
   - d3f:WirelessRouter
   labels:
@@ -1807,6 +1842,14 @@ FONTAWESOME_MAP:
   - d3f:PhysicalLocation
   labels:
   - fa:fa-building
+- artifacts:
+  - d3f:Multi-factorAuthentication
+  labels:
+  - fa:fa-fingerprint
+- artifacts:
+  - d3f:MessageAuthentication
+  labels:
+  - fa:fa-envelope fa:fa-file-signature
 INFERRED_RELATIONS:
 - predicates:
   - :{subject} d3f:produces d3f:LoginSession .
@@ -1858,13 +1901,15 @@ SW_MAP:
   - kafka
   - pulsar
 - artifacts:
-  - d3f:AuthorizationServer
+  - d3f:AuthorizationService
   - d3f:AuthenticationService
   labels:
   - auth0
   - okta
   - keycloak
   - oauth
+  - openid
+  - oidc
 - artifacts:
   - d3f:ApplicationLayerFirewall
   - d3f:MailService
@@ -1900,6 +1945,8 @@ SW_MAP:
   - fab:fa-linux
   - fab:fa-ubuntu
   - fab:fa-redhat
+  - fab:fa-suse
+  - fab:fa-fedora
 - artifacts:
   - d3f:ExecutableScript
   labels:

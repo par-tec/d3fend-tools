@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from pathlib import Path
 from time import time
 
@@ -10,6 +11,7 @@ from rdflib.namespace import RDF
 
 from d3fendtools import kuberdf
 from d3fendtools.as_mermaid import RDF2Mermaid
+from d3fendtools.mermaidrdf import D3fendMermaid, filter_mermaid, flip_mermaid
 
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -127,3 +129,17 @@ def test_external_file():
     mermaid = RDF2Mermaid(g)
     mermaid_text = mermaid.render()
     dpath.write_text(_wrap_md(mermaid_text, title=test_name))
+
+
+def test_filter_preserves_subgraph():
+    fpath = Path(__file__).parent / "data" / "as_mermaid" / "console-demo-plugin.ttl"
+    g = Graph()
+    g.parse(data=fpath.read_text(), format="turtle")
+    text_mmd_0 = RDF2Mermaid(g).render()
+    text_mmd_1 = D3fendMermaid(text_mmd_0).mermaid()
+
+    text_mmd_2 = filter_mermaid(text_mmd_1, "service")
+    assert len(re.findall("subgraph ", text_mmd_2)) == len(
+        re.findall("end", text_mmd_2)
+    )
+    flip_mermaid(text_mmd_2)

@@ -1,6 +1,7 @@
 import logging
 import re
 import unicodedata
+from functools import partial
 from time import time
 
 from rdflib import Graph, Namespace
@@ -91,12 +92,14 @@ def d3fend_summary(g: Graph, type="mermaid"):
     return [HEADERS] + [render_row(row) for row in ret]
 
 
-def d3fend_summary_html(g: Graph, aggregate=False):
-    return f_summary_html(g, aggregate, d3fend_summary)
+def d3fend_summary_html(g: Graph, aggregate=False, type="mermaid"):
+    f_summary = partial(d3fend_summary, type=type)
+    return f_summary_html(g, aggregate, f_summary)
 
 
-def attack_summary_html(g: Graph, aggregate=False):
-    return f_summary_html(g, aggregate, attack_summary)
+def attack_summary_html(g: Graph, aggregate=False, type="mermaid"):
+    f_summary = partial(attack_summary, type=type)
+    return f_summary_html(g, aggregate, f_summary)
 
 
 def f_summary_html(g: Graph, aggregate=False, summary_function=d3fend_summary):
