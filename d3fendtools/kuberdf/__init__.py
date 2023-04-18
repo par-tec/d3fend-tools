@@ -173,6 +173,7 @@ class K8Resource:
             "ReplicationController": ReplicationController,
             "Route": Route,
             "Service": Service,
+            "StatefulSet": DC,
         }
         kind = manifest.get("kind")
         clz = classmap.get(kind) or K8Resource
@@ -269,6 +270,7 @@ class K8Resource:
             "Job": skip_resource_instances,
             "Route": Route.triple_spec,
             "Service": Service.triple_spec,
+            "StatefulSet": DC.triple_spec,
         }
         if self.spec:
             yield from classmap[self.kind](self)

@@ -32,6 +32,7 @@ class RDF2Mermaid:
         "urn:k8s:CronJob": "fa:fa-clock",
         "urn:k8s:Deployment": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:DeploymentConfig": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
+        "urn:k8s:StatefulSet": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:Endpoint": "fa:fa-ethernet",
         "urn:k8s:Endpoints": "fa:fa-ethernet",
         "urn:k8s:Host": "fa:fa-globe",
@@ -67,6 +68,7 @@ class RDF2Mermaid:
         # DC are groups.
         NS_K8S.DeploymentConfig,
         NS_K8S.Deployment,
+        NS_K8S.StatefulSet,
     )
     DONT_RENDER_AS_NODES = DONT_RENDER + RENDER_AS_SUBGRAPHS
 
