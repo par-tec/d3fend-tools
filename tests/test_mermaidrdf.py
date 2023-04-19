@@ -40,6 +40,8 @@ def d3fend_graph():
 def test_render_mermaid():
     txt = """
     graph
+
+    Client --> MySQL
     MySQL[(UserPreferences d3f:Process)] -->|d3f:Email| DataVolume[(Tablespace fa:fa-hard-drive d3f:Volume)]
 
     subgraph a
@@ -51,7 +53,9 @@ def test_render_mermaid():
     """
     m = D3fendMermaid(txt)
     m.parse()
-    m.mermaid()
+    ret = m.mermaid()
+    assert "Client" in m.g.serialize()
+    assert "Client" in ret
     raise NotImplementedError
 
 
@@ -150,40 +154,75 @@ def test_mermaid_to_triples(test_name, test_data):
     assert rdf == expected
 
 
+@pytest.mark.parametrize("line, expected", TESTCASES["test_lines_are_split_correctly"])
+def test_lines_are_split_correctly(line, expected):
+    ret = parse_line2(line)
+    assert ret == [tuple(x) for x in expected]
+
+
+@pytest.mark.parametrize(
+    "node,expected",
+    [
+        ("A", ("A", None, None, None, None)),
+        ("A[label]", ("A", "[label]", "[", "label", "]")),
+    ],
+)
+def test_parse_node(node, expected):
+    from d3fendtools.mermaidrdf import RE_NODE
+
+    m = RE_NODE.match(node)
+    g = m.groups()
+    assert g == expected
+
+
 @pytest.mark.parametrize(
     "line, expected",
     [
-        ("A --> B --> C", [("A", "-->", None), ("B", "-->", None), ("C", None, None)]),
         (
-            "A --o |comment| B --o C",
-            [("A", "--o", "comment"), ("B", "--o", None), ("C", None, None)],
+            "A",
+            (
+                "A",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            ),
         ),
         (
-            "A--o|comment|B--oC",
-            [("A", "--o", "comment"), ("B", "--o", None), ("C", None, None)],
+            "a[label]",
+            (
+                "a",
+                "[label]",
+                "[",
+                "label",
+                "]",
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+                None,
+            ),
         ),
-        ("A", [("A", None, None)]),
-        (
-            "A[label] --o |comment| B[[label]]",
-            [
-                ("A[label]", "--o", "comment"),
-                ("B[[label]]", None, None),
-            ],
-        ),
-        (
-            "A -.-x B ---o C ---> D",
-            [
-                ("A", "-.-x", None),
-                ("B", "---o", None),
-                ("C", "--->", None),
-                ("D", None, None),
-            ],
-        ),
+        ("nginx-->mysql", (None,)),
     ],
 )
-def test_parse_line2(line, expected):
-    ret = parse_line2(line)
-    assert ret == expected
+def test_parse_line_removeme(line, expected):
+    from d3fendtools.mermaidrdf import parse_line
+
+    ret = parse_line(line)
+    assert next(ret) == expected
+    raise NotImplementedError
 
 
 # def test_render_node_docker():

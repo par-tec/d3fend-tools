@@ -41,7 +41,7 @@ WebMail[WebMail fab:fa-react]
 %%   Type "d3f:" and press CTRL+space to see the list of available artifacts.
 %%   Then use TAB to complete.
 WebMail -->|d3f:Email| IMAP[IMAP d3f:MailServer]
-WebMail -->|d3f:Email| SMTP[SMTP d3f:MailServer]
+WebMail -->|sends d3f:Email| SMTP[SMTP d3f:MailServer]
 IMAP --> Mailstore[Mailstore d3f:Volume]
 
 %% Associated d3f:DigitalArtifacts can be decorated with font-awesome too.

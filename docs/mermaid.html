@@ -163,14 +163,14 @@
 
 
 <div id="tools-panel" class="col-sm mw-50 h-100">
-  <ul class="nav nav-tabs bg-primary" id="myTab" role="tablist">
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item"><a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Diagram</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab-attack-tab" data-bs-toggle="tab" href="#tab-attack" role="tab" aria-controls="tab-attack" aria-selected="false">ATT&CK</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab-d3fend-tab" data-bs-toggle="tab" href="#tab-d3fend" role="tab" aria-controls="tab-d3fend" aria-selected="false">D3FEND</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab-rdf-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab40-tab" data-bs-toggle="tab" href="#tab40" role="tab" aria-controls="tab40" aria-selected="false">Console</i></a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab50-tab" data-bs-toggle="tab" href="#tab50" role="tab" aria-controls="tab50" aria-selected="false">Help</a></li>
-    <li class="nav-item"><a class="nav-link text-white" id="tab100-tab" data-bs-toggle="tab" href="#tab100" role="tab" aria-controls="tab100" aria-selected="false"><i class="fab fa-github"></i></a></li>
+    <li class="nav-item"><a class="nav-link" id="tab-attack-tab" data-bs-toggle="tab" href="#tab-attack" role="tab" aria-controls="tab-attack" aria-selected="false">ATT&CK</a></li>
+    <li class="nav-item"><a class="nav-link" id="tab-d3fend-tab" data-bs-toggle="tab" href="#tab-d3fend" role="tab" aria-controls="tab-d3fend" aria-selected="false">D3FEND</a></li>
+    <li class="nav-item"><a class="nav-link" id="tab-rdf-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
+    <li class="nav-item"><a class="nav-link" id="tab40-tab" data-bs-toggle="tab" href="#tab40" role="tab" aria-controls="tab40" aria-selected="false">Console</i></a></li>
+    <li class="nav-item"><a class="nav-link" id="tab50-tab" data-bs-toggle="tab" href="#tab50" role="tab" aria-controls="tab50" aria-selected="false">Help</a></li>
+    <li class="nav-item"><a class="nav-link" id="tab100-tab" data-bs-toggle="tab" href="#tab100" role="tab" aria-controls="tab100" aria-selected="false"><i class="fab fa-github"></i></a></li>
   </ul>
   <div class="tab-content" id="myTabContent">
 
@@ -234,19 +234,25 @@ list(nodes)
         <h4>Intro</h4>
         <p>This tool shows how to use the D3FEND ontology to support the design and review of IT architectures.
 
-        <ul>
-        <li>The first step is to represent your components and their relationships in a mermaid graph.
-        <li>You can classify your components using the d3fend vocabulary that is available via auto-complete. For example, you can type <code>d3f:mail CTRL+space</code> and the auto-complete will suggest the possible choices. For example, a Client that sends emails to a MTA can be represented as follows:
+        <ol>
+        <li>Represent the components of your infrastructure and their relationships in the left pane editor using <a href="https://mermaid.live/" target="_blank">Mermaid JS syntax</a>.
+        <li>Classify your components using the D3FEND vocabulary that is available via auto-complete.
+            For example, you can type <code>d3f:mail CTRL+space</code> and the auto-complete will suggest the possible choices.
+            The following text represents a Client that sends emails to a MTA:
 
-        <pre>Client -->|d3f:Email| MTA</pre>
+            <pre>Client -->|sends d3f:Email to| MTA</pre>
 
-        The application is capable to label major sofware applications (e.g. nginx, postfix, ...) and to map them to the corresponding D3FEND classes (e.g. <code>d3f:MailTransferAgent</code>).
+            The application is capable to label major sofware applications (e.g. nginx, postfix, ...) and to map them to the corresponding D3FEND classes (e.g. <code>d3f:MailTransferAgent</code>).
 
-        You can also use some icons from font-awesome (see the <a href="https://fontawesome.com/icons?d=gallery&m=free">gallery</a>) to make your diagram more fancy. For example you can use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
+            You can also use some icons from font-awesome (see the <a href="https://fontawesome.com/icons?d=gallery&m=free">gallery</a>) to make your diagram more fancy.
+            For example you can use the <code>fab:fa-react</code> icon to indicate that a component is a WebUI.
 
-        <li>Once you have created your mermaid graph, you can click on the D3FEND tab to see the corresponding D3FEND graph. The D3FEND graph is represented as a turtle file. You can copy and paste it in your favorite RDF editor (e.g. <a href="https://www.w3.org/RDF/Validator/">W3C RDF validator</a>).
+        <li>Now, click on the ATT&CK tab to show the attacks associated with the specific DigitalArtifacts,
+            or on the D3FEND tab to see the corresponding defensive measures.
+            The tables contain hyperlinks to the corresponding D3FEND classes and ATT&CK techniques.
 
-        <li>The "Summary" tabs shows a table with the main entities of the D3FEND graph and the attacks associated with the specific DigitalArtifacts. The table contains hyperlinks to the corresponding D3FEND classes and ATT&CK techniques.
+        <li>The D3FEND graph is a RDF graph represented in Turtle format. You can copy and paste it in your favorite RDF editor (e.g. <a href="https://www.w3.org/RDF/Validator/">W3C RDF validator</a>).
+
         </p>
 
         </p>
@@ -356,7 +362,7 @@ def update_graph_and_render_mermaid(event):
   log.warning("update_graph_and_render_mermaid: %s" % (event,))
 
   if hasattr(event, "inputType") and len(status["editor"].getValue()) > 6000:
-    log.warning("Skipping update, too big.")
+    log.warning("Skipping auto-update, too big.")
     return
 
   refresh_all(event)

@@ -276,15 +276,17 @@ def parse_line(line):
     if line.startswith(MERMAID_KEYWORDS):
         log.warning(f"Unsupported KEYWORD: {line}")
         return
+
     # if the line doesn't match x-->y, skip it
-    if not RE_LINE.match(line):
-        log.warning(f"Unsupported RE_LINE: {line}")
-        return
     # Split the line into the two nodes and the arrow
     # according to the mermaid syntax. The resulting line will be
     # something like 5-1-5
-    parsed_line = parse_line2(line)
-    log.info(f"Parsed line: {line} to: {parsed_line}")
+    try:
+        parsed_line = parse_line2(line)
+        log.info(f"Parsed line: {line} to: {parsed_line}")
+    except Exception:
+        log.warning(f"Unsupported line: {line}")
+        return
 
     node_id0, arrow0, relation0 = None, None, None
     for node, arrow, relation in parsed_line:
@@ -324,6 +326,7 @@ def _parse_relation(src, dst, predicate, relation):
     @param relation: the relation enclosed by pipes,
                      e.g. a -->|| b.
     """
+    relation = relation.strip()
     if not relation:
         yield f":{src} {predicate} :{dst} ."
         return
@@ -410,7 +413,9 @@ def filter_mermaid(text, mermaid_filter, skip_filter=None):
             ret.append(line)
             continue
 
-        s_p_o = RE_LINE.match(line)
+        s_p_o = RE_LINE.match(
+            line
+        )  # FIXME: RE_LINE is broken and should be removed because it's too complex.
         s_p_o = s_p_o.groups() if s_p_o else [None] * 9
         s, o = s_p_o[0], s_p_o[8]
         items = {s, o}

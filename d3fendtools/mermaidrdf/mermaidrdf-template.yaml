@@ -37,6 +37,10 @@ FONTAWESOME_MAP:
   labels:
   - "fa:fa-user-lock"
 - artifacts:
+  - d3f:PasswordDatabase
+  labels:
+  - "fa:fa-key fa:fa-database"
+- artifacts:
   - d3f:Log
   - d3f:LogFile
   labels:
@@ -156,6 +160,14 @@ FONTAWESOME_MAP:
 #
 # Network
 #
+- artifacts:
+  - d3f:WebResourceAccess
+  labels:
+  - "{..}"
+- artifacts:
+  - d3f:DatabaseQuery
+  labels:
+  - "fa:fa-database fa:fa-magnifying-glass"
 - artifacts:
   - d3f:WebApplicationFirewall
   - d3f:ApplicationLayerFirewall

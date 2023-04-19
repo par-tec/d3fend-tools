@@ -1,6 +1,34 @@
 ---
 # Testcases.
 testcases:
+    test_lines_are_split_correctly: [
+                [
+                    A --> B --> C,
+                    [[A, -->, null], [B, -->, null], &id001 [C, null, null]],
+                ],
+                [
+                    A --o
+                    |comment| B --o C,
+                    [&id002 [A, --o, comment], &id003 [B, --o, null], *id001],
+                ],
+                [A--o|comment|B--oC, [*id002, *id003, *id001]],
+                [A, [[A, null, null]]],
+                [
+                    "A[label]
+                    --o |comment| B[[label]]",
+                    [["A[label]", --o, comment], ["B[[label]]", null, null]],
+                ],
+                [
+                    A -.-x B ---o C ---> D,
+                    [
+                        [A, -.-x, null],
+                        [B, "---o", null],
+                        [C, "--->", null],
+                        [D, null, null],
+                    ],
+                ],
+            ]
+
     test_mermaid_to_rdf:
         basic:
             mermaid: |-
@@ -9,89 +37,90 @@ testcases:
                 A--oC
                 A[(mysql)] --> D
                 B-->C
-            expected: [
-                ":A a :Node .",
-                ":B a :Node .",
-                ":C a :Node .",
-                ":D a :Node .",
-                ":A d3f:accesses :B .",
-                ":A d3f:reads :C .",
-                ":A d3f:accesses :D .",
-                ":A a d3f:DatabaseServer .",
-                ':A rdfs:label """mysql""" .',
-                ":B d3f:accesses :C ."
+            expected:
+                [
+                    ":A a :Node .",
+                    ":B a :Node .",
+                    ":C a :Node .",
+                    ":D a :Node .",
+                    ":A d3f:accesses :B .",
+                    ":A d3f:reads :C .",
+                    ":A d3f:accesses :D .",
+                    ":A a d3f:DatabaseServer .",
+                    ':A rdfs:label """mysql""" .',
+                    ":B d3f:accesses :C .",
                 ]
         label_d3f:
             mermaid: |-
                 graph TD
                 D3fend[[Example d3f:NetworkNode]]
             expected:
-            - :D3fend a :Node .
-            - :D3fend a d3f:NetworkNode .
-            - :D3fend rdfs:label """Example d3f:NetworkNode""" .
-            - :D3fend a d3f:Server .
+                - :D3fend a :Node .
+                - :D3fend a d3f:NetworkNode .
+                - :D3fend rdfs:label """Example d3f:NetworkNode""" .
+                - :D3fend a d3f:Server .
         sqlquery:
             mermaid: |-
                 graph TD
                 App --> |via d3f:DatabaseQuery| DB[(sql)]
             expected:
-            - ":App d3f:accesses :DB ."
-            - ":App a :Node ."
-            - ":DB a :Node ."
-            - ":DB a d3f:DatabaseServer ."
-            - ':DB rdfs:label """sql""" .'
-            - ':App d3f:produces d3f:DatabaseQuery .'
-            - ':DB d3f:uses d3f:DatabaseQuery .'
+                - ":App d3f:accesses :DB ."
+                - ":App a :Node ."
+                - ":DB a :Node ."
+                - ":DB a d3f:DatabaseServer ."
+                - ':DB rdfs:label """sql""" .'
+                - ":App d3f:produces d3f:DatabaseQuery ."
+                - ":DB d3f:uses d3f:DatabaseQuery ."
         email:
             mermaid: |-
                 graph TD
                 Client --> |via fa:fa-envelope| MTA
             expected:
-            - ':MTA a :Node .'
-            - ':Client a :Node .'
-            - ':Client d3f:accesses :MTA .'
-            - ':MTA d3f:uses d3f:Email .'
-            - ':Client d3f:produces d3f:Email .'
-            - ':Client d3f:produces d3f:MailNetworkTraffic .'
-            - ':MTA d3f:uses d3f:MailNetworkTraffic .'
+                - ":MTA a :Node ."
+                - ":Client a :Node ."
+                - ":Client d3f:accesses :MTA ."
+                - ":MTA d3f:uses d3f:Email ."
+                - ":Client d3f:produces d3f:Email ."
+                - ":Client d3f:produces d3f:MailNetworkTraffic ."
+                - ":MTA d3f:uses d3f:MailNetworkTraffic ."
         internet:
             mermaid: |-
                 graph TD
                 Client --> |via fa:fa-globe| Internet
             expected:
-            - ':Internet a :Node .'
-            - ':Client a :Node .'
-            - ':Client d3f:accesses :Internet .'
-            - ':Internet d3f:uses d3f:InternetNetworkTraffic .'
-            - ':Client d3f:produces d3f:InternetNetworkTraffic .'
+                - ":Internet a :Node ."
+                - ":Client a :Node ."
+                - ":Client d3f:accesses :Internet ."
+                - ":Internet d3f:uses d3f:InternetNetworkTraffic ."
+                - ":Client d3f:produces d3f:InternetNetworkTraffic ."
         authnz:
             mermaid: |-
                 graph TD
                 OAuth --o |d3f:authenticates| Client
             expected:
-            - ':OAuth a :Node .'
-            - ':Client a :Node .'
-            - ':OAuth a d3f:AuthorizationServer,d3f:AuthenticationService .'
-            - ':OAuth d3f:authenticates :Client .'
-            - ':OAuth d3f:produces d3f:LoginSession .'
-            - ':Client d3f:uses d3f:LoginSession .'
-            - ':OAuth d3f:produces d3f:AuthenticationLog .'
+                - ":OAuth a :Node ."
+                - ":Client a :Node ."
+                - ":OAuth a d3f:AuthorizationServer,d3f:AuthenticationService ."
+                - ":OAuth d3f:authenticates :Client ."
+                - ":OAuth d3f:produces d3f:LoginSession ."
+                - ":Client d3f:uses d3f:LoginSession ."
+                - ":OAuth d3f:produces d3f:AuthenticationLog ."
         container:
-          mermaid: |-
-            graph
-            app[fab:fa-docker Containerized Application]
-          expected:
-            - ':app a :Node .'
-            - ':app a d3f:ContainerProcess .'
-            - ':app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage .'
-            - ':app rdfs:label """fab:fa-docker Containerized Application""" .'
+            mermaid: |-
+                graph
+                app[fab:fa-docker Containerized Application]
+            expected:
+                - ":app a :Node ."
+                - ":app a d3f:ContainerProcess ."
+                - ":app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage ."
+                - ':app rdfs:label """fab:fa-docker Containerized Application""" .'
         container-webapp:
-          mermaid: |-
-            graph
-            app[fab:fa-docker fab:fa-angular Containerized Application]
-          expected:
-            - ':app a :Node .'
-            - ':app a d3f:ContainerProcess .'
-            - ':app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage .'
-            - ':app rdfs:label """fab:fa-docker fab:fa-angular Containerized Application""" .'
-            - ':app a d3f:WebServerApplication,d3f:GraphicalUserInterface .'
+            mermaid: |-
+                graph
+                app[fab:fa-docker fab:fa-angular Containerized Application]
+            expected:
+                - ":app a :Node ."
+                - ":app a d3f:ContainerProcess ."
+                - ":app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage ."
+                - ':app rdfs:label """fab:fa-docker fab:fa-angular Containerized Application""" .'
+                - ":app a d3f:WebServerApplication,d3f:GraphicalUserInterface ."
