@@ -88,7 +88,7 @@
         vertical-align: top;
       }
       #mermaid-filter {
-        width: 30em;
+        /* width: 30em; */
       }
       .diagram-full {
         height: 100%;
@@ -175,37 +175,52 @@
   <div class="tab-content" id="myTabContent">
 
     <div class="tab-pane p-4 fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-      <p>
-      <div class="input-group form-group">
-        <label for="mermaid-filter">Filter the mermaid graph with regexp</label>
-        <input type="text" class="form-control" id="mermaid-filter"/>
-
-        <div class="input-group-append">
-          <div class="form-check-inline">
-            <input id="mermaid-chk-flip" type="checkbox">
-            <label for="mermaid-chk-flip">Flip</label>
-          </div>
-          <button class="btn btn-primary" type="button" id="mermaid-btn-redraw">Ok</button>
-          <button id="mermaid-btn-fullscreen" class="btn btn-primary" type="button"><i class="fa fa-expand"></i>toggle</button></p>
+      <div class="input-group row">
+        <div class="form-group col-sm-5">
+          <label for="mermaid-filter">Filter the mermaid graph with regexp</label>
+          <input type="text" class="form-control" id="mermaid-filter"/>
         </div>
-      </div>
+        <div class="form-group col-sm-5">
+          <button id="mermaid-btn-redraw"     class="btn btn-primary" type="button" >Ok</button>
+          <button id="mermaid-graph-copy"     class="btn btn-primary" type="button"><i class="fas fa-copy"></i>Copy</button>
+          <button id="mermaid-btn-fullscreen" class="btn btn-primary" type="button"><i class="fa fa-expand"></i>toggle</button>
+        </div>
+        <div class="form-group col-sm-2">
+          <div class="toggles">
+            <label for="mermaid-chk-flip">
+              <input id="mermaid-chk-flip" type="checkbox">
+              <span class="lever"></span>
+              Flip
+            </label>
+          </div>
+        </div>
+      </div> <!-- input-group row -->
       <p id="mermaid-graph" class="diagram-normal"></p>
-    </div>
+    </div><!-- tab1 -->
 
     <div class="tab-pane p-4 fade" id="tab-attack" role="tabpanel" aria-labelledby="tab-attack-tab">
-      <p>ATT&CK Summary with artifacts and attacks.</p>
-      <p><button class="fas fa-copy float-end" id="attack-summary-copy"></button> </p>
-      <div id="attack-summary" class="scrollable-tab">att&ck summary placeholder </div>
+      <p>ATT&CK Summary with artifacts and attacks.
+        <button id="attack-summary-reload" class="btn btn-primary float-end" type="button"><i class="fas fa-table"></i>Generate</button>
+        <button id="attack-summary-copy" class="btn btn-primary float-end" type="button"><i class="fas fa-copy"></i>Copy</button>
+      </p>
+      <hr style="visibility: hidden">
+      <div id="attack-summary" class="scrollable-tab">Click on the Generate button to generate or update the report. The operation will take ~20 seconds.</div>
     </div>
     <div class="tab-pane p-4 fade" id="tab-d3fend" role="tabpanel" aria-labelledby="tab-d3fend-tab">
-      <p>D3FEND Summary with artifacts and defenses.</p>
-      <p><button class="fas fa-copy float-end" id="d3fend-summary-copy"></button> </p>
-      <div id="d3fend-summary" class="scrollable-tab">d3f summary placeholder </div>
+      <p>D3FEND Summary with artifacts and defenses.
+        <button id="d3fend-summary-reload" class="btn btn-primary float-end" type="button"><i class="fas fa-table"></i>Generate</button>
+        <button id="d3fend-summary-copy" class="btn btn-primary float-end" type="button"><i class="fas fa-copy"></i>Copy</button>
+      </p>
+      <hr style="visibility: hidden">
+      <div id="d3fend-summary" class="scrollable-tab">Click on the Generate button to generate or update the report. The operation will take ~20 seconds.</div>
     </div>
 
     <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab-rdf-tab">
-      <p>This is a description of your IT architecture in <a href="https://en.wikipedia.org/wiki/Resource_Description_Framework" target="_blank" rel="noopener noreferrer">RDF</a> format. Nodes are described using MITRE categories. </p>
-      <p><button class="fas fa-copy float-end" id="turtle-graph-copy"></button></p>
+      <p>
+        <button id="turtle-graph-copy" class="btn btn-primary float-end" type="button"><i class="fas fa-copy"></i>Copy</button>
+        This is a description of your IT architecture in <a href="https://en.wikipedia.org/wiki/Resource_Description_Framework" target="_blank" rel="noopener noreferrer">RDF</a> format.
+        Nodes are described using MITRE categories.
+      </p>
       <pre class="result scrollable-tab" id="turtle-graph" style="border-color: blue">graph placeholder</pre>
     </div>
 
@@ -258,7 +273,7 @@ list(nodes)
         </p>
 
     </div>
-    <div class="tab-pane p-4 fade" id="tab100" role="tabpanel" aria-labelledby="tab100-tab">ß
+    <div class="tab-pane p-4 fade" id="tab100" role="tabpanel" aria-labelledby="tab100-tab">
         <h4>Open Source</h4>
         <p>This tool is Open Source, contributions are welcome.
         <ul>
@@ -269,7 +284,15 @@ list(nodes)
 
   </div><!-- tab-content -->
 </div><!-- row -->
+
 </div><!-- container -->
+<!-- a spinner
+<div class="container visually-hidden h-100 w-100 fixed-top position-absolute d-flex align-content-center justify-content-center flex-wrap" id="div-spinner">
+  <div class="progress-spinner size-lg" id="spinner">
+    <span class="visually-hidden">Generating report...</span>
+  </div>
+</div>
+-->
 <div class="row alert" id="error-panel"></div>
 
 <py-script>
@@ -350,12 +373,13 @@ def mmd_to_graph(event):
     status["d3fend"].parse()
     log.warning("Loaded %s rdf entries in %d.." % (len(status["d3fend"].g), time()-t0,))
     Element("error-panel").clear()
-
   except Exception as e:
     msg = "Failed to create RDF graph: %s" % (e,)
+    app.alert(msg)
     log.exception(msg)
     log.info("Original mermaid text: %s" % (status["editor"].getValue(),))
-
+    return False
+  return True
 
 def update_graph_and_render_mermaid(event):
   global status
@@ -370,8 +394,8 @@ def update_graph_and_render_mermaid(event):
 
 def refresh_all(event):
   # Populate the graph from the mermaid text.
-  mmd_to_graph(event)
-  render_mmd(event)
+  if mmd_to_graph(event):
+    render_mmd(event)
 
 
 def create_report(event, id_, f):
@@ -381,16 +405,16 @@ def create_report(event, id_, f):
   # Generate the d3fend tables.
   t0 = time()
   _g = status["d3fend"].annotate()
+
   try:
     html = f(_g, aggregate=True)
     Element(f"{id_}-summary").clear()
     Element(f"{id_}-summary").element.innerHTML = html
     app.alert_clear()
-
+    log.warning("Created summary in %d.." % (time()-t0,))
   except Exception as e:
     log.error(f"Error in {id_} summary: {e}")
     app.alert(f"Error in {id_} summary: {e}")
-  log.warning("Created summary in %d.." % (time()-t0,))
 
 
 def render_mmd(event):
@@ -477,14 +501,6 @@ if not initialized:
       "click", create_proxy(render_mmd)
     )
 
-  @app.event_listener("tab-attack-tab", "click")
-  def create_report_attack(event):
-    return create_report(event, "attack", app.attack_summary_html)
-
-  @app.event_listener("tab-d3fend-tab", "click")
-  def create_report_d3fend(event):
-    return create_report(event, "d3fend", app.d3fend_summary_html)
-
   @app.event_listener("tab-rdf-tab", "click")
   def _show_turtle_graph(event):
     if status["d3fend"] is None:
@@ -516,7 +532,17 @@ if not initialized:
   js.document.getElementById("turtle-graph-copy").addEventListener(
     "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("turtle-graph"))
   )
+  js.document.getElementById("mermaid-graph-copy").addEventListener(
+    "click", create_proxy(lambda event: app._copy_text_to_clipboard(status["mermaid"]["diagram-text"]))
+  )
 
+  @app.event_listener("attack-summary-reload", "click")
+  def create_report_attack(event):
+    return create_report(event, "attack", app.attack_summary_html)
+
+  @app.event_listener("d3fend-summary-reload", "click")
+  def create_report_d3fend(event):
+    return create_report(event, "d3fend", app.d3fend_summary_html)
 
   initialized = True
     </py-script>

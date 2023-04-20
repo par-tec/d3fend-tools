@@ -45,7 +45,7 @@ subgraph app4_
     app4[d3f:ContainerProcess d3f:WebServerApplication app4] --- sidecar4{{sidecar}}
 end
 
-subgraph kube[Kubernetes cluster d3f:ContainerOrchestrator]
+subgraph kube[Kubernetes cluster d3f:ContainerOrchestrationSoftware]
     app1_
     app2_
     app3_

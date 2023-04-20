@@ -326,7 +326,7 @@ def _parse_relation(src, dst, predicate, relation):
     @param relation: the relation enclosed by pipes,
                      e.g. a -->|| b.
     """
-    relation = relation.strip()
+    relation = relation.strip() if relation else None
     if not relation:
         yield f":{src} {predicate} :{dst} ."
         return
@@ -335,6 +335,7 @@ def _parse_relation(src, dst, predicate, relation):
 
         for predicate in D3F_INFERRED_RELATIONS[relation]:
             yield predicate.format(subject=src, object=dst)
+        log.warning(f"Stop processing relation: {relation}")
         return
 
     # Explicit the relationship.
@@ -352,8 +353,15 @@ def _parse_relation(src, dst, predicate, relation):
             yield f":{src} d3f:implements {needle} ."
             yield f":{dst} d3f:implements {needle} ."
             continue
-        raise NotImplementedError(f"Unsupported relation: {needle}")
-        # return
+
+        if needle == relation:
+            raise NotImplementedError(
+                f"Unsupported relation: {relation} is not a D3FEND relation."
+            )
+
+        raise NotImplementedError(
+            f"Unsupported relation: the relation {needle} cannot be used in {relation}"
+        )
 
     # Introduces a relation based on a specific d3f:DigitalArtifact,
     # e.g. :Client --> |via fa:fa-envelope| :MTA

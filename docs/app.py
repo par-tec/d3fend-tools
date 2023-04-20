@@ -23,8 +23,7 @@ d3fend_summary_html = d3fend.d3fend_summary_html
 attack_summary = d3fend.attack_summary
 attack_summary_html = d3fend.attack_summary_html
 
-MERMAID_INIT_TEXT = """
-graph LR
+MERMAID_INIT_TEXT = """graph LR
 
 %% 1. Design here your architecture using MermaidJS syntax.
 %% 2. Click on the "ATTACK" tab to see the possible attack paths.
@@ -45,14 +44,28 @@ WebMail -->|sends d3f:Email| SMTP[SMTP d3f:MailServer]
 IMAP --> Mailstore[Mailstore d3f:Volume]
 
 %% Associated d3f:DigitalArtifacts can be decorated with font-awesome too.
-Authorization[d3f:AuthorizationService fa:fa-user-secret] --> |d3f:authenticates| Client
-IMAP --o Authorization
-SMTP --o Authorization
+Authorization[d3f:AuthorizationService Identity] --> |d3f:authenticates| Client
 
 %% You can detail the kind of traffic using d3f: entities.
 WebMail --> |d3f:DatabaseQuery| MySQL
 
 MySQL[(UserPreferences d3f:PasswordDatabase)] --> DataVolume[(Tablespace d3f:Volume)]
+
+%% Subgraphs can be used to group nodes.
+Client
+subgraph Platform
+WebMail
+IMAP
+SMTP
+MySQL
+DataVolume
+Mailstore
+Authorization
+end
+
+%% You can use the "classDef" directive to define the style of a class.
+classDef boundary fill:none, stroke-dasharray: 5
+class Platform boundary
 
 """
 
