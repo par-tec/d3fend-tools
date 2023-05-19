@@ -134,6 +134,11 @@ class D3fendMermaid:
                     out += line
                     continue
 
+                # Nodes like `a & b` are not supported.
+                if " & " in line:
+                    out += line
+                    continue
+
                 # Strip %% comments after line.
                 line = line.split(r"%%")[0].strip()
 

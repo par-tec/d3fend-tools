@@ -1,3 +1,6 @@
+#
+# DigitalArtifacts -> Icons
+#
 FONTAWESOME_MAP:
 # Services
 - artifacts:
@@ -75,6 +78,14 @@ FONTAWESOME_MAP:
   labels:
   - fab:fa-docker
 - artifacts:
+  - d3f:OrchestrationController
+  labels:
+  - fa:fa-person-chalkboard
+- artifacts:
+  - d3f:OrchestrationWorker
+  labels:
+  - fa:fa-person-digging # fa:fa-helmet-safety  #  fa:fa-users-gear fa:fa-user-shield
+- artifacts:
   - d3f:Email
   - d3f:MailNetworkTraffic
   labels:
@@ -103,7 +114,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:PrivilegedUserAccount
   labels:
-  - fa:fa-user-plus
+  - fa:fa-user-gear
 - artifacts:
   - d3f:Browser
   labels:
@@ -121,6 +132,14 @@ FONTAWESOME_MAP:
   - d3f:RDPSession
   labels:
   - fa:fa-desktop fa:fa-lock
+- artifacts:
+  - d3f:AdministrativeNetworkTraffic
+  labels:
+  - fa:fa-network-wired fa:fa-lock
+- artifacts:
+  - d3f:AdministrationServer
+  labels:
+  - fa:fa-chess-rook
 #
 # Devices
 #
@@ -159,9 +178,21 @@ FONTAWESOME_MAP:
   - d3f:Partition
   labels:
   - fa:fa-hdd
+- artifacts:
+  - d3f:NetworkNode
+  labels:
+  - "fa:fa-server"
 #
-# Network
+# Network & Media Types
 #
+- artifacts:
+  - d3f:ConfigurationResource
+  - d3f:ConfigurationDatabase
+  - d3f:ConfigurationFile
+  - d3f:SystemConfigurationDatabase
+  - d3f:ApplicationConfigurationDatabase
+  labels:
+  - "fa:fa-file fa:fa-gear"
 - artifacts:
   - d3f:WebResourceAccess
   labels:
@@ -175,7 +206,7 @@ FONTAWESOME_MAP:
   - d3f:ApplicationLayerFirewall
   - d3f:Firewall
   labels:
-  - "🛡"
+  - "🧱🔥"
 - artifacts:
   - d3f:OperatingSystem
   labels:
@@ -257,22 +288,23 @@ FONTAWESOME_MAP:
   labels:
   - "fa:fa-envelope fa:fa-file-signature"
 #
-# Map software to icons.
+# Map software to digitalartifacts.
 #
 SW_MAP:
 # Software -> d3f:DigitalArtifact
-- artifacts:
-  - d3f:MailService
-  labels:
+- labels:
   - imap
   - lmtp
   - dovecot
-- artifacts:
-  - d3f:SoftwareDeploymentTool
-  labels:
+  artifacts:
+  - d3f:MailService
+- labels:
   - jenkins
   - gitlab-ci
   - github
+  - argocd
+  artifacts:
+  - d3f:SoftwareDeploymentTool
 - artifacts:
   - d3f:DatabaseServer
   labels:
@@ -321,6 +353,11 @@ SW_MAP:
   - avas
   - clamav
   - antispam
+- artifacts:
+  - d3f:SSHSession
+  labels:
+  - bastion
+  - ssh
 - artifacts:
   - d3f:DNSServer
   labels:
@@ -395,3 +432,6 @@ INFERRED_RELATIONS:
     - ":{object} d3f:uses d3f:LoginSession ."
     - ":{subject} d3f:produces d3f:AuthenticationLog ."
     - ":{subject} d3f:related d3f:AuthenticationFunction"
+- relation:  "d3f:manages"
+  predicates:
+    - ":{subject} d3f:produces d3f:AdministrativeNetworkTraffic ."
