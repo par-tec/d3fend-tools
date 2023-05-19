@@ -50,6 +50,28 @@ testcases:
                     ':A rdfs:label """mysql""" .',
                     ":B d3f:accesses :C .",
                 ]
+        complex:
+            mermaid: |-
+                graph
+
+                a & b --> c
+                d & f --> g & h
+            expected:
+                [
+                    ":a a :Node .",
+                    ":b a :Node .",
+                    ":c a :Node .",
+                    ":d a :Node .",
+                    ":f a :Node .",
+                    ":g a :Node .",
+                    ":h a :Node .",
+                    ":a d3f:accesses :c .",
+                    ":b d3f:accesses :c .",
+                    ":d d3f:accesses :g .",
+                    ":d d3f:accesses :h .",
+                    ":f d3f:accesses :g .",
+                    ":f d3f:accesses :h .",
+                ]
         label_d3f:
             mermaid: |-
                 graph TD

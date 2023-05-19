@@ -118,6 +118,13 @@
       .mw-50 {
         max-width: 50%;
       }
+      /** Console */
+      .cm-editor {
+        max-height: 500px;
+      }
+      #replOutput {
+        max-height: calc(100vh - 600px);
+      }
     </style>
   </head>
   <body class="">
@@ -167,6 +174,7 @@
     <li class="nav-item"><a class="nav-link active" id="tab1-tab" data-bs-toggle="tab" href="#tab1" role="tab" aria-controls="tab1" aria-selected="true">Diagram</a></li>
     <li class="nav-item"><a class="nav-link" id="tab-attack-tab" data-bs-toggle="tab" href="#tab-attack" role="tab" aria-controls="tab-attack" aria-selected="false">ATT&CK</a></li>
     <li class="nav-item"><a class="nav-link" id="tab-d3fend-tab" data-bs-toggle="tab" href="#tab-d3fend" role="tab" aria-controls="tab-d3fend" aria-selected="false">D3FEND</a></li>
+    <li class="nav-item"><a class="nav-link" id="tab-cwe-tab" data-bs-toggle="tab" href="#tab-cwe" role="tab" aria-controls="tab-cwe" aria-selected="false">CWE</a></li>
     <li class="nav-item"><a class="nav-link" id="tab-rdf-tab" data-bs-toggle="tab" href="#tab30" role="tab" aria-controls="tab30" aria-selected="false">RDF graph</i></a></li>
     <li class="nav-item"><a class="nav-link" id="tab40-tab" data-bs-toggle="tab" href="#tab40" role="tab" aria-controls="tab40" aria-selected="false">Console</i></a></li>
     <li class="nav-item"><a class="nav-link" id="tab50-tab" data-bs-toggle="tab" href="#tab50" role="tab" aria-controls="tab50" aria-selected="false">Help</a></li>
@@ -214,6 +222,14 @@
       <hr style="visibility: hidden">
       <div id="d3fend-summary" class="scrollable-tab">Click on the Generate button to generate or update the report. The operation will take ~20 seconds.</div>
     </div>
+    <div class="tab-pane p-4 fade" id="tab-cwe" role="tabpanel" aria-labelledby="tab-cwe-tab">
+      <p>CWE Summary with artifacts and Weaknesses.
+        <button id="cwe-summary-reload" class="btn btn-primary float-end" type="button"><i class="fas fa-table"></i>Generate</button>
+        <button id="cwe-summary-copy" class="btn btn-primary float-end" type="button"><i class="fas fa-copy"></i>Copy</button>
+      </p>
+      <hr style="visibility: hidden">
+      <div id="cwe-summary" class="scrollable-tab">Click on the Generate button to generate or update the report. The operation will take ~20 seconds.</div>
+    </div>
 
     <div class="tab-pane p-4 fade" id="tab30" role="tabpanel" aria-labelledby="tab-rdf-tab">
       <p>
@@ -229,7 +245,7 @@
         Moreover, you can issue SPARQL queries using the `g.query()` method.
         Currently it does only show the returned value of the last python line, so statements such as print(), while evaluated, are not shown.
         </p>
-        <py-repl output="replOutput">
+        <py-repl id="pyRepl" output="replOutput">
 g1 = status["d3fend"].g
 d3f = dict(g1.namespaces())["d3f"]
 nodes = ontology.query("""
@@ -303,6 +319,7 @@ log = logging.getLogger(__name__)
 # Pyodide imports
 import pyodide_js
 from pyodide import create_proxy
+from pyodide.ffi.wrappers import add_event_listener
 log.info(f"{pyodide_js.version= }")
 import js
 from pathlib import Path
@@ -492,12 +509,12 @@ if not initialized:
     "click", create_proxy(app.mermaid_toggle_fullscreen)
   )
 
-  js.document.getElementById("mermaid-chk-flip").addEventListener(
+  Element("mermaid-chk-flip").element.addEventListener(
     "click", create_proxy(render_mmd)
   )
 
   for element_id in ("mermaid-btn-redraw", "tab1-tab"):
-    js.document.getElementById(element_id).addEventListener(
+    Element(element_id).element.addEventListener(
       "click", create_proxy(render_mmd)
     )
 
@@ -522,27 +539,31 @@ if not initialized:
       status["editor"].setValue(fpath.read_text())
       refresh_all(event)
 
-  # Copy to clipboard.
-  js.document.getElementById("attack-summary-copy").addEventListener(
-    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("attack-summary"))
+  # Event listeners for the summary reports.
+  #   Closure of the loop variable is implemented passing the value as a default argument.
+  for tab in ("attack", "d3fend", "cwe"):
+    add_event_listener(Element(f"{tab}-summary-copy").element, "click",
+      lambda event, tab=tab: app._copy_element_to_clipboard_with_js(f"{tab}-summary")
     )
-  js.document.getElementById("d3fend-summary-copy").addEventListener(
-    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("d3fend-summary"))
-  )
-  js.document.getElementById("turtle-graph-copy").addEventListener(
-    "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("turtle-graph"))
-  )
-  js.document.getElementById("mermaid-graph-copy").addEventListener(
-    "click", create_proxy(lambda event: app._copy_text_to_clipboard(status["mermaid"]["diagram-text"]))
-  )
+    @app.event_listener(f"{tab}-summary-reload", "click")
+    def create_report_attack(event, tab=tab):
+      return create_report(event, tab, getattr(app, f"{tab}_summary_html"))
 
-  @app.event_listener("attack-summary-reload", "click")
-  def create_report_attack(event):
-    return create_report(event, "attack", app.attack_summary_html)
+  # Event listeners for the other tabs.
+  add_event_listener(Element("mermaid-graph-copy").element, "click",
+    lambda event: app._copy_text_to_clipboard(status["mermaid"]["diagram-text"])
+  )
+  add_event_listener(Element("turtle-graph-copy").element, "click",
+    lambda event: app._copy_element_to_clipboard_with_js("turtle-graph")
+  )
+  #js.document.getElementById("turtle-graph-copy").addEventListener(
+  #  "click", create_proxy(lambda event: app._copy_element_to_clipboard_with_js("turtle-graph"))
+  #)
+  #js.document.getElementById("mermaid-graph-copy").addEventListener(
+  #  "click", create_proxy(lambda event: app._copy_text_to_clipboard(status["mermaid"]["diagram-text"]))
+  #)
 
-  @app.event_listener("d3fend-summary-reload", "click")
-  def create_report_d3fend(event):
-    return create_report(event, "d3fend", app.d3fend_summary_html)
+
 
   initialized = True
     </py-script>

@@ -78,6 +78,22 @@ WHERE {
     ?attack rdfs:label ?attack_label .
     }
 """,
+        "cwe": """
+prefix : <https://par-tec.it/example#>
+prefix d3f: <http://d3fend.mitre.org/ontologies/d3fend.owl#>
+prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT DISTINCT
+    ?node ?relation ?artifact ?cwe_id ?cwe_label ?cwe
+WHERE {
+    ?node a :Node .
+    ?node ?relation ?artifact .
+    # boilerplate.
+    ?cwe d3f:cwe-id ?cwe_id .
+    ?cwe ?weakens ?artifact .
+    ?cwe rdfs:label ?cwe_label .
+    }
+""",
     },
 }
 
@@ -85,6 +101,11 @@ WHERE {
 def attack_summary(g: Graph, type="mermaid"):
     ret = list(g.query(QUERIES[type]["attack"]))
     return [HEADERS] + [render_row(row) for row in ret]
+
+
+def attack_summary_html(g: Graph, aggregate=False, type="mermaid"):
+    f_summary = partial(attack_summary, type=type)
+    return f_summary_html(g, aggregate, f_summary)
 
 
 def d3fend_summary(g: Graph, type="mermaid"):
@@ -97,8 +118,30 @@ def d3fend_summary_html(g: Graph, aggregate=False, type="mermaid"):
     return f_summary_html(g, aggregate, f_summary)
 
 
-def attack_summary_html(g: Graph, aggregate=False, type="mermaid"):
-    f_summary = partial(attack_summary, type=type)
+def cwe_summary(g: Graph, type="mermaid"):
+    """
+
+    # Retrieves
+        AuthenticationFunction --> UserAccount
+        ProcessStartFunction --> CreateProcess
+    PREFIX d3f: <%s>
+    SELECT DISTINCT ?w ?specificTarget ?related ?target
+    WHERE {
+        ?w rdfs:subClassOf+ d3f:Weakness .
+        ?w (d3f:weakness-of|d3f:may-be-weakness-of) ?specificTarget .
+        ?specificTarget ?related ?target .
+        ?related rdfs:subPropertyOf* d3f:may-be-associated-with
+    }
+
+
+
+    """
+    ret = list(g.query(QUERIES[type]["cwe"]))
+    return [HEADERS] + [render_row(row) for row in ret]
+
+
+def cwe_summary_html(g: Graph, aggregate=False, type="mermaid"):
+    f_summary = partial(cwe_summary, type=type)
     return f_summary_html(g, aggregate, f_summary)
 
 

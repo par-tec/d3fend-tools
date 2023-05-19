@@ -106,7 +106,18 @@ def _d3fend_short(g):
         g.query(
             f"CONSTRUCT {{ ?s ?p ?q . }}  WHERE {{ ?s rdfs:subClassOf* d3f:{rdf_type}; ?p ?q . }}"
         )
-        for rdf_type in ("DigitalArtifact", "DefensiveTechnique", "OffensiveTechnique")
+        for rdf_type in (
+            "DigitalArtifact",
+            "DefensiveTechnique",
+            "OffensiveTechnique",
+            "Weakness",
+        )
+    )
+    subset += tuple(
+        g.query(
+            f"CONSTRUCT {{ ?s ?p ?q . }}  WHERE {{ ?s rdfs:subPropertyOf* d3f:{rdf_type}; ?p ?q . }}"
+        )
+        for rdf_type in ("d3fend-object-property",)
     )
     short_graph = Graph()
     for x in subset:

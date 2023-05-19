@@ -137,11 +137,6 @@ Hardening an application's configuration involves analyzing not only the applica
     rdfs:subClassOf [ ],
         ns1:ApplicationHardening .
 
-ns1:ApplicationInstaller a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Application Installer" ;
-    rdfs:subClassOf ns1:UserApplication .
-
 ns1:ApplicationInventorySensor a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Application Inventory Sensor" ;
@@ -245,14 +240,6 @@ This technique covers statistical outliers. Though depending on the complexity o
         ns1:Reference-UserLoginActivityMonitoring_MITRE ;
     rdfs:subClassOf [ ],
         ns1:UserBehaviorAnalysis .
-
-ns1:AuthenticationFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Authentication Function" ;
-    ns1:authenticates ns1:UserAccount ;
-    ns1:definition "Authenticates a user account by verifying a presented credential." ;
-    rdfs:subClassOf [ ],
-        ns1:Subroutine .
 
 ns1:AuthenticationServer a owl:Class ;
     rdfs:label "Authentication Server" ;
@@ -386,6 +373,203 @@ ns1:CACertificateFile a owl:Class ;
     rdfs:seeAlso <http://dbpedia.org/resource/Certificate_authority>,
         <http://dbpedia.org/resource/Public_key_infrastructure> ;
     rdfs:subClassOf ns1:CertificateFile .
+
+ns1:CWE-119 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Restriction of Operations within the Bounds of a Memory Buffer" ;
+    ns1:cwe-id "CWE-119" ;
+    ns1:weakness-of ns1:RawMemoryAccessFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-125 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Out-of-bounds Read" ;
+    ns1:cwe-id "CWE-125" ;
+    ns1:weakness-of ns1:RawMemoryAccessFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-190 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Integer Overflow or Wraparound" ;
+    ns1:cwe-id "CWE-190" ;
+    ns1:weakness-of ns1:MathematicalFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-20 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Input Validation" ;
+    ns1:cwe-id "CWE-20" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-22 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')" ;
+    ns1:cwe-id "CWE-22" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-276 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Incorrect Default Permissions" ;
+    ns1:cwe-id "CWE-276" ;
+    ns1:weakness-of ns1:ApplicationInstaller ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-287 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Authentication" ;
+    ns1:cwe-id "CWE-287" ;
+    ns1:weakness-of ns1:AuthenticationFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-306 a owl:Class ;
+    rdfs:label "Missing Authentication for Critical Function" ;
+    ns1:cwe-id "CWE-306" ;
+    rdfs:subClassOf ns1:Weakness .
+
+ns1:CWE-352 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Cross-Site Request Forgery (CSRF)" ;
+    ns1:cwe-id "CWE-352" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-362 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Concurrent Execution using Shared Resource with Improper Synchronization ('Race Condition')" ;
+    ns1:cwe-id "CWE-362" ;
+    ns1:weakness-of ns1:SharedResourceAccessFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-400 a owl:Class ;
+    rdfs:label "Uncontrolled Resource Consumption" ;
+    ns1:cwe-id "CWE-400" ;
+    rdfs:subClassOf ns1:Weakness .
+
+ns1:CWE-416 a owl:Class ;
+    rdfs:label "Use After Free" ;
+    ns1:cwe-id "CWE-416" ;
+    rdfs:subClassOf ns1:Weakness .
+
+ns1:CWE-434 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Unrestricted Upload of File with Dangerous Type" ;
+    ns1:cwe-id "CWE-434" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-476 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "NULL Pointer Dereference" ;
+    ns1:cwe-id "CWE-476" ;
+    ns1:weakness-of ns1:PointerDereferencingFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-502 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Deserialization of Untrusted Data" ;
+    ns1:cwe-id "CWE-502" ;
+    ns1:may-be-weakness-of ns1:UserInputFunction ;
+    ns1:weakness-of ns1:DeserializationFunction ;
+    rdfs:subClassOf [ ],
+        [ ],
+        ns1:Weakness .
+
+ns1:CWE-611 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Restriction of XML External Entity Reference" ;
+    ns1:cwe-id "CWE-611" ;
+    ns1:weakness-of ns1:ExternalContentInclusionFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-77 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Neutralization of Special Elements used in a Command ('Command Injection')" ;
+    ns1:cwe-id "CWE-77" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-78 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Neutralization of Special Elements used in an OS Command ('OS Command Injection')" ;
+    ns1:cwe-id "CWE-78" ;
+    ns1:may-be-weakness-of ns1:EvalFunction,
+        ns1:ProcessStartFunction,
+        ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        [ ],
+        [ ],
+        ns1:Weakness .
+
+ns1:CWE-787 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Out-of-bounds Write" ;
+    ns1:cwe-id "CWE-787" ;
+    ns1:weakness-of ns1:RawMemoryAccessFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-79 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Neutralization of Input During Web Page Generation ('Cross-site Scripting')" ;
+    ns1:cwe-id "CWE-79" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-798 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Use of Hard-coded Credentials" ;
+    ns1:cwe-id "CWE-798" ;
+    ns1:weakness-of ns1:AuthenticationFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-862 a owl:Class ;
+    rdfs:label "Missing Authorization" ;
+    ns1:cwe-id "CWE-862" ;
+    rdfs:comment "Broad and could apply to all resource accesses." ;
+    rdfs:subClassOf ns1:Weakness .
+
+ns1:CWE-89 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Neutralization of Special Elements used in an SQL Command ('SQL Injection')" ;
+    ns1:cwe-id "CWE-89" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-918 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Server-Side Request Forgery (SSRF)" ;
+    ns1:cwe-id "CWE-918" ;
+    ns1:weakness-of ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        ns1:Weakness .
+
+ns1:CWE-94 a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Improper Control of Generation of Code ('Code Injection')" ;
+    ns1:cwe-id "CWE-94" ;
+    ns1:may-be-weakness-of ns1:EvalFunction,
+        ns1:UserInputFunction ;
+    rdfs:subClassOf [ ],
+        [ ],
+        ns1:Weakness .
 
 ns1:Certificate-basedAuthentication a ns1:CredentialHardening,
         owl:Class,
@@ -945,12 +1129,6 @@ A credential may be:
     rdfs:subClassOf [ ],
         ns1:DecoyObject .
 
-ns1:DeserializationFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Deserialization Function" ;
-    ns1:definition "Function with an input of serialized data which deserializes that data, usually with data parsing methods." ;
-    rdfs:subClassOf ns1:Subroutine .
-
 ns1:DesktopComputer a owl:Class ;
     rdfs:label "Desktop Computer" ;
     ns1:definition "A desktop computer is a personal computer designed for regular use at a single location on or near a desk or table due to its size and power requirements. The most common configuration has a case that houses the power supply, motherboard (a printed circuit board with a microprocessor as the central processing unit (CPU), memory, bus, and other electronic components, disk storage (usually one or more hard disk drives, solid state drives, optical disc drives, and in early models a floppy disk drive); a keyboard and mouse for input; and a computer monitor, speakers, and, often, a printer for output. The case may be oriented horizontally or vertically and placed either underneath, beside, or on top of a desk." ;
@@ -1173,14 +1351,6 @@ ns1:EncryptedTunnels a ns1:NetworkIsolation,
     rdfs:subClassOf [ ],
         ns1:NetworkIsolation .
 
-ns1:EvalFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Eval Function" ;
-    ns1:definition "Takes inputs of strings and evaluations them as expressions." ;
-    ns1:invokes ns1:Subroutine ;
-    rdfs:subClassOf [ ],
-        ns1:Subroutine .
-
 ns1:ExceptionHandler a owl:Class ;
     rdfs:label "Exception Handler" ;
     ns1:definition "An exception handler is a code segment that processes an exception." ;
@@ -1302,12 +1472,6 @@ On a Windows machine the Windows Defender Application Control (WDAC) policy enfo
     rdfs:subClassOf [ ],
         [ ],
         ns1:ExecutionIsolation .
-
-ns1:ExternalContentInclusionFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "External Content Inclusion Function" ;
-    ns1:definition "External content, strings or data, are inserted into a local document (e.g. xml document) as if it were a native part of that document." ;
-    rdfs:subClassOf ns1:Subroutine .
 
 ns1:FastSymbolicLink a owl:Class ;
     rdfs:label "Fast Symbolic Link" ;
@@ -2261,12 +2425,6 @@ Initial planning of access model and continuous monitoring of the available user
         [ ],
         ns1:Kernel-basedProcessIsolation .
 
-ns1:MathematicalFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Mathematical Function" ;
-    ns1:definition "Computes mathematical expressions." ;
-    rdfs:subClassOf ns1:Subroutine .
-
 ns1:MediaServer a owl:Class ;
     rdfs:label "Media Server" ;
     ns1:definition "A media server is a computer appliance or an application software that stores digital media (video, audio or images) and makes it available over a network. Media servers range from servers that provide video on demand to smaller personal computers or NAS (Network Attached Storage) for the home." ;
@@ -2856,17 +3014,6 @@ A known potential limitation of PACs concerns signing gadgets. Under certain cir
     rdfs:subClassOf [ ],
         ns1:ApplicationHardening .
 
-ns1:PointerDereferencingFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Pointer Dereferencing Function" ;
-    ns1:addresses ns1:MemoryBlock,
-        ns1:Pointer ;
-    ns1:definition "A function which has an operation which dereferences a pointer." ;
-    rdfs:comment "Note, this is not the actual code which performs the dereferencing operation internal to an application runtime." ;
-    rdfs:subClassOf [ ],
-        [ ],
-        ns1:Subroutine .
-
 ns1:PrintServer a owl:Class ;
     rdfs:label "Print Server" ;
     ns1:definition "A print server, or printer server, is a device that connects printers to client computers over a network. It accepts print jobs from the computers and sends the jobs to the appropriate printers, queuing the jobs locally to accommodate the fact that work may arrive more quickly than the printer can actually handle." ;
@@ -3034,14 +3181,6 @@ Comparing loaded code segments of processes with what is expected to have been l
     ns1:kb-reference ns1:Reference-SystemAndMethodForProcessHollowingDetection_CarbonBlackInc ;
     rdfs:subClassOf [ ],
         ns1:ProcessAnalysis .
-
-ns1:ProcessStartFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Process Start Function" ;
-    ns1:definition "A function creates a new computer process, usually by invoking a create process system call." ;
-    ns1:invokes ns1:CreateProcess ;
-    rdfs:subClassOf [ ],
-        ns1:Subroutine .
 
 ns1:ProcessSuspension a ns1:ProcessEviction,
         owl:Class,
@@ -3271,14 +3410,6 @@ ns1:RadioModem a owl:Class ;
     ns1:definition "A radio modem provides the means to send digital data wirelessly.  Radio modems are used to communicate by direct broadcast satellite, WiFi, WiMax, mobile phones, GPS, Bluetooth and NFC. Modern telecommunications and data networks also make extensive use of radio modems where long distance data links are required. Such systems are an important part of the PSTN, and are also in common use for high-speed computer network links to outlying areas where fiber optic is not economical." ;
     rdfs:isDefinedBy <http://dbpedia.org/resource/Modem#Radio> ;
     rdfs:subClassOf ns1:Modem .
-
-ns1:RawMemoryAccessFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Raw Memory Access Function" ;
-    ns1:accesses ns1:MemoryBlock ;
-    ns1:definition "A function which accesses raw memory, usually using memory addresses." ;
-    rdfs:subClassOf [ ],
-        ns1:Subroutine .
 
 ns1:RelayPatternAnalysis a ns1:NetworkTrafficAnalysis,
         owl:Class,
@@ -3670,14 +3801,6 @@ If the threshold for detecting a stack anomaly is low, it may not detect a retur
     ns1:kb-reference ns1:Reference-ThreatDetectionForReturnOrientedProgramming_CrowdstrikeInc ;
     rdfs:subClassOf [ ],
         ns1:ProcessAnalysis .
-
-ns1:SharedResourceAccessFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Shared Resource Access Function" ;
-    ns1:accesses ns1:Resource ;
-    ns1:definition "A function which access a shared resource." ;
-    rdfs:subClassOf [ ],
-        ns1:Subroutine .
 
 ns1:SoftwareArtifactServer a owl:Class ;
     rdfs:label "Software Artifact Server" ;
@@ -8552,12 +8675,6 @@ Geolocation data for each user logon attempt is collected and used to create a b
     rdfs:subClassOf [ ],
         ns1:UserBehaviorAnalysis .
 
-ns1:UserInputFunction a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "User Input Function" ;
-    ns1:definition "Generic function that receives direct user input from an untrusted source." ;
-    rdfs:subClassOf ns1:InputFunction .
-
 ns1:UserSessionInitConfigAnalysis a ns1:OperatingSystemMonitoring,
         owl:Class,
         owl:NamedIndividual ;
@@ -8669,6 +8786,643 @@ ns1:ZeroClientComputer a owl:Class ;
     rdfs:isDefinedBy <http://dbpedia.org/resource/Thin_client#Zero_client> ;
     rdfs:subClassOf ns1:ThinClientComputer .
 
+ns1:abuses a owl:ObjectProperty ;
+    rdfs:label "abuses" ;
+    ns1:definition "x abuses y: The entity x applies an artifact y to a wrong thing or person; x applies y badly or incorrectly." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01163606-v> ;
+    rdfs:subPropertyOf ns1:uses ;
+    skos:altLabel "misapplies",
+        "misuses" .
+
+ns1:accessed-by a owl:ObjectProperty ;
+    rdfs:label "accessed-by" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-be-accessed-by ;
+    owl:inverseOf ns1:accesses .
+
+ns1:addressed-by a owl:ObjectProperty ;
+    rdfs:label "addressed-by" ;
+    ns1:definition "x addressed-by y: Relates a resource x (e.g., network host, peripheral device, disk sector, a memory cell or other logical or physical entity) to a discrete address y in an address space that points to it." ;
+    rdfs:domain ns1:Resource ;
+    rdfs:range ns1:Identifier ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:addresses .
+
+ns1:adds a owl:ObjectProperty ;
+    rdfs:label "adds" ;
+    ns1:definition "x adds y: The subject x adds a data object y, such as a file, to some other digital artifact, such as a directory. Examples include an agent or technique adding a record to a database. or a domain entry to a DNS server." ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-add .
+
+ns1:assessed-by a owl:ObjectProperty ;
+    rdfs:label "assessed-by" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:assesses .
+
+ns1:attached-to a owl:ObjectProperty ;
+    rdfs:label "attached-to" ;
+    ns1:definition "x attached-to y: A subject x is joined in close association to an object y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01980375-s> ;
+    rdfs:seeAlso "d3f:connects" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:authenticates a owl:ObjectProperty ;
+    rdfs:label "authenticates" ;
+    ns1:definition "x authenticates y: The subject x establishes the authenticity of some y. This relation indicates an authentication event has occurred." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01980375-s> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:author a owl:ObjectProperty ;
+    rdfs:label "author" ;
+    rdfs:subPropertyOf ns1:creator .
+
+ns1:authorizes a owl:ObjectProperty ;
+    rdfs:label "authorizes" ;
+    ns1:definition "x authorizes y: A subject x grants authorization or clearance for an agent y to use an object.  This relation indicates an authorization event has occurred." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00804987-v> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/00805664-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:blocks a owl:ObjectProperty ;
+    rdfs:label "blocks" ;
+    ns1:definition "x blocks y: The entity x blocks off the use of digital artifact y by reference to a block or allow list (or both.)" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01480024-v> ;
+    rdfs:subPropertyOf ns1:counters,
+        ns1:filters .
+
+ns1:broader a owl:ObjectProperty ;
+    rdfs:label "broader" ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:broader-transitive a owl:ObjectProperty ;
+    rdfs:label "broader-transitive" ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:cited-by a owl:ObjectProperty ;
+    rdfs:label "cited-by" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:cites .
+
+ns1:claimed-by a owl:ObjectProperty ;
+    rdfs:label "claimed-by" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:claims .
+
+ns1:configures a owl:ObjectProperty ;
+    rdfs:label "configures" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:connects a owl:ObjectProperty ;
+    rdfs:label "connects" ;
+    ns1:definition "x connects y: The subject x joins system y by means of communication equipment (to some other system, typically the adversary-targeted host)." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01071413-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:contained-by a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "contained-by" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-be-contained-by ;
+    owl:inverseOf ns1:contains .
+
+ns1:copies a owl:ObjectProperty ;
+    rdfs:label "copies" ;
+    ns1:definition "x copies y: An technique or agent x reproduces or makes and exact copy of some digital artifact y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01738810-v> ;
+    rdfs:subPropertyOf ns1:creates .
+
+ns1:copy-of a owl:ObjectProperty ;
+    rdfs:label "copy-of" ;
+    ns1:definition "x copy-of y: The subject x is a duplicate of the object y" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:created-by a owl:ObjectProperty ;
+    rdfs:label "created-by" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-be-created-by ;
+    owl:inverseOf ns1:creates .
+
+ns1:deceives a owl:ObjectProperty ;
+    rdfs:label "deceives" ;
+    rdfs:subPropertyOf ns1:counters .
+
+ns1:deletes a owl:ObjectProperty ;
+    rdfs:label "deletes" ;
+    ns1:definition "x deletes y: A technique or agent x wipes out the digitally or magnetically recorded information of digital object y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01001860-v> ;
+    rdfs:subPropertyOf ns1:evicts,
+        ns1:modifies .
+
+ns1:dependent a owl:ObjectProperty ;
+    rdfs:label "dependent" ;
+    ns1:definition "x dependent y: A dependent y is an entity that requires the fulfillment of the requirements specified in dependency x." ;
+    rdfs:isDefinedBy "http://wordnet-rdf.princeton.edu/id/00729216-a" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:dependsOn a owl:ObjectProperty ;
+    rdfs:label "depends-on" ;
+    rdfs:isDefinedBy "http://wordnet-rdf.princeton.edu/id/00729216-a",
+        "x depends-on y: The entity x is contingent on y being available; x relies on y." ;
+    rdfs:seeAlso "https://www.cisa.gov/what-are-dependencies" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:has-dependent .
+
+ns1:disables a owl:ObjectProperty ;
+    rdfs:label "disables" ;
+    ns1:definition "x disables y: The technique or agent x makes an entity y unable to perform its actions or capabilities." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00513267-v> ;
+    rdfs:subPropertyOf ns1:evicts,
+        ns1:may-disable,
+        ns1:modifies .
+
+ns1:drives a owl:ObjectProperty ;
+    rdfs:label "drives" ;
+    ns1:definition "x drives y: The device driver x causes a system component y to function by controlling it." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01184038-v> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Device_driver> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:employed-by a owl:ObjectProperty ;
+    rdfs:label "employed-by" ;
+    ns1:definition "x employed-by y: An entity x is put into service by a technique or agent y.  Inverse of y employs x." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01161188-v> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:employs .
+
+ns1:enabled-by a owl:ObjectProperty ;
+    rdfs:label "enabled-by" ;
+    ns1:definition "x enabled-by y: A top level technique y enables a tactic x, that is, the property indicates that a technique y is used to put a particular tactic x into action. In other words, y renders x capable or able for some task.  Inverse of enables." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00513958-v> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:enables .
+
+ns1:encrypts a owl:ObjectProperty ;
+    rdfs:label "encrypts" ;
+    ns1:definition "x encrypts y: The entity x converts the ordinary representation of a digital artifact y into a secret code." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00996121-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:end a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-process-object-property .
+
+ns1:enumerates a owl:ObjectProperty ;
+    rdfs:label "enumerates" ;
+    ns1:definition "definition \"x enumerates y: The subject x takes the action of reading from a digital source y to acquire data and create a list of its contents." ;
+    rdfs:subPropertyOf ns1:reads .
+
+ns1:evaluated-by a owl:ObjectProperty ;
+    rdfs:label "evaluated-by" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:evaluates .
+
+ns1:evaluator a owl:ObjectProperty ;
+    rdfs:label "evaluator" ;
+    rdfs:subPropertyOf ns1:contributor .
+
+ns1:exactly a owl:ObjectProperty ;
+    rdfs:label "exactly" ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:expected-latency a owl:ObjectProperty ;
+    rdfs:label "expected-latency" ;
+    rdfs:range [ ] ;
+    rdfs:subPropertyOf ns1:latency .
+
+ns1:extends a owl:ObjectProperty ;
+    rdfs:label "extends" ;
+    ns1:definition "x extends y: The entity x extend the scope or range or area of entity y, especially in the sense of widen the range of applications." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00541315-v> ;
+    rdfs:subPropertyOf ns1:modifies .
+
+ns1:features a owl:ObjectProperty ;
+    rdfs:label "features" ;
+    rdfs:domain ns1:CapabilityFeatureClaim ;
+    rdfs:range ns1:CapabilityFeature ;
+    rdfs:subPropertyOf ns1:claims .
+
+ns1:forges a owl:ObjectProperty ;
+    rdfs:label "forges" ;
+    ns1:definition "x forges y: An technique or agent x counterfeits a digital artifact y, such as a fake credential, with the intent to deceive." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/01657814-v> ;
+    rdfs:subPropertyOf ns1:creates .
+
+ns1:fork a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-process-object-property .
+
+ns1:has-account a owl:ObjectProperty ;
+    rdfs:label "has-account" ;
+    ns1:definition "x has-account y: The subject x has ownership or possession of some account y." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/02209474-v> ;
+    rdfs:subPropertyOf ns1:owns .
+
+ns1:has-audience a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-use-case-object-property .
+
+ns1:has-contribution a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-kb-object-property .
+
+ns1:has-contributor a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-kb-object-property .
+
+ns1:has-evidence a owl:ObjectProperty ;
+    rdfs:label "has-evidence" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:has-feature a owl:ObjectProperty ;
+    rdfs:label "has-feature" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:has-goal a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-use-case-object-property .
+
+ns1:has-implementation a owl:ObjectProperty ;
+    rdfs:label "has-implementation" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:has-location a owl:ObjectProperty ;
+    rdfs:label "has-location" ;
+    ns1:definition "x has-location y: The entity x is situated in a particular spot or position y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02133811-s> ;
+    rdfs:seeAlso <http://www.obofoundry.org/ro/#OBO_REL:located_in> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    skos:altLabel "located_in" .
+
+ns1:has-member a owl:ObjectProperty ;
+    rdfs:label "has-member" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:member-of .
+
+ns1:has-prerequisite a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-use-case-object-property .
+
+ns1:has-procedure a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-general-object-property .
+
+ns1:has-recipient a owl:ObjectProperty ;
+    rdfs:label "has-recipient" ;
+    ns1:definition "x has_recipient y: An agent y is the intended recipient and decoder of the information contained in communication x." ;
+    rdfs:isDefinedBy <http://www.ontologyrepository.com/CommonCoreOntologies/has_recipient> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/09651094-n>,
+        <http://wordnet-rdf.princeton.edu/id/09788768-n> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:has-sender a owl:ObjectProperty ;
+    rdfs:label "has-sender" ;
+    ns1:definition "x has_sender y: An agent y is the sender and encoder of the information contained in communication x." ;
+    rdfs:isDefinedBy <http://www.ontologyrepository.com/CommonCoreOntologies/has_sender> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/10598214-n> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:has-weakness a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:may-have-weakness .
+
+ns1:hides a owl:ObjectProperty ;
+    rdfs:label "hides" ;
+    ns1:definition "x hides y: A technique or operation x conceals the digital artifact y." ;
+    rdfs:range ns1:DigitalArtifact ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:identifies a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:impairs a owl:ObjectProperty ;
+    rdfs:label "impairs" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:implemented-by a owl:ObjectProperty ;
+    rdfs:label "implemented-by" ;
+    rdfs:range ns1:CapabilityImplementation ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:implements .
+
+ns1:injects a owl:ObjectProperty ;
+    rdfs:label "injects" ;
+    ns1:definition "x injects y: The subject x takes the action of exploiting a security flaw by introducing (injecting) y, which is code or data that will change the course of execution or state of a computing process to an alternate course or state. Typically code injection is associated with adversaries intending the alternate course to facilitate a malevolent purpose; however, code injection can be unintentional or the intentions behind it may be good or benign." ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Code_injection>,
+        <http://wordnet-rdf.princeton.edu/id/00916722-v> ;
+    rdfs:subPropertyOf ns1:executes .
+
+ns1:installs a owl:ObjectProperty ;
+    rdfs:label "installs" ;
+    ns1:definition "x installs y: An entity x sets up a digital artifact y for subsequent use.  For example, an installation program can install application software." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01572394-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:instructed-by a owl:ObjectProperty ;
+    rdfs:label "instructed-by" ;
+    ns1:definition "definition \"x instructed-by y: A subject x takes machine instructions from object y.\"" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:instructs a owl:ObjectProperty ;
+    rdfs:label "instructs" ;
+    ns1:definition "definition \"x instructs y: A subject x delivers machine instructions to object y.\"" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:interprets a owl:ObjectProperty ;
+    rdfs:label "interprets" ;
+    ns1:definition "x interprets y: The subject x interprets the executable script y. The sense of interprets is here 'Parse the source code and perform its behavior directly.'" ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Interpreter_(computing)> ;
+    rdfs:subPropertyOf ns1:executes,
+        ns1:may-interpret .
+
+ns1:inventoried-by a owl:ObjectProperty ;
+    rdfs:label "inventoried-by" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:inventories .
+
+ns1:invoked-by a owl:ObjectProperty ;
+    rdfs:label "invoked-by" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-be-invoked-by ;
+    owl:inverseOf ns1:invokes .
+
+ns1:kb-reference a owl:ObjectProperty ;
+    rdfs:label "kb-reference" ;
+    rdfs:subPropertyOf ns1:d3fend-kb-object-property ;
+    owl:inverseOf ns1:kb-reference-of ;
+    skos:altLabel "has-technique-reference" .
+
+ns1:license a owl:ObjectProperty ;
+    rdfs:label "license" ;
+    rdfs:range [ ] ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:loaded-by a owl:ObjectProperty ;
+    rdfs:label "loaded-by" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:loads .
+
+ns1:manages a owl:ObjectProperty ;
+    rdfs:label "manages" ;
+    ns1:definition "x manages y: The technique or agent x watches and directs the use of a digital artifact y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02447914-v> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    skos:altLabel "oversees",
+        "supervises" .
+
+ns1:mapped-by a owl:ObjectProperty ;
+    rdfs:label "mapped-by" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:maps .
+
+ns1:may-be-deceived-by a owl:ObjectProperty ;
+    rdfs:label "may-be-deceived-by" ;
+    ns1:pref-label "may be deceived by" ;
+    rdfs:subPropertyOf ns1:attack-may-be-countered-by ;
+    owl:inverseOf ns1:may-deceive .
+
+ns1:may-be-detected-by a owl:ObjectProperty ;
+    rdfs:label "may-be-detected-by" ;
+    ns1:pref-label "may be detected by" ;
+    rdfs:subPropertyOf ns1:attack-may-be-countered-by ;
+    owl:inverseOf ns1:may-detect .
+
+ns1:may-be-evicted-by a owl:ObjectProperty ;
+    rdfs:label "may-be-evicted-by" ;
+    ns1:pref-label "may be evicted by" ;
+    rdfs:subPropertyOf ns1:attack-may-be-countered-by ;
+    owl:inverseOf ns1:may-evict .
+
+ns1:may-be-hardened-against-by a owl:ObjectProperty ;
+    rdfs:label "may-be-hardened-against-by" ;
+    ns1:pref-label "may be hardened against by" ;
+    rdfs:subPropertyOf ns1:attack-may-be-countered-by ;
+    owl:inverseOf ns1:may-harden .
+
+ns1:may-be-isolated-by a owl:ObjectProperty ;
+    rdfs:label "may-be-isolated-by" ;
+    ns1:pref-label "may be isolated by" ;
+    rdfs:subPropertyOf ns1:attack-may-be-countered-by ;
+    owl:inverseOf ns1:may-isolate .
+
+ns1:may-transfer a owl:ObjectProperty ;
+    rdfs:label "may-transfer" ;
+    ns1:definition "x may-transfer y: They entity x might send the thing y; that is, 'x transfers y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:modified-by a owl:ObjectProperty ;
+    rdfs:label "modified-by" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-be-modified-by ;
+    owl:inverseOf ns1:modifies .
+
+ns1:modifies-part a owl:ObjectProperty ;
+    rdfs:label "modifies-part" ;
+    ns1:definition "x modifies-part y: The entity x modifies a part of y.  [Note: This is a rolification property for the rule 'if one modifies a part of a whole, they modify the whole.'  Reasoning for this and similar semantics to come are under evaluation and not part of current d3fend inferences.]" ;
+    rdfs:subPropertyOf ns1:may-modify ;
+    owl:propertyChainAxiom [ ] .
+
+ns1:monitors a owl:ObjectProperty ;
+    rdfs:label "monitors" ;
+    ns1:definition "x monitors y: The technique or agent x keep tabs on; keeps an eye on; or keep the digital artifact y under surveillance." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02167732-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:detects .
+
+ns1:narrower a owl:ObjectProperty ;
+    rdfs:label "narrower" ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:narrower-transitive a owl:ObjectProperty ;
+    rdfs:label "narrower-transitive" ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:neutralizes a owl:ObjectProperty ;
+    rdfs:label "neutralizes" ;
+    ns1:definition "x neutralizes y: The technique x makes the execution of actions of y ineffective by preventing or counterbalancing the effect of y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00471015-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:next a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-process-object-property .
+
+ns1:obfuscates a owl:ObjectProperty ;
+    rdfs:label "obfuscates" ;
+    ns1:definition "x obfuscates y: The technique x makes the digital artifact y unclear or obscure.  Typically obfuscation is a way to hide a digital artifact from discovery, use, or both." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00942245-v> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Obfuscation_(software)> ;
+    rdfs:subPropertyOf ns1:evicts,
+        ns1:modifies .
+
+ns1:originates-from a owl:ObjectProperty ;
+    rdfs:label "originates-from" ;
+    ns1:definition "x originates-from y: The digital event or artifact x began its network transit from a physical location y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02749218-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:process-image-path a owl:ObjectProperty ;
+    rdfs:label "process-image-path" ;
+    ns1:definition "x process-image-path y: The filepath y is the process image path for the process x, indicating the path to the resource from which the process's image was loaded." ;
+    rdfs:subPropertyOf ns1:process-property ;
+    skos:altLabel "processImagePath" .
+
+ns1:process-parent a owl:ObjectProperty ;
+    rdfs:label "process-parent" ;
+    ns1:definition "x process-parent y: The process y created the process x (directly) with a create process event." ;
+    rdfs:subPropertyOf ns1:process-ancestor ;
+    skos:altLabel "processParent" .
+
+ns1:process-user a owl:ObjectProperty ;
+    rdfs:label "process-user" ;
+    ns1:definition "x process-user y: The process x has been executed by the user y." ;
+    rdfs:subPropertyOf ns1:process-property ;
+    skos:altLabel "processUser" .
+
+ns1:produced-by a owl:ObjectProperty ;
+    rdfs:label "produced-by" ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:produces .
+
+ns1:producer a owl:ObjectProperty ;
+    rdfs:label "producer" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:produces .
+
+ns1:provider a owl:ObjectProperty ;
+    rdfs:label "provider" ;
+    ns1:definition "x provider y: A provider y is an entity that supplies a service, system, or data resources to a dependent entity x." ;
+    rdfs:isDefinedBy "http://wordnet-rdf.princeton.edu/id/05901034-n" ;
+    rdfs:seeAlso "http://wordnet-rdf.princeton.edu/id/10696710-n" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:provides a owl:ObjectProperty ;
+    rdfs:label "provides" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:publisher a owl:ObjectProperty ;
+    rdfs:label "publisher" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:publishes .
+
+ns1:queries a owl:ObjectProperty ;
+    rdfs:label "queries" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-query .
+
+ns1:recorded-in a owl:ObjectProperty ;
+    rdfs:label "recorded-in" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:records a owl:ObjectProperty ;
+    rdfs:label "records" ;
+    ns1:definition "x records y: The digital artifact x makes a record of events y; set down in permanent form." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01002259-v> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/01003181-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:related a owl:ObjectProperty ;
+    rdfs:label "related" ;
+    ns1:definition "x related y: x has a symmetric associative relation to y." ;
+    rdfs:isDefinedBy skos:related ;
+    rdfs:subPropertyOf ns1:semantic-relation .
+
+ns1:seller a owl:ObjectProperty ;
+    rdfs:label "seller" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:sells .
+
+ns1:spoofs a owl:ObjectProperty ;
+    rdfs:label "spoofs" ;
+    ns1:definition "x spoofs y: The technique x creates a fake instance of a digital artifact y; that is, y is a decoy, fake, or counterfeit." ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Spoof>,
+        <http://wordnet-rdf.princeton.edu/id/03323383-n> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:deceives-with .
+
+ns1:start a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-process-object-property .
+
+ns1:strengthens a owl:ObjectProperty ;
+    rdfs:label "strengthens" ;
+    ns1:definition "x strengthens y: The technique x make digital artifact y resistant (to harm or misuse.)" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00165779-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:submitter a owl:ObjectProperty ;
+    rdfs:label "submitter" ;
+    rdfs:subPropertyOf ns1:contributor .
+
+ns1:summarizes a owl:ObjectProperty ;
+    rdfs:label "summarizes" ;
+    ns1:definition "x summarizes y: The sensor x summarizes a set y of events concerning digital artifacts over time" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02758570-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:suspends a owl:ObjectProperty ;
+    rdfs:label "suspends" ;
+    ns1:definition "x suspends y: The agent or technique x pauses entity y." ;
+    rdfs:isDefinedBy "http://wordnet-rdf.princeton.edu/id/00543748-v" ;
+    rdfs:subPropertyOf ns1:evicts .
+
+ns1:terminates a owl:ObjectProperty ;
+    rdfs:label "terminates" ;
+    ns1:definition "x terminates y: The technique x brings to an end or halt to some activity y." ;
+    ns1:synonym "aborts" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00353480-v> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/00354493-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:evicts .
+
+ns1:unmounts a owl:ObjectProperty ;
+    rdfs:label "unmounts" ;
+    ns1:definition "x unmounts y: An operation x removes the access via computer system's file system the availability of files and directories on a storage artifact y.  Unmounts reverse or undo prior mount operations." ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Mount_(computing)> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:updates a owl:ObjectProperty ;
+    rdfs:label "updates" ;
+    ns1:definition "x updates y: The technique x updates the software for component y." ;
+    rdfs:subPropertyOf ns1:hardens,
+        ns1:modifies .
+
+ns1:use-limits a owl:ObjectProperty ;
+    rdfs:label "use-limits" ;
+    ns1:definition "x use-limits y: An entity x specifies a designated number of uses beyond which some entity y cannot function or must be terminated." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/13781154-n> ;
+    rdfs:subPropertyOf ns1:limits .
+
+ns1:used-by a owl:ObjectProperty ;
+    rdfs:label "used-by" ;
+    ns1:definition "x used-by y: is inverse of y uses x." ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:uses .
+
+ns1:validates a owl:ObjectProperty ;
+    rdfs:label "validates" ;
+    ns1:definition "x validates y: The technique x proves the digital artifact y is valid; that is, x shows or confirms the validity of y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00669142-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:hardens .
+
+ns1:validator a owl:ObjectProperty ;
+    rdfs:label "validator" ;
+    rdfs:subPropertyOf ns1:contributor .
+
+ns1:verifies a owl:ObjectProperty ;
+    rdfs:label "verifies" ;
+    ns1:definition "x verifies y: A technique x confirms the truth of a digital artifact y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00666401-v> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Formal_verification>,
+        <http://dbpedia.org/resource/Runtime_verification>,
+        <http://wordnet-rdf.princeton.edu/id/00665271-v> ;
+    rdfs:subPropertyOf ns1:analyzes,
+        ns1:associated-with .
+
+ns1:weakness-of a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:may-be-weakness-of .
+
+ns1:writes a owl:ObjectProperty ;
+    rdfs:label "writes" ;
+    ns1:definition "x writes y: The subject x takes the action of writing to a digital artifact y to store data and placing it into persistent memory for later reference." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/01000931-v> ;
+    rdfs:subPropertyOf ns1:accesses .
+
 ns1:ActiveCertificateAnalysis a ns1:ActiveCertificateAnalysis,
         ns1:CertificateAnalysis,
         owl:Class,
@@ -8720,6 +9474,11 @@ ns1:ApplicationConfigurationDatabaseRecord a owl:Class,
     ns1:definition "A database record holding information used to configure the parameters and initial settings for an application." ;
     rdfs:subClassOf ns1:ApplicationConfiguration,
         ns1:ConfigurationDatabaseRecord .
+
+ns1:ApplicationInstaller a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Application Installer" ;
+    rdfs:subClassOf ns1:UserApplication .
 
 ns1:ApplicationLayerFirewall a owl:Class ;
     rdfs:label "Application Layer Firewall" ;
@@ -8931,6 +9690,12 @@ ns1:DefaultUserAccount a owl:Class,
     rdfs:seeAlso <https://docs.microsoft.com/en-us/windows/security/identity-protection/access-control/local-accounts> ;
     rdfs:subClassOf ns1:UserAccount .
 
+ns1:DeserializationFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Deserialization Function" ;
+    ns1:definition "Function with an input of serialized data which deserializes that data, usually with data parsing methods." ;
+    rdfs:subClassOf ns1:Subroutine .
+
 ns1:DisplayAdapter a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Display Adapter" ;
@@ -8966,6 +9731,12 @@ Endpoints are configured to periodically generate and transmit a secure heartbea
     ns1:kb-reference ns1:Reference-IntrusionDetectionUsingAHeartbeat_SophosLtd ;
     ns1:synonym "Endpoint Health Telemetry" ;
     rdfs:subClassOf ns1:OperatingSystemMonitoring .
+
+ns1:ExternalContentInclusionFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "External Content Inclusion Function" ;
+    ns1:definition "External content, strings or data, are inserted into a local document (e.g. xml document) as if it were a native part of that document." ;
+    rdfs:subClassOf ns1:Subroutine .
 
 ns1:FileHash a owl:Class,
         owl:NamedIndividual ;
@@ -9182,6 +9953,12 @@ ns1:MailService a owl:Class ;
         <http://dbpedia.org/resource/Message_transfer_agent> ;
     rdfs:subClassOf ns1:NetworkService ;
     skos:altLabel "Email Service" .
+
+ns1:MathematicalFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Mathematical Function" ;
+    ns1:definition "Computes mathematical expressions." ;
+    rdfs:subClassOf ns1:Subroutine .
 
 ns1:MemoryAddressSpace a owl:Class,
         owl:NamedIndividual ;
@@ -9420,6 +10197,17 @@ NOTE: not synonymous with data link as a data link can be over a telecommunicati
     rdfs:seeAlso "https://dbpedia.org/resource/Physical_layer" ;
     rdfs:subClassOf ns1:Link .
 
+ns1:PointerDereferencingFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Pointer Dereferencing Function" ;
+    ns1:addresses ns1:MemoryBlock,
+        ns1:Pointer ;
+    ns1:definition "A function which has an operation which dereferences a pointer." ;
+    rdfs:comment "Note, this is not the actual code which performs the dereferencing operation internal to an application runtime." ;
+    rdfs:subClassOf [ ],
+        [ ],
+        ns1:Subroutine .
+
 ns1:PowerShellProfileScript a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "PowerShell Profile Script" ;
@@ -9441,6 +10229,14 @@ ns1:ProcessEnvironmentVariable a owl:Class,
     rdfs:isDefinedBy <http://dbpedia.org/resource/Environment_variable> ;
     rdfs:subClassOf ns1:ApplicationConfiguration ;
     skos:altLabel "Environment Variable" .
+
+ns1:ProcessStartFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Process Start Function" ;
+    ns1:definition "A function creates a new computer process, usually by invoking a create process system call." ;
+    ns1:invokes ns1:CreateProcess ;
+    rdfs:subClassOf [ ],
+        ns1:Subroutine .
 
 ns1:ProcessTree a owl:Class,
         owl:NamedIndividual ;
@@ -9517,6 +10313,14 @@ ns1:Session a owl:Class ;
     ns1:definition "In computer science, in particular networking, a session is a semi-permanent interactive information interchange, also known as a dialogue, a conversation or a meeting, between two or more communicating devices, or between a computer and user (see Login session). A session is set up or established at a certain point in time, and then torn down at some later point. An established communication session may involve more than one message in each direction. A session is typically, but not always, stateful, meaning that at least one of the communicating parts needs to save information about the session history in order to be able to communicate, as opposed to stateless communication, where the communication consists of independent requests with responses." ;
     rdfs:isDefinedBy <http://dbpedia.org/resource/Session_(computer_science)> ;
     rdfs:subClassOf ns1:DigitalArtifact .
+
+ns1:SharedResourceAccessFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Shared Resource Access Function" ;
+    ns1:accesses ns1:Resource ;
+    ns1:definition "A function which access a shared resource." ;
+    rdfs:subClassOf [ ],
+        ns1:Subroutine .
 
 ns1:ShimDatabase a owl:Class,
         owl:NamedIndividual ;
@@ -9815,6 +10619,284 @@ ns1:WirelessAccessPoint a owl:Class ;
         ns1:RFTransceiver ;
     skos:altLabel "WAP" .
 
+ns1:addresses a owl:ObjectProperty ;
+    rdfs:label "addresses" ;
+    ns1:definition "x addresses y: Relates a pointer x to a digital artifact y located in the address space to which x points. The address space is part of some digital store, whether it be in memory, an image, or a persistent storage device." ;
+    rdfs:domain ns1:Identifier ;
+    rdfs:range ns1:Resource ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Pointer_(computer_programming)>,
+        <http://wordnet-rdf.princeton.edu/id/02253826-v> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    skos:altLabel "points-to" .
+
+ns1:analyzes a owl:ObjectProperty ;
+    rdfs:label "analyzes" ;
+    ns1:definition "x analyzes y: The subject x break down object y into components or essential features, assessing y by quantitative methods, qualitative methods, or both.  Usually the analysis is done in terms of some model or framework." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00738221-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:detects .
+
+ns1:assesses a owl:ObjectProperty ;
+    rdfs:label "assesses" ;
+    rdfs:domain ns1:DefensiveTechniqueClaim ;
+    rdfs:range ns1:DefensiveTechniqueAssessment ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:cites a owl:ObjectProperty ;
+    rdfs:label "cites" ;
+    rdfs:range ns1:InformationContentEntity ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property ;
+    owl:inverseOf ns1:d3fend-catalog-object-property .
+
+ns1:contains a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "contains" ;
+    ns1:definition "x contains y: A core relation that holds between a whole x and its part y.  Equivalent to relational concept 'has part' and thus transitive." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02639021-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-contain .
+
+ns1:creator a owl:ObjectProperty ;
+    rdfs:label "creator" ;
+    rdfs:subPropertyOf ns1:contributor .
+
+ns1:d3fend-general-object-property a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
+ns1:deceives-with a owl:ObjectProperty ;
+    rdfs:label "deceives-with" ;
+    rdfs:subPropertyOf ns1:d3fend-tactical-verb-property .
+
+ns1:employs a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:enables a owl:ObjectProperty ;
+    rdfs:label "enables" ;
+    ns1:definition "x enables y: A top level technique x enables a tactic y, that is, the property indicates that a technique x is used to put a particular tactic y into action. In other words, x renders y capable or able for some task." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00513958-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:evaluates a owl:ObjectProperty ;
+    rdfs:label "evaluates" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-evaluate .
+
+ns1:filters a owl:ObjectProperty ;
+    rdfs:label "filters" ;
+    ns1:definition "x filters y: An technique or agent x removes some specified set of of entities from the content of a digital artifact y, by passing an artifact's content through a filter.  A filter is a device that removes something from whatever passes through it." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01461293-v> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/03344588-n>,
+        <http://www.ontologyrepository.com/CommonCoreOntologies/Filter> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:isolates .
+
+ns1:has-dependent a owl:ObjectProperty ;
+    rdfs:label "has-dependent" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:identified-by a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    owl:inverseOf ns1:identified-by .
+
+ns1:implements a owl:ObjectProperty ;
+    rdfs:label "implements" ;
+    rdfs:domain ns1:CapabilityImplementation ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:inventories a owl:ObjectProperty ;
+    rdfs:label "inventories" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:invokes a owl:ObjectProperty ;
+    rdfs:label "invokes" ;
+    ns1:definition "x invokes y: The subject x invokes a system service y by use of an instruction object y that interrupts the program being executed and passes control to the operating system to perform that operation." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/06599393-n> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/System_call> ;
+    rdfs:subPropertyOf ns1:executes,
+        ns1:may-invoke ;
+    skos:altLabel "calls" .
+
+ns1:isolates a owl:ObjectProperty ;
+    rdfs:label "isolates" ;
+    ns1:definition "x isolates y: The technique or agent x sets digital artifact y apart from other digital artifacts, sequestering y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00496744-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:d3fend-tactical-verb-property .
+
+ns1:kb-reference-of a owl:ObjectProperty ;
+    rdfs:label "kb-reference-of" ;
+    ns1:definition "x kb-is-example-of y: The reference x is an example of technique y." ;
+    rdfs:domain ns1:Reference ;
+    rdfs:range ns1:Technique ;
+    rdfs:subPropertyOf ns1:d3fend-kb-object-property ;
+    skos:altLabel "kb-is-example-of" .
+
+ns1:latency a owl:ObjectProperty ;
+    rdfs:label "latency" ;
+    rdfs:range [ ] ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:limits a owl:ObjectProperty ;
+    rdfs:label "limits" ;
+    ns1:definition "x limits y: An entity x specifies a designated limit beyond which some entity y cannot function or must be terminated." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/13781154-n> ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/13780436-n> ;
+    rdfs:subPropertyOf ns1:restricts ;
+    skos:altLabel "cutoff" .
+
+ns1:loads a owl:ObjectProperty ;
+    rdfs:label "loads" ;
+    ns1:definition "x loads y: The technique or process x transfers a software from a storage y to a computer's memory for subsequent execution." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02236692-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:maps a owl:ObjectProperty ;
+    rdfs:label "maps" ;
+    rdfs:subPropertyOf ns1:may-map .
+
+ns1:may-access a owl:ObjectProperty ;
+    rdfs:label "may-access" ;
+    ns1:definition "x may-access y: They entity x may access the thing y; that is, 'x accesses y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with ;
+    owl:inverseOf ns1:may-be-accessed-by .
+
+ns1:may-add a owl:ObjectProperty ;
+    rdfs:label "may-add" ;
+    ns1:definition "x may-add y: They entity x may add the thing y; that is, 'x adds y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-be-contained-by a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "may-be-contained-by" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with ;
+    owl:inverseOf ns1:may-contain .
+
+ns1:may-be-created-by a owl:ObjectProperty ;
+    rdfs:label "may-be-created-by" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with ;
+    owl:inverseOf ns1:may-create .
+
+ns1:may-be-invoked-by a owl:ObjectProperty ;
+    rdfs:label "may-be-invoked-by" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with ;
+    owl:inverseOf ns1:may-invoke .
+
+ns1:may-be-modified-by a owl:ObjectProperty ;
+    rdfs:label "may-be-modified-by" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with ;
+    owl:inverseOf ns1:may-modify .
+
+ns1:may-be-weakness-of a owl:ObjectProperty ;
+    rdfs:domain ns1:Weakness ;
+    rdfs:range ns1:Artifact ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-deceive a owl:ObjectProperty ;
+    rdfs:label "may-deceive" ;
+    ns1:pref-label "may deceive" ;
+    rdfs:subPropertyOf ns1:may-counter-attack .
+
+ns1:may-detect a owl:ObjectProperty ;
+    rdfs:label "may-detect" ;
+    ns1:pref-label "may detect" ;
+    rdfs:subPropertyOf ns1:may-counter-attack .
+
+ns1:may-disable a owl:ObjectProperty ;
+    rdfs:label "may-disable" ;
+    rdfs:subPropertyOf ns1:may-evict .
+
+ns1:may-evaluate a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-execute a owl:ObjectProperty ;
+    rdfs:label "may-execute" ;
+    ns1:definition "x may execute y: The subject x might take the action of carrying out (executing) y, which is a single software module, function, or instruction." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-harden a owl:ObjectProperty ;
+    rdfs:label "may-harden" ;
+    ns1:pref-label "may harden" ;
+    rdfs:subPropertyOf ns1:may-counter-attack .
+
+ns1:may-have-weakness a owl:ObjectProperty ;
+    rdfs:domain ns1:Artifact ;
+    rdfs:range ns1:Weakness ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-interpret a owl:ObjectProperty ;
+    rdfs:label "may-interpret" ;
+    ns1:definition "x may-interpret y: They entity x may interpret the thing y; that is, 'x interprets y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-isolate a owl:ObjectProperty ;
+    rdfs:label "may-isolate" ;
+    ns1:pref-label "may isolate" ;
+    rdfs:subPropertyOf ns1:may-counter-attack .
+
+ns1:may-map a owl:ObjectProperty ;
+    rdfs:label "may-map" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-produce a owl:ObjectProperty ;
+    rdfs:label "may-produce" ;
+    ns1:definition "x may-produce y: They entity x may produce the thing y; that is, 'x produces y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-query a owl:ObjectProperty ;
+    rdfs:label "may-query" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-run a owl:ObjectProperty ;
+    rdfs:label "may-run" ;
+    ns1:definition "x may-run y: They entity x may run the thing y; that is, 'x runs y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:member-of a owl:ObjectProperty ;
+    rdfs:label "member-of" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:owns a owl:ObjectProperty ;
+    rdfs:label "owns" ;
+    ns1:definition "x owns y: The subject x has ownership or possession of some object y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02209474-v> ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Ownership> ;
+    rdfs:subPropertyOf ns1:associated-with ;
+    skos:altLabel "possesses" .
+
+ns1:process-ancestor a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "process-ancestor" ;
+    ns1:definition "x process-ancestor y: The process y is a process ancestor of process x, indicating one or more process creation events were conducted were started at process y and subsequently created process x." ;
+    rdfs:subPropertyOf ns1:process-property .
+
+ns1:publishes a owl:ObjectProperty ;
+    rdfs:label "publishes" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:reads a owl:ObjectProperty ;
+    rdfs:label "reads" ;
+    ns1:definition "x reads y: The subject x takes the action of reading from a digital source y to acquire data and placing it into volatile memory for processing." ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Reading_(computer)>,
+        <http://wordnet-rdf.princeton.edu/id/00629157-v> ;
+    rdfs:subPropertyOf ns1:accesses .
+
+ns1:restricts a owl:ObjectProperty ;
+    rdfs:label "restricts" ;
+    ns1:definition "x restricts y: An entity x bounds the use of entity y." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00234091-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
+ns1:runs a owl:ObjectProperty ;
+    rdfs:label "runs" ;
+    ns1:definition "x runs y: To carry out a process or program y, as on a computer or a machine x; where y may be a large software assembly or a specific module or instruction.  Examples: \"run a new program on the Mac\"; \"the computer runs the application software\"." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/02569242-v> ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-run .
+
+ns1:sells a owl:ObjectProperty ;
+    rdfs:label "sells" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
 ns1:ArtifactServer a owl:Class ;
     rdfs:label "Artifact Server" ;
     ns1:definition "A digital artifact server provides access services to digital artifacts in a repository.  It provides an associated set of data management, search and access methods allowing application-independent access to the content." ;
@@ -9827,6 +10909,14 @@ ns1:AsymmetricKey a owl:Class ;
     ns1:definition "Asymmetric keys are public and private keys, paired such that asymmetric (public-key) cryptography algorithms can be implemented using them. Public-key cryptography, or asymmetric cryptography, is any cryptographic system that uses pairs of keys: public keys that may be disseminated widely paired with private keys which are known only to the owner. There are two functions that can be achieved: using a public key to authenticate that a message originated with a holder of the paired private key; or encrypting a message with a public key to ensure that only the holder of the paired private key can decrypt it." ;
     rdfs:seeAlso <http://dbpedia.org/resource/Public-key_cryptography> ;
     rdfs:subClassOf ns1:CryptographicKey .
+
+ns1:AuthenticationFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Authentication Function" ;
+    ns1:authenticates ns1:UserAccount ;
+    ns1:definition "Authenticates a user account by verifying a presented credential." ;
+    rdfs:subClassOf [ ],
+        ns1:Subroutine .
 
 ns1:AuthorizationService a owl:Class ;
     rdfs:label "Authorization Service" ;
@@ -10009,6 +11099,14 @@ ns1:EmailRule a owl:Class,
     rdfs:label "Email Rule" ;
     ns1:definition "A configuration of an email application which is used to apply logical or data processing functions to data processed by the email  application." ;
     rdfs:subClassOf ns1:ApplicationRule .
+
+ns1:EvalFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Eval Function" ;
+    ns1:definition "Takes inputs of strings and evaluations them as expressions." ;
+    ns1:invokes ns1:Subroutine ;
+    rdfs:subClassOf [ ],
+        ns1:Subroutine .
 
 ns1:FileEviction a ns1:DefensiveTechnique,
         owl:Class,
@@ -10709,6 +11807,62 @@ ns1:WebFileResource a owl:Class,
         ns1:NetworkFileResource ;
     skos:altLabel "Web Resource" .
 
+ns1:claims a owl:ObjectProperty ;
+    rdfs:label "claims" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:detects a owl:ObjectProperty ;
+    rdfs:label "detects" ;
+    rdfs:subPropertyOf ns1:counters,
+        ns1:d3fend-tactical-verb-property .
+
+ns1:may-be-accessed-by a owl:ObjectProperty ;
+    rdfs:label "may-be-accessed-by" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-be-tactically-associated-with a owl:ObjectProperty ;
+    rdfs:label "may-be-tactically-associated-with" ;
+    ns1:definition "x may-be-tactically-associated-with y: the defensive technique x may be a tactic that counters offensive technique y." ;
+    rdfs:domain ns1:DefensiveTechnique ;
+    rdfs:range ns1:OffensiveTechnique ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-contain a owl:ObjectProperty,
+        owl:TransitiveProperty ;
+    rdfs:label "may-contain" ;
+    ns1:definition "to potentially have as contents or constituent parts; comprise; include." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-counter a owl:ObjectProperty ;
+    rdfs:label "may-counter" ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-create a owl:ObjectProperty ;
+    rdfs:label "may-create" ;
+    ns1:definition "x may-create y: They entity x may create the entity y; that is, 'x creates y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:may-invoke a owl:ObjectProperty ;
+    rdfs:label "may-invoke" ;
+    ns1:definition "x may-invoke y: They entity x may invoke the thing y; that is, 'x invokes y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:produces a owl:ObjectProperty ;
+    rdfs:label "produces" ;
+    ns1:definition "x produces y: The subject entity x or process produces a data object y, which may be discrete digital object or a stream (e.g., a stream such as network traffic.)" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01625832-v> ;
+    rdfs:seeAlso "creates" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:d3fend-catalog-object-property,
+        ns1:may-produce ;
+    skos:altLabel "outputs" .
+
+ns1:uses a owl:ObjectProperty ;
+    rdfs:label "uses" ;
+    ns1:definition "x uses y: An entity x puts into service a resource or implement y; makes y work or employ for a particular purpose or for its inherent or natural purpose." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01161188-v> ;
+    rdfs:subPropertyOf ns1:associated-with .
+
 ns1:ApplicationConfigurationDatabase a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Application Configuration Database" ;
@@ -10977,6 +12131,14 @@ ns1:RFNode a owl:Class ;
     rdfs:label "RF Node" ;
     rdfs:subClassOf ns1:NetworkNode .
 
+ns1:RawMemoryAccessFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Raw Memory Access Function" ;
+    ns1:accesses ns1:MemoryBlock ;
+    ns1:definition "A function which accesses raw memory, usually using memory addresses." ;
+    rdfs:subClassOf [ ],
+        ns1:Subroutine .
+
 ns1:RemoteSession a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Remote Session" ;
@@ -11211,6 +12373,41 @@ ns1:WebServer a owl:Class,
     ns1:definition "A web server is server software, or hardware dedicated to running this software, that can satisfy client requests on the World Wide Web. A web server can, in general, contain one or more websites. A web server processes incoming network requests over HTTP and several other related protocols. While the major function is to serve content, a full implementation of HTTP also includes ways of receiving content from clients. This feature is used for submitting web forms, including uploading of files." ;
     rdfs:isDefinedBy <http://dbpedia.org/resource/Web_server> ;
     rdfs:subClassOf ns1:Server .
+
+ns1:creates a owl:ObjectProperty ;
+    rdfs:label "creates" ;
+    ns1:definition "x creates y: The subject x bring into existence an object y.  Some technique or agent x creates a persistent digital artifact y (as opposed to production of a consumable or transient object.); i.e., bring forth or generate" ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/01630392-v> ;
+    rdfs:seeAlso "produces" ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-create .
+
+ns1:d3fend-use-case-object-property a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
+ns1:executes a owl:ObjectProperty ;
+    rdfs:label "executes" ;
+    ns1:definition "x executes y: The subject x takes the action of carrying out (executing) y, which is a single software module, function, or instruction." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02569242-v> ;
+    rdfs:subPropertyOf ns1:accesses,
+        ns1:may-execute,
+        ns1:runs .
+
+ns1:may-evict a owl:ObjectProperty ;
+    rdfs:label "may-evict" ;
+    ns1:pref-label "may evict" ;
+    rdfs:subPropertyOf ns1:may-counter,
+        ns1:may-counter-attack .
+
+ns1:may-modify a owl:ObjectProperty ;
+    rdfs:label "may-modify" ;
+    ns1:definition "x may-modify y: They entity x may modify the thing y; that is, 'x modifies y' may be true." ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
+
+ns1:process-property a owl:ObjectProperty ;
+    rdfs:label "process-property" ;
+    ns1:definition "x process-property y: Process x has the a process-property y.  This is generalization for specific process object properties." ;
+    rdfs:subPropertyOf ns1:associated-with .
 
 ns1:AdministrativeNetworkTraffic a owl:Class,
         owl:NamedIndividual ;
@@ -11580,6 +12777,18 @@ ns1:WebNetworkTraffic a owl:Class,
     ns1:definition "Web network traffic is network traffic that uses a standard web protocol." ;
     rdfs:subClassOf ns1:NetworkTraffic .
 
+ns1:contributor a owl:ObjectProperty ;
+    rdfs:range owl:Thing ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property .
+
+ns1:d3fend-kb-object-property a owl:ObjectProperty ;
+    rdfs:label "d3fend-kb-object-property" ;
+    ns1:definition "x d3fend-kb-object-property y: The object y is a d3fend knowledge base object property. These properties allow the linkage of knowledge and information supporting and illustrating the d3fend model." ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
+ns1:d3fend-process-object-property a owl:ObjectProperty ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
 ns1:ArchiveFile a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Archive File" ;
@@ -11814,6 +13023,39 @@ ns1:UserLogonInitResource a owl:Class,
     ns1:definition "A user logon initialization resource contains information used to configure a user's environment when a user logs into a system." ;
     rdfs:subClassOf ns1:LocalResource .
 
+ns1:accesses a owl:ObjectProperty ;
+    rdfs:label "accesses" ;
+    ns1:definition "x accesses y: An subject x takes the action of reading from, writing into, or executing the stored information in the object y. Reads, writes, and executes are specific cases of accesses." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/02673854-n> ;
+    rdfs:range ns1:NetworkResource ;
+    rdfs:subPropertyOf ns1:associated-with,
+        ns1:may-access .
+
+ns1:attack-may-be-countered-by a owl:ObjectProperty ;
+    rdfs:label "attack-may-be-countered-by" ;
+    rdfs:subPropertyOf ns1:may-be-tactically-associated-with .
+
+ns1:counters a owl:ObjectProperty ;
+    rdfs:label "counters" ;
+    rdfs:subPropertyOf ns1:d3fend-catalog-object-property,
+        ns1:may-counter .
+
+ns1:d3fend-tactical-verb-property a owl:ObjectProperty ;
+    rdfs:label "d3fend-tactical-verb-property" ;
+    rdfs:domain ns1:DefensiveTechnique ;
+    rdfs:range ns1:Artifact ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
+ns1:evicts a owl:ObjectProperty ;
+    rdfs:label "evicts" ;
+    rdfs:subPropertyOf ns1:counters,
+        ns1:d3fend-tactical-verb-property,
+        ns1:may-evict .
+
+ns1:may-counter-attack a owl:ObjectProperty ;
+    rdfs:label "may-counter-attack" ;
+    rdfs:subPropertyOf ns1:may-be-tactically-associated-with .
+
 ns1:CredentialEviction a ns1:DefensiveTechnique,
         owl:Class,
         owl:NamedIndividual ;
@@ -12035,6 +13277,19 @@ ns1:UserApplication a owl:Class ;
     rdfs:seeAlso <http://dbpedia.org/resource/Enterprise_software> ;
     rdfs:subClassOf ns1:Application .
 
+ns1:modifies a owl:ObjectProperty ;
+    rdfs:label "modifies" ;
+    ns1:definition "x modifies y: A technique or agent x causes a digital object y to change; become different; or undertake a transformation.  Afterwards, the data or state held by a digital object is changed." ;
+    rdfs:isDefinedBy <http://wordnet-rdf.princeton.edu/id/00126072-v> ;
+    rdfs:subPropertyOf ns1:accesses,
+        ns1:associated-with,
+        ns1:may-modify ;
+    skos:altLabel "alters" .
+
+ns1:semantic-relation a owl:ObjectProperty ;
+    rdfs:label "semantic-relation" ;
+    rdfs:subPropertyOf ns1:associated-with .
+
 ns1:AccessControlConfiguration a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Access Control Configuration" ;
@@ -12076,14 +13331,6 @@ ns1:Directory a owl:Class,
     rdfs:isDefinedBy <http://dbpedia.org/resource/Directory_(computing)> ;
     rdfs:subClassOf [ ],
         ns1:DigitalArtifact .
-
-ns1:Identifier a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Identifier" ;
-    ns1:definition "An identifier is a name that identifies (that is, labels the identity of) either a unique object or a unique class of objects, where the \"object\" or class may be an idea, physical [countable] object (or class thereof), or physical [noncountable] substance (or class thereof). The abbreviation ID often refers to identity, identification (the process of identifying), or an identifier (that is, an instance of identification). An identifier may be a word, number, letter, symbol, or any combination of those." ;
-    rdfs:isDefinedBy <http://dbpedia.org/resource/Identifier> ;
-    rdfs:subClassOf ns1:DigitalArtifact ;
-    skos:altLabel "ID" .
 
 ns1:InboundInternetNetworkTraffic a owl:Class,
         owl:NamedIndividual ;
@@ -12134,6 +13381,9 @@ ns1:T1552 a owl:Class,
     ns1:attack-id "T1552" ;
     rdfs:subClassOf [ ],
         ns1:CredentialAccessTechnique .
+
+ns1:d3fend-object-property a owl:ObjectProperty ;
+    rdfs:subPropertyOf owl:topObjectProperty .
 
 ns1:Application a owl:Class,
         owl:NamedIndividual ;
@@ -12242,14 +13492,6 @@ ns1:NetworkMapping a ns1:DefensiveTechnique,
     rdfs:subClassOf [ ],
         ns1:DefensiveTechnique .
 
-ns1:NetworkResource a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Network Resource" ;
-    ns1:definition "In computing, a shared resource, or network share, is a computer resource made available from one host to other hosts on a computer network. It is a device or piece of information on a computer that can be remotely accessed from another computer, typically via a local area network or an enterprise intranet, transparently as if it were a resource in the local machine.Network sharing is made possible by inter-process communication over the network." ;
-    rdfs:seeAlso <http://dbpedia.org/resource/Shared_resource> ;
-    rdfs:subClassOf ns1:RemoteResource ;
-    skos:altLabel "Shared Resource" .
-
 ns1:OperationalActivityMapping a ns1:DefensiveTechnique,
         owl:Class,
         owl:NamedIndividual ;
@@ -12310,6 +13552,11 @@ ns1:T1059 a owl:Class,
     rdfs:subClassOf [ ],
         ns1:ExecutionTechnique .
 
+ns1:hardens a owl:ObjectProperty ;
+    rdfs:label "hardens" ;
+    rdfs:subPropertyOf ns1:counters,
+        ns1:d3fend-tactical-verb-property .
+
 ns1:ConfigurationResource a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Configuration Resource" ;
@@ -12340,6 +13587,14 @@ ns1:FileSystemMetadata a owl:Class,
     rdfs:seeAlso <http://dbpedia.org/resource/File_system#Metadata> ;
     rdfs:subClassOf ns1:Metadata .
 
+ns1:Identifier a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Identifier" ;
+    ns1:definition "An identifier is a name that identifies (that is, labels the identity of) either a unique object or a unique class of objects, where the \"object\" or class may be an idea, physical [countable] object (or class thereof), or physical [noncountable] substance (or class thereof). The abbreviation ID often refers to identity, identification (the process of identifying), or an identifier (that is, an instance of identification). An identifier may be a word, number, letter, symbol, or any combination of those." ;
+    rdfs:isDefinedBy <http://dbpedia.org/resource/Identifier> ;
+    rdfs:subClassOf ns1:DigitalArtifact ;
+    skos:altLabel "ID" .
+
 ns1:InternetNetworkTraffic a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "Internet Network Traffic" ;
@@ -12365,6 +13620,14 @@ ns1:MemoryBlock a owl:Class,
     rdfs:subClassOf [ ],
         [ ],
         ns1:MemoryExtent .
+
+ns1:NetworkResource a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Network Resource" ;
+    ns1:definition "In computing, a shared resource, or network share, is a computer resource made available from one host to other hosts on a computer network. It is a device or piece of information on a computer that can be remotely accessed from another computer, typically via a local area network or an enterprise intranet, transparently as if it were a resource in the local machine.Network sharing is made possible by inter-process communication over the network." ;
+    rdfs:seeAlso <http://dbpedia.org/resource/Shared_resource> ;
+    rdfs:subClassOf ns1:RemoteResource ;
+    skos:altLabel "Shared Resource" .
 
 ns1:OperatingSystemFile a owl:Class,
         owl:NamedIndividual ;
@@ -12480,6 +13743,12 @@ ns1:URL a owl:Class,
         ns1:Identifier ;
     skos:altLabel "Uniform Resource Locator" .
 
+ns1:UserInputFunction a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "User Input Function" ;
+    ns1:definition "Generic function that receives direct user input from an untrusted source." ;
+    rdfs:subClassOf ns1:InputFunction .
+
 ns1:AssetInventory a ns1:DefensiveTechnique,
         owl:Class,
         owl:NamedIndividual ;
@@ -12528,13 +13797,6 @@ ns1:NetworkNode a owl:Class,
     rdfs:isDefinedBy <http://dbpedia.org/resource/Node_(networking)> ;
     rdfs:subClassOf [ ],
         ns1:DigitalArtifact .
-
-ns1:Resource a owl:Class,
-        owl:NamedIndividual ;
-    rdfs:label "Resource" ;
-    ns1:definition "In computing, a system resource, or simply resource, is any physical or virtual component of limited availability within a computer system. Every device connected to a computer system is a resource. Every internal system component is a resource. Virtual system resources include files (concretely file handles), network connections (concretely network sockets), and memory areas. Managing resources is referred to as resource management, and includes both preventing resource leaks (releasing a resource when a process has finished using it) and dealing with resource contention (when multiple processes wish to access a limited resource)." ;
-    rdfs:isDefinedBy <http://dbpedia.org/resource/System_resource> ;
-    rdfs:subClassOf ns1:DigitalArtifact .
 
 ns1:Server a owl:Class,
         owl:NamedIndividual ;
@@ -12613,13 +13875,12 @@ ns1:Authentication a ns1:Authentication,
         [ ],
         ns1:UserAction .
 
-ns1:OffensiveTechnique a owl:Class ;
-    rdfs:label "Offensive Technique" ;
-    ns1:display-baseurl "/offensive-technique/attack/" ;
-    rdfs:isDefinedBy <https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf> ;
-    rdfs:subClassOf [ ],
-        ns1:ATTACKThing,
-        ns1:Technique .
+ns1:Resource a owl:Class,
+        owl:NamedIndividual ;
+    rdfs:label "Resource" ;
+    ns1:definition "In computing, a system resource, or simply resource, is any physical or virtual component of limited availability within a computer system. Every device connected to a computer system is a resource. Every internal system component is a resource. Virtual system resources include files (concretely file handles), network connections (concretely network sockets), and memory areas. Managing resources is referred to as resource management, and includes both preventing resource leaks (releasing a resource when a process has finished using it) and dealing with resource contention (when multiple processes wish to access a limited resource)." ;
+    rdfs:isDefinedBy <http://dbpedia.org/resource/System_resource> ;
+    rdfs:subClassOf ns1:DigitalArtifact .
 
 ns1:SystemConfigurationDatabase a owl:Class,
         owl:NamedIndividual ;
@@ -12636,6 +13897,14 @@ ns1:HardwareDevice a owl:Class,
     rdfs:isDefinedBy <http://dbpedia.org/resource/Computer_hardware> ;
     rdfs:subClassOf ns1:DigitalArtifact,
         ns1:PhysicalArtifact .
+
+ns1:OffensiveTechnique a owl:Class ;
+    rdfs:label "Offensive Technique" ;
+    ns1:display-baseurl "/offensive-technique/attack/" ;
+    rdfs:isDefinedBy <https://attack.mitre.org/docs/ATTACK_Design_and_Philosophy_March_2020.pdf> ;
+    rdfs:subClassOf [ ],
+        ns1:ATTACKThing,
+        ns1:Technique .
 
 ns1:T1546 a owl:Class ;
     rdfs:label "Event Triggered Execution" ;
@@ -12835,6 +14104,12 @@ ns1:SystemConfigurationDatabaseRecord a owl:Class,
     rdfs:subClassOf ns1:ConfigurationDatabaseRecord,
         ns1:OperatingSystemConfigurationComponent .
 
+ns1:may-be-associated-with a owl:ObjectProperty ;
+    rdfs:label "may-be-associated-with" ;
+    ns1:definition "x may-be-associated-with y: The subject x and object y may be associated in some way." ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/13804981-n> ;
+    rdfs:subPropertyOf ns1:d3fend-object-property .
+
 ns1:UserAccount a owl:Class,
         owl:NamedIndividual ;
     rdfs:label "User Account" ;
@@ -12842,6 +14117,16 @@ ns1:UserAccount a owl:Class,
     rdfs:isDefinedBy <http://dbpedia.org/resource/User_(computing)#User_account> ;
     rdfs:seeAlso <http://dbpedia.org/resource/User_account> ;
     rdfs:subClassOf ns1:DigitalArtifact .
+
+ns1:d3fend-catalog-object-property a owl:ObjectProperty ;
+    rdfs:label "d3fend-catalog-object-property" ;
+    rdfs:subPropertyOf ns1:d3fend-object-property ;
+    skos:altLabel "d3fend-vendor-registry-object-property" .
+
+ns1:Weakness a owl:Class ;
+    rdfs:label "Weakness" ;
+    ns1:definition "A weakness is a condition in a software, firmware, hardware, or service component that, under certain circumstances, could contribute to the introduction of vulnerabilities." ;
+    rdfs:subClassOf ns1:D3FENDThing .
 
 ns1:Subroutine a owl:Class,
         owl:NamedIndividual ;
@@ -12968,6 +14253,12 @@ ns1:PersistenceTechnique a owl:Class,
     ns1:enables ns1:Persistence ;
     rdfs:subClassOf [ ],
         ns1:OffensiveTechnique .
+
+ns1:associated-with a owl:ObjectProperty ;
+    rdfs:label "associated-with" ;
+    ns1:definition "x associated-with y: The subject x and object y are associated in some way.  This is the most general definite relationship in d3fend (i.e., most general relationship that is not prefixed by 'may-'.)" ;
+    rdfs:seeAlso <http://wordnet-rdf.princeton.edu/id/13804981-n> ;
+    rdfs:subPropertyOf ns1:may-be-associated-with .
 
 ns1:DigitalArtifact a owl:Class,
         owl:NamedIndividual ;

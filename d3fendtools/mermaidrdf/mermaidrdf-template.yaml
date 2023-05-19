@@ -61,8 +61,10 @@ FONTAWESOME_MAP:
   - d3f:ExecutableScript
   labels:
   - fa:fa-file-code
-- artifacts: [ d3f:DocumentFile ]
-  labels: [ fab:fa-readme ]
+- artifacts:
+  - d3f:DocumentFile
+  labels:
+  - fab:fa-readme
 - artifacts:
   - d3f:TaskSchedule
   labels:
@@ -222,7 +224,14 @@ FONTAWESOME_MAP:
   labels:
   - "fa:fa-ethernet fa:fa-link"
 - artifacts:
+  - d3f:Switch
+  labels:
+  - "fa:fa-network-wired fa:fa-exchange-alt"
+- artifacts:
   - d3f:Router
+  labels:
+  - "fa:fa-network-wired fa:fa-up-down-left-right"
+- artifacts:
   - d3f:ReverseProxyServer
   labels:
   - "fab:fa-uncharted"
@@ -385,3 +394,4 @@ INFERRED_RELATIONS:
     - ":{subject} d3f:produces d3f:LoginSession ."
     - ":{object} d3f:uses d3f:LoginSession ."
     - ":{subject} d3f:produces d3f:AuthenticationLog ."
+    - ":{subject} d3f:related d3f:AuthenticationFunction"

@@ -5,7 +5,13 @@ from time import time
 
 from rdflib import RDF, Graph
 
-from d3fendtools import as_mermaid, d3fend, kuberdf, mermaidrdf
+from d3fendtools import as_mermaid, kuberdf, mermaidrdf
+from d3fendtools.d3fend import (  # cwe_summary,; cwe_summary_html,
+    attack_summary,
+    attack_summary_html,
+    d3fend_summary,
+    d3fend_summary_html,
+)
 
 try:
     from pyodide import create_proxy
@@ -18,10 +24,7 @@ HEADERS = ["node", "relation", "artifact", "technique"]
 
 flip_mermaid = mermaidrdf.flip_mermaid
 filter_mermaid = mermaidrdf.filter_mermaid
-d3fend_summary = d3fend.d3fend_summary
-d3fend_summary_html = d3fend.d3fend_summary_html
-attack_summary = d3fend.attack_summary
-attack_summary_html = d3fend.attack_summary_html
+
 
 MERMAID_INIT_TEXT = """graph LR
 

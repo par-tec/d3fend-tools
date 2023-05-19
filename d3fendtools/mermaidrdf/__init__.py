@@ -288,34 +288,38 @@ def parse_line(line):
         log.warning(f"Unsupported line: {line}")
         return
 
-    node_id0, arrow0, relation0 = None, None, None
-    for node, arrow, relation in parsed_line:
-        parsed_node = RE_NODE.match(node)
-        if not parsed_node:
-            continue
+    nodes_id0, arrow0, relation0 = [], None, None
+    for nodes, arrow, relation in parsed_line:
+        nodes = nodes.split(" & ")
+        nodes_id = []
+        for node in nodes:
+            parsed_node = RE_NODE.match(node)
+            if not parsed_node:
+                continue
 
-        id_, _, sep, label, _ = parsed_node.groups()
-        # Remove the trailing and leading quotes from the nodes
-        node_id, node1_rdf = render_node(id_=id_, label=label, sep=sep)
-        yield from node1_rdf
-        if node_id0:
-            # TODO handle the relation.
+            id_, _, sep, label, _ = parsed_node.groups()
+            # Remove the trailing and leading quotes from the nodes
+            node_id, node1_rdf = render_node(id_=id_, label=label, sep=sep)
+            nodes_id.append(node_id)
+            yield from node1_rdf
+            for node_id0 in nodes_id0:
+                # TODO handle the relation.
 
-            if not (node and arrow0):
-                raise NotImplementedError
-            # Create the RDF
-            if arrow0.endswith("->"):
-                predicate = "d3f:accesses"
-            elif arrow0.endswith("-o"):
-                predicate = "d3f:reads"
-            elif arrow0.endswith("-"):
-                predicate = ":connected"
-            else:
-                raise NotImplementedError(f"Unsupporte predicate: {arrow}")
+                if not (node and arrow0):
+                    raise NotImplementedError
+                # Create the RDF
+                if arrow0.endswith("->"):
+                    predicate = "d3f:accesses"
+                elif arrow0.endswith("-o"):
+                    predicate = "d3f:reads"
+                elif arrow0.endswith("-"):
+                    predicate = ":connected"
+                else:
+                    raise NotImplementedError(f"Unsupporte predicate: {arrow}")
 
-            yield from _parse_relation(node_id0, node_id, predicate, relation0)
+                yield from _parse_relation(node_id0, node_id, predicate, relation0)
 
-        node_id0, arrow0, relation0 = node_id, arrow, relation
+        nodes_id0, arrow0, relation0 = nodes_id, arrow, relation
 
 
 def _parse_relation(src, dst, predicate, relation):
