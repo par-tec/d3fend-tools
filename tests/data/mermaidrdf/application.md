@@ -84,5 +84,5 @@ worker -->|d3f:uses| RAM
 worker -->|d3f:uses| socket
 
 user((d3f:User)) -->|d3f:connects| application
-user -->|d3f:authenticates via| authnz
+user -.->|d3f:authenticates| authnz
 ```

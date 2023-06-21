@@ -273,3 +273,16 @@ def test_all_referenced_icons_are_visible():
         out += f"""{artifact}("{labels}")\n"""
     out = f"```mermaid\n\ngraph LR\n{out}\n\n```\n"
     Path("/tmp/icons.md").write_text(out)
+
+
+def test_inferred_relations_syntax():
+    """Test the syntax of the inferred relations."""
+    project_root = Path(__file__).parent.parent
+    mermaidrdf_template_yaml = (
+        project_root / "d3fendtools" / "mermaidrdf" / "mermaidrdf-template.yaml"
+    )
+    mermaidrdf_template = yaml.safe_load(mermaidrdf_template_yaml.read_text())
+    INFERRED_RELATIONS = mermaidrdf_template["INFERRED_RELATIONS"]
+    for relation in INFERRED_RELATIONS:
+        for predicate in relation["predicates"]:
+            assert predicate.endswith(".")

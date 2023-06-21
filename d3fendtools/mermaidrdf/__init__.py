@@ -28,7 +28,7 @@ PAT_NODE = (
     r"([\(\[\{\/]{1,2})" + PAT_LABEL + r"([\)\]\}\/]{1,2})"
     r")?$"
 )
-PAT_ARROW = r"\s*(-->|--o|-[.-]+-[>ox]?)" + r"\s*" + r"(?:\|(.*)?\|)?\s*"
+PAT_ARROW = r"\s*(-->|--o|-[.-]+-[>ox-]?)" + r"\s*" + r"(?:\|(.*)?\|)?\s*"
 PAT_LINE = rf"{PAT_NODE}({PAT_ARROW}{PAT_NODE})*"
 RE_ARROW = re.compile(PAT_ARROW)
 RE_LINE = re.compile(PAT_LINE)
@@ -307,6 +307,7 @@ def parse_line(line):
             node_id, node1_rdf = render_node(id_=id_, label=label, sep=sep)
             nodes_id.append(node_id)
             yield from node1_rdf
+            swap = False
             for node_id0 in nodes_id0:
                 # TODO handle the relation.
 
@@ -318,16 +319,20 @@ def parse_line(line):
                 elif arrow0.endswith("-o"):
                     predicate = "d3f:reads"
                 elif arrow0.endswith("-"):
-                    predicate = ":connected"
+                    predicate = "d3f:related"
                 else:
                     raise NotImplementedError(f"Unsupporte predicate: {arrow}")
 
-                yield from _parse_relation(node_id0, node_id, predicate, relation0)
+                if "." in arrow0:
+                    swap = True
+                yield from _parse_relation(
+                    node_id0, node_id, predicate, relation0, swap
+                )
 
         nodes_id0, arrow0, relation0 = nodes_id, arrow, relation
 
 
-def _parse_relation(src, dst, predicate, relation):
+def _parse_relation(src, dst, predicate, relation, swap=False):
     """Parse a relation between two nodes.
     @param src: the source node
     @param dst: the destination node
@@ -335,6 +340,8 @@ def _parse_relation(src, dst, predicate, relation):
     @param relation: the relation enclosed by pipes,
                      e.g. a -->|| b.
     """
+    if swap:
+        src, dst = dst, src
     relation = relation.strip() if relation else None
     if not relation:
         yield f":{src} {predicate} :{dst} ."
@@ -350,6 +357,8 @@ def _parse_relation(src, dst, predicate, relation):
     # Explicit the relationship.
     yield f":{src} {predicate} :{dst} ."
 
+    if swap:
+        src, dst = dst, src
     # Introduces a relation based on a specific d3f:DigitalArtifact,
     # e.g. :App --> |via d3f:DatabaseQuery| :Database
     for needle in re.findall(r"(d3f:[A-Za-z0-9._\.-]+)", relation):

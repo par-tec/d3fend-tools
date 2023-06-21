@@ -930,86 +930,6 @@
         }
         ,
         {
-            label: 'Credential Hardening',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Credential Hardening techniques modify system or network properties in order to protect system or network/domain credentials.",
-            insertText: 'CredentialHardening',
-            range: range,
-        }
-        ,
-        {
-            label: 'Credential Transmission Scoping',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Limiting the transmission of a credential to a scoped set of relying parties.",
-            insertText: 'CredentialTransmissionScoping',
-            range: range,
-        }
-        ,
-        {
-            label: 'Certificate Pinning',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Persisting either a server's X509 certificate or their public key and comparing that to server's presented identity to allow for greater client confidence in the remote server's identity for SSL connections.",
-            insertText: 'CertificatePinning',
-            range: range,
-        }
-        ,
-        {
-            label: 'One-time Password',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "A one-time password is valid for only one user authentication.",
-            insertText: 'One-timePassword',
-            range: range,
-        }
-        ,
-        {
-            label: 'Certificate-based Authentication',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Requiring a digital certificate in order to authenticate a user.",
-            insertText: 'Certificate-basedAuthentication',
-            range: range,
-        }
-        ,
-        {
-            label: 'Biometric Authentication',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Using biological measures in order to authenticate a user.",
-            insertText: 'BiometricAuthentication',
-            range: range,
-        }
-        ,
-        {
-            label: 'Strong Password Policy',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Modifying system configuration to increase password strength.",
-            insertText: 'StrongPasswordPolicy',
-            range: range,
-        }
-        ,
-        {
-            label: 'Domain Trust Policy',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Restricting inter-domain trust by modifying domain configuration.",
-            insertText: 'DomainTrustPolicy',
-            range: range,
-        }
-        ,
-        {
-            label: 'Multi-factor Authentication',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Requiring proof of two or more pieces of evidence in order to authenticate a user.",
-            insertText: 'Multi-factorAuthentication',
-            range: range,
-        }
-        ,
-        {
-            label: 'User Account Permissions',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Restricting a user account's access to resources.",
-            insertText: 'UserAccountPermissions',
-            range: range,
-        }
-        ,
-        {
             label: 'Process Analysis',
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Process Analysis consists of observing a running application process and analyzing it to watch for certain behaviors or conditions which may indicate adversary activity. Analysis can occur inside of the process or through a third-party monitoring application. Examples include monitoring system and privileged calls, monitoring process initiation chains, and memory boundary allocations.",
@@ -1102,6 +1022,94 @@
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Identification of suspicious processes executing on an end-point device by examining the ancestry and siblings of a process, and the associated metadata of each node on the tree, such as process execution, duration, and order relative to siblings and ancestors.",
             insertText: 'ProcessLineageAnalysis',
+            range: range,
+        }
+        ,
+        {
+            label: 'Credential Hardening',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Credential Hardening techniques modify system or network properties in order to protect system or network/domain credentials.",
+            insertText: 'CredentialHardening',
+            range: range,
+        }
+        ,
+        {
+            label: 'Credential Transmission Scoping',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Limiting the transmission of a credential to a scoped set of relying parties.",
+            insertText: 'CredentialTransmissionScoping',
+            range: range,
+        }
+        ,
+        {
+            label: 'Credential Rotation',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Expiring an existing set of credentials and reissuing a new valid set",
+            insertText: 'CredentialRotation',
+            range: range,
+        }
+        ,
+        {
+            label: 'Certificate Pinning',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Persisting either a server's X509 certificate or their public key and comparing that to server's presented identity to allow for greater client confidence in the remote server's identity for SSL connections.",
+            insertText: 'CertificatePinning',
+            range: range,
+        }
+        ,
+        {
+            label: 'One-time Password',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "A one-time password is valid for only one user authentication.",
+            insertText: 'One-timePassword',
+            range: range,
+        }
+        ,
+        {
+            label: 'Certificate-based Authentication',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Requiring a digital certificate in order to authenticate a user.",
+            insertText: 'Certificate-basedAuthentication',
+            range: range,
+        }
+        ,
+        {
+            label: 'Biometric Authentication',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Using biological measures in order to authenticate a user.",
+            insertText: 'BiometricAuthentication',
+            range: range,
+        }
+        ,
+        {
+            label: 'Strong Password Policy',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Modifying system configuration to increase password strength.",
+            insertText: 'StrongPasswordPolicy',
+            range: range,
+        }
+        ,
+        {
+            label: 'Domain Trust Policy',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restricting inter-domain trust by modifying domain configuration.",
+            insertText: 'DomainTrustPolicy',
+            range: range,
+        }
+        ,
+        {
+            label: 'Multi-factor Authentication',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Requiring proof of two or more pieces of evidence in order to authenticate a user.",
+            insertText: 'Multi-factorAuthentication',
+            range: range,
+        }
+        ,
+        {
+            label: 'User Account Permissions',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restricting a user account's access to resources.",
+            insertText: 'UserAccountPermissions',
             range: range,
         }
         ,
@@ -3466,78 +3474,6 @@
         }
         ,
         {
-            label: 'Credential',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A credential is a physical/tangible object, a piece of knowledge, or a facet of a person's physical being that enables an individual access to a given physical facility or computer-based information system. Typically, credentials can be something a person knows (such as a number or PIN), something they have (such as an access badge), something they are (such as a biometric feature), something they do (measurable behavioral patterns) or some combination of these items. This is known as multi-factor authentication. The typical credential is an access card or key-fob, and newer software can also turn users' smartphones into access devices.",
-            insertText: 'Credential',
-            range: range,
-        }
-        ,
-        {
-            label: 'Session Cookie',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A session cookie, also known as an in-memory cookie, transient cookie or non-persistent cookie, exists only in temporary memory while the user navigates the website. Web browsers normally delete session cookies when the user closes the browser. Unlike other cookies, session cookies do not have an expiration date assigned to them, which is how the browser knows to treat them as session cookies.",
-            insertText: 'SessionCookie',
-            range: range,
-        }
-        ,
-        {
-            label: 'Encrypted Credential',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A credential that is encrypted.",
-            insertText: 'EncryptedCredential',
-            range: range,
-        }
-        ,
-        {
-            label: 'Password',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A password, sometimes called a passcode, is a memorized secret, typically a string of characters, usually used to confirm the identity of a user. Using the terminology of the NIST Digital Identity Guidelines, the secret is memorized by a party called the claimant while the party verifying the identity of the claimant is called the verifier. When the claimant successfully demonstrates knowledge of the password to the verifier through an established authentication protocol, the verifier is able to infer the claimant's identity.",
-            insertText: 'Password',
-            range: range,
-        }
-        ,
-        {
-            label: 'Access Token',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "In computer systems, an access token contains the security credentials for a login session and identifies the user, the user's groups, the user's privileges, and, in some cases, a particular application. Typically one may be asked to enter the access token (e.g. 40 random characters) rather than the usual password (it therefore should be kept secret just like a password).",
-            insertText: 'AccessToken',
-            range: range,
-        }
-        ,
-        {
-            label: 'Ticket Granting Ticket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "In some computer security systems, a Ticket Granting Ticket or Ticket to Get Tickets (TGT) is a small, encrypted identification file with a limited validity period. After authentication, this file is granted to a user for data traffic protection by the key distribution center (KDC) subsystem of authentication services such as Kerberos. The TGT file contains the session key, its expiration date, and the user's IP address, which protects the user from man-in-the-middle attacks. The TGT is used to obtain a service ticket from Ticket Granting Service (TGS). User is granted access to network services only after this service ticket is provided.",
-            insertText: 'TicketGrantingTicket',
-            range: range,
-        }
-        ,
-        {
-            label: 'Kerberos Ticket Granting Ticket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A ticket granting ticket issued by a Kerberos system; that is, a ticket that grants a user domain admin access.",
-            insertText: 'KerberosTicketGrantingTicket',
-            range: range,
-        }
-        ,
-        {
-            label: 'Kerberos Ticket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "An access ticket/token issued by a Kerberos system.",
-            insertText: 'KerberosTicket',
-            range: range,
-        }
-        ,
-        {
-            label: 'Kerberos Ticket Granting Service Ticket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A Kerberos ticket-granting service (TGS) ticket is given in response to requesting a Kerberos TGS request.",
-            insertText: 'KerberosTicketGrantingServiceTicket',
-            range: range,
-        }
-        ,
-        {
             label: 'Resource',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "In computing, a system resource, or simply resource, is any physical or virtual component of limited availability within a computer system. Every device connected to a computer system is a resource. Every internal system component is a resource. Virtual system resources include files (concretely file handles), network connections (concretely network sockets), and memory areas. Managing resources is referred to as resource management, and includes both preventing resource leaks (releasing a resource when a process has finished using it) and dealing with resource contention (when multiple processes wish to access a limited resource).",
@@ -4086,6 +4022,78 @@
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A file containing a script in a web-scripting programming language. Web scripts may be present and run on the client or on the server side.",
             insertText: 'WebScriptFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Credential',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A credential is a physical/tangible object, a piece of knowledge, or a facet of a person's physical being that enables an individual access to a given physical facility or computer-based information system. Typically, credentials can be something a person knows (such as a number or PIN), something they have (such as an access badge), something they are (such as a biometric feature), something they do (measurable behavioral patterns) or some combination of these items. This is known as multi-factor authentication. The typical credential is an access card or key-fob, and newer software can also turn users' smartphones into access devices.",
+            insertText: 'Credential',
+            range: range,
+        }
+        ,
+        {
+            label: 'Session Cookie',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A session cookie, also known as an in-memory cookie, transient cookie or non-persistent cookie, exists only in temporary memory while the user navigates the website. Web browsers normally delete session cookies when the user closes the browser. Unlike other cookies, session cookies do not have an expiration date assigned to them, which is how the browser knows to treat them as session cookies.",
+            insertText: 'SessionCookie',
+            range: range,
+        }
+        ,
+        {
+            label: 'Encrypted Credential',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A credential that is encrypted.",
+            insertText: 'EncryptedCredential',
+            range: range,
+        }
+        ,
+        {
+            label: 'Password',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A password, sometimes called a passcode, is a memorized secret, typically a string of characters, usually used to confirm the identity of a user. Using the terminology of the NIST Digital Identity Guidelines, the secret is memorized by a party called the claimant while the party verifying the identity of the claimant is called the verifier. When the claimant successfully demonstrates knowledge of the password to the verifier through an established authentication protocol, the verifier is able to infer the claimant's identity.",
+            insertText: 'Password',
+            range: range,
+        }
+        ,
+        {
+            label: 'Access Token',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "In computer systems, an access token contains the security credentials for a login session and identifies the user, the user's groups, the user's privileges, and, in some cases, a particular application. Typically one may be asked to enter the access token (e.g. 40 random characters) rather than the usual password (it therefore should be kept secret just like a password).",
+            insertText: 'AccessToken',
+            range: range,
+        }
+        ,
+        {
+            label: 'Ticket Granting Ticket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "In some computer security systems, a Ticket Granting Ticket or Ticket to Get Tickets (TGT) is a small, encrypted identification file with a limited validity period. After authentication, this file is granted to a user for data traffic protection by the key distribution center (KDC) subsystem of authentication services such as Kerberos. The TGT file contains the session key, its expiration date, and the user's IP address, which protects the user from man-in-the-middle attacks. The TGT is used to obtain a service ticket from Ticket Granting Service (TGS). User is granted access to network services only after this service ticket is provided.",
+            insertText: 'TicketGrantingTicket',
+            range: range,
+        }
+        ,
+        {
+            label: 'Kerberos Ticket Granting Ticket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A ticket granting ticket issued by a Kerberos system; that is, a ticket that grants a user domain admin access.",
+            insertText: 'KerberosTicketGrantingTicket',
+            range: range,
+        }
+        ,
+        {
+            label: 'Kerberos Ticket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "An access ticket/token issued by a Kerberos system.",
+            insertText: 'KerberosTicket',
+            range: range,
+        }
+        ,
+        {
+            label: 'Kerberos Ticket Granting Service Ticket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A Kerberos ticket-granting service (TGS) ticket is given in response to requesting a Kerberos TGS request.",
+            insertText: 'KerberosTicketGrantingServiceTicket',
             range: range,
         }
         ,
@@ -5454,6 +5462,14 @@
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "x neutralizes y: The technique x makes the execution of actions of y ineffective by preventing or counterbalancing the effect of y.",
             insertText: 'neutralizes',
+            range: range,
+        }
+        ,
+        {
+            label: 'regenerates',
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "x regenerates y: The entity x discards the current digital artifact y and creates a new version that serves the same function.",
+            insertText: 'regenerates',
             range: range,
         }
         ,

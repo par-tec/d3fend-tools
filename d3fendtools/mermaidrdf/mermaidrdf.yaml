@@ -27,6 +27,7 @@ D3F_DEFENSIVE_TECHNIQUES:
 - d3f:CredentialEviction
 - d3f:CredentialHardening
 - d3f:CredentialRevoking
+- d3f:CredentialRotation
 - d3f:CredentialTransmissionScoping
 - d3f:DNSAllowlisting
 - d3f:DNSDenylisting
@@ -1597,6 +1598,7 @@ D3F_PROPERTIES:
 - d3f:reads
 - d3f:recorded-in
 - d3f:records
+- d3f:regenerates
 - d3f:related
 - d3f:restricts
 - d3f:runs
@@ -1622,6 +1624,10 @@ D3F_PROPERTIES:
 - d3f:writes
 FONTAWESOME_MAP:
 - artifacts:
+  - d3f:VersionControlSystem
+  labels:
+  - fab:fa-git
+- artifacts:
   - d3f:SoftwarePackage
   labels:
   - fa:fa-box fa:fa-box-archive
@@ -1629,6 +1635,11 @@ FONTAWESOME_MAP:
   - d3f:WebServerApplication
   labels:
   - '{fab:fa-whmcs}'
+- artifacts:
+  - d3f:FileServer
+  - d3f:CloudStorage
+  labels:
+  - fa:fa-cloud-arrow-down
 - artifacts:
   - d3f:SoftwareArtifactServer
   labels:
@@ -1658,12 +1669,19 @@ FONTAWESOME_MAP:
   labels:
   - fa:fa-user-lock
 - artifacts:
+  - d3f:Password
+  labels:
+  - 'fa:fa-lock
+
+    ***'
+- artifacts:
   - d3f:PasswordDatabase
   labels:
   - fa:fa-key fa:fa-database
 - artifacts:
   - d3f:Log
   - d3f:LogFile
+  - d3f:EventLog
   labels:
   - fa:fa-scroll
 - artifacts:
@@ -1689,12 +1707,28 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:TaskSchedule
   labels:
+  - fa:fa-calendar-days
+- artifacts:
+  - d3f:TaskSchedulerProcess
+  labels:
   - fa:fa-clock
+- artifacts:
+  - d3f:TaskSchedulerSoftware
+  labels:
+  - fa:fa-business-time
 - artifacts:
   - d3f:ContainerOrchestrationSoftware
   - d3f:ContainerImage
   labels:
   - fab:fa-docker
+- artifacts:
+  - d3f:OrchestrationController
+  labels:
+  - fa:fa-person-chalkboard
+- artifacts:
+  - d3f:OrchestrationWorker
+  labels:
+  - fa:fa-person-digging
 - artifacts:
   - d3f:Email
   - d3f:MailNetworkTraffic
@@ -1723,7 +1757,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:PrivilegedUserAccount
   labels:
-  - fa:fa-user-plus
+  - fa:fa-user-gear
 - artifacts:
   - d3f:Browser
   labels:
@@ -1749,6 +1783,10 @@ FONTAWESOME_MAP:
   - d3f:AdministrationServer
   labels:
   - fa:fa-chess-rook
+- artifacts:
+  - d3f:Storage
+  labels:
+  - fa:fa-hdd
 - artifacts:
   - d3f:MobilePhone
   - d3f:TabletComputer
@@ -1789,6 +1827,14 @@ FONTAWESOME_MAP:
   labels:
   - fa:fa-server
 - artifacts:
+  - d3f:ConfigurationResource
+  - d3f:ConfigurationDatabase
+  - d3f:ConfigurationFile
+  - d3f:SystemConfigurationDatabase
+  - d3f:ApplicationConfigurationDatabase
+  labels:
+  - fa:fa-file fa:fa-gear
+- artifacts:
   - d3f:WebResourceAccess
   labels:
   - '{..}'
@@ -1817,7 +1863,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:VPNServer
   labels:
-  - "fa:fa-lock \u21CB"
+  - fa:fa-arrow-down-up-lock
 - artifacts:
   - d3f:NetworkTrafficPolicyMapping
   labels:
@@ -1886,7 +1932,7 @@ INFERRED_RELATIONS:
   - :{subject} d3f:produces d3f:LoginSession .
   - :{object} d3f:uses d3f:LoginSession .
   - :{subject} d3f:produces d3f:AuthenticationLog .
-  - :{subject} d3f:related d3f:AuthenticationFunction
+  - :{subject} d3f:related d3f:AuthenticationFunction .
   relation: d3f:authenticates
 - predicates:
   - :{subject} d3f:produces d3f:AdministrativeNetworkTraffic .
@@ -1904,6 +1950,7 @@ SW_MAP:
   - jenkins
   - gitlab-ci
   - github
+  - argocd
 - artifacts:
   - d3f:DatabaseServer
   labels:

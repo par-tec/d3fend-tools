@@ -14,8 +14,9 @@ from d3fendtools.d3fend import (  # cwe_summary,; cwe_summary_html,
 )
 
 try:
-    from pyodide import create_proxy
-    from pyscript import Element, js
+    import js
+    from pyodide.ffi import create_proxy
+    from pyscript import Element
 except ImportError:
     pass
 

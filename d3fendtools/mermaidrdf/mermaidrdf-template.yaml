@@ -4,6 +4,10 @@
 FONTAWESOME_MAP:
 # Services
 - artifacts:
+  - d3f:VersionControlSystem
+  labels:
+  - fab:fa-git
+- artifacts:
   - d3f:SoftwarePackage
   labels:
   - "fa:fa-box fa:fa-box-archive"
@@ -11,6 +15,12 @@ FONTAWESOME_MAP:
   - d3f:WebServerApplication
   labels:
   - "{fab:fa-whmcs}"
+- artifacts:
+  - d3f:FileServer
+  - d3f:CloudStorage
+  labels:
+  - fa:fa-cloud-arrow-down  # fa:fa-file-arrow-down
+# arrows-split-up-and-left
 - artifacts:
   - d3f:SoftwareArtifactServer
   labels:
@@ -40,12 +50,17 @@ FONTAWESOME_MAP:
   labels:
   - "fa:fa-user-lock"
 - artifacts:
+  - d3f:Password
+  labels:
+  - "fa:fa-lock\n***"
+- artifacts:
   - d3f:PasswordDatabase
   labels:
   - "fa:fa-key fa:fa-database"
 - artifacts:
   - d3f:Log
   - d3f:LogFile
+  - d3f:EventLog
   labels:
   - fa:fa-scroll
 - artifacts:
@@ -71,7 +86,15 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:TaskSchedule
   labels:
+  - fa:fa-calendar-days
+- artifacts:
+  - d3f:TaskSchedulerProcess
+  labels:
   - fa:fa-clock
+- artifacts:
+  - d3f:TaskSchedulerSoftware
+  labels:
+  - fa:fa-business-time
 - artifacts:
   - d3f:ContainerOrchestrationSoftware
   - d3f:ContainerImage
@@ -143,6 +166,10 @@ FONTAWESOME_MAP:
 #
 # Devices
 #
+- artifacts:
+  - d3f:Storage
+  labels:
+  - "fa:fa-hdd"  # fa:fa-database
 - artifacts:
   - d3f:MobilePhone
   - d3f:TabletComputer
@@ -222,7 +249,7 @@ FONTAWESOME_MAP:
 - artifacts:
   - d3f:VPNServer
   labels:
-  - "fa:fa-lock ⇋"
+  - "fa:fa-arrow-down-up-lock"
 - artifacts:
   - d3f:NetworkTrafficPolicyMapping
   labels:
@@ -431,7 +458,7 @@ INFERRED_RELATIONS:
     - ":{subject} d3f:produces d3f:LoginSession ."
     - ":{object} d3f:uses d3f:LoginSession ."
     - ":{subject} d3f:produces d3f:AuthenticationLog ."
-    - ":{subject} d3f:related d3f:AuthenticationFunction"
+    - ":{subject} d3f:related d3f:AuthenticationFunction ."
 - relation:  "d3f:manages"
   predicates:
     - ":{subject} d3f:produces d3f:AdministrativeNetworkTraffic ."

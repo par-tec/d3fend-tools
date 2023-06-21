@@ -96,7 +96,7 @@ testcases:
         email:
             mermaid: |-
                 graph TD
-                Client --> |via fa:fa-envelope| MTA
+                Client --> |via d3f:Email| MTA
             expected:
                 - ":MTA a :Node ."
                 - ":Client a :Node ."
@@ -108,7 +108,7 @@ testcases:
         internet:
             mermaid: |-
                 graph TD
-                Client --> |via fa:fa-globe| Internet
+                Client --> |d3f:InternetNetworkTraffic| Internet
             expected:
                 - ":Internet a :Node ."
                 - ":Client a :Node ."
@@ -127,22 +127,36 @@ testcases:
                 - ":OAuth d3f:produces d3f:LoginSession ."
                 - ":Client d3f:uses d3f:LoginSession ."
                 - ":OAuth d3f:produces d3f:AuthenticationLog ."
+                - ":OAuth d3f:related d3f:AuthenticationFunction ."
         container:
             mermaid: |-
                 graph
                 app[fab:fa-docker Containerized Application]
             expected:
                 - ":app a :Node ."
-                - ":app a d3f:ContainerProcess ."
                 - ":app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage ."
                 - ':app rdfs:label """fab:fa-docker Containerized Application""" .'
         container-webapp:
             mermaid: |-
                 graph
-                app[fab:fa-docker fab:fa-angular Containerized Application]
+                app[fab:fa-angular fab:fa-docker Containerized Application]
             expected:
                 - ":app a :Node ."
-                - ":app a d3f:ContainerProcess ."
                 - ":app d3f:related d3f:ContainerOrchestrationSoftware,d3f:ContainerImage ."
-                - ':app rdfs:label """fab:fa-docker fab:fa-angular Containerized Application""" .'
+                - ':app rdfs:label """fab:fa-angular fab:fa-docker Containerized Application""" .'
                 - ":app a d3f:WebServerApplication,d3f:GraphicalUserInterface ."
+        duplicate_subgraphs:
+            mermaid: |-
+                graph TD
+                subgraph A
+                a --> B
+                end
+                subgraph A
+                a -.- C
+                end
+            expected:
+                - ":B a :Node ."
+                - ":C d3f:related :a ."
+                - ":C a :Node ."
+                - ":a a :Node ."
+                - ":a d3f:accesses :B ."

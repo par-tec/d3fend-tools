@@ -79,6 +79,10 @@
         height: 85%;
         max-height: 80vh;
       }
+      #monaco-editor {
+        width: 100%;
+        height: 100%;
+      }
       /* This is the pandas dataframe class. */
       .dataframe th {
         text-align: center;
@@ -88,16 +92,19 @@
         vertical-align: top;
       }
       #mermaid-filter {
-        /* width: 30em; */
+        /* font-size: 12px; */
+      }
+      .form-control-tm {
+        font-size: 0.75rem;
       }
       .diagram-full {
         height: 3000px;
         width: 3000px;
-        // width: calc(100% * 1.19);
+        /* width: calc(100% * 1.19); */
       }
       .diagram-normal {
-        height: 2000px;
-        width: 2000px;
+        height: 1500px;
+        width: 1500px;
       }
       #header {
         height: 70px;
@@ -184,24 +191,17 @@
   <div class="tab-content" id="myTabContent">
 
     <div class="tab-pane p-4 fade show active" id="tab1" role="tabpanel" aria-labelledby="tab1-tab">
-      <div class="input-group row">
-        <div class="form-group col-sm-5">
+      <div class="input-group row" style="width: 50%; height: 2em;">
+        <div class="form-group col-sm-5 form-control-tn">
           <label for="mermaid-filter">Filter the mermaid graph with regexp</label>
           <input type="text" class="form-control" id="mermaid-filter"/>
         </div>
         <div class="form-group col-sm-5">
-          <button id="mermaid-btn-redraw"     class="btn btn-primary" type="button" >Ok</button>
-          <button id="mermaid-graph-copy"     class="btn btn-primary" type="button"><i class="fas fa-copy"></i>Copy</button>
-          <button id="mermaid-btn-fullscreen" class="btn btn-primary" type="button"><i class="fa fa-expand"></i>toggle</button>
-        </div>
-        <div class="form-group col-sm-2">
-          <div class="toggles">
-            <label for="mermaid-chk-flip">
-              <input id="mermaid-chk-flip" type="checkbox">
-              <span class="lever"></span>
-              Flip
-            </label>
-          </div>
+          <button id="mermaid-btn-redraw" title="Redraw/Search" class="btn btn-primary" type="button" ><i class="fas fa-rotate"></i></button>
+          <button id="mermaid-graph-copy" title="Copy mermaidjs text"    class="btn btn-primary" type="button"><i class="fas fa-copy"></i></button>
+          <button id="mermaid-btn-fullscreen" title="Full-screen diagram" class="btn btn-primary" type="button"><i class="fa fa-expand"></i></button>
+          <div id="mermaid-chk-flip-wrapper" title="Rotate diagram" class="btn btn-primary" type="button"><i class="fas fa-rotate-left"></i></div>
+          <input id="mermaid-chk-flip" class="btn btn-primary" type="checkbox" style="visibility: hidden"/>
         </div>
       </div> <!-- input-group row -->
       <p id="mermaid-graph" class="diagram-normal"></p>
@@ -319,7 +319,7 @@ log = logging.getLogger(__name__)
 
 # Pyodide imports
 import pyodide_js
-from pyodide import create_proxy
+from pyodide.ffi import create_proxy
 from pyodide.ffi.wrappers import add_event_listener
 log.info(f"{pyodide_js.version= }")
 import js
@@ -391,6 +391,7 @@ def mmd_to_graph(event):
     status["d3fend"].parse()
     log.warning("Loaded %s rdf entries in %d.." % (len(status["d3fend"].g), time()-t0,))
     Element("error-panel").clear()
+    status["last_update"] = time()
   except Exception as e:
     msg = "Failed to create RDF graph: %s" % (e,)
     app.alert(msg)
@@ -481,13 +482,14 @@ def _create_monaco(init_text=app.MERMAID_INIT_TEXT):
     "value": init_text,
     "language": lang,
     "theme": "vs-dark",
-    "automaticLayout": False,
+    "automaticLayout": True,
     "acceptSuggestionOnEnter": False,
   })
-  editor.layout(**{
-      "width": Element("tab-input-mermaid").element.clientWidth,
-      "height": Element("input-panel").element.clientHeight - 100,
-  })
+  # FIXME: This prevents the editor from being resized.
+  # editor.layout(**{
+  #     "width": Element("tab-input-mermaid").element.clientWidth,
+  #     "height": Element("input-panel").element.clientHeight - 100,
+  # })
   status["editor"] = editor
 
 
@@ -512,6 +514,10 @@ if not initialized:
 
   Element("mermaid-chk-flip").element.addEventListener(
     "click", create_proxy(render_mmd)
+  )
+
+  Element("mermaid-chk-flip-wrapper").element.addEventListener(
+    "click", create_proxy(lambda e: Element("mermaid-chk-flip").element.click())
   )
 
   for element_id in ("mermaid-btn-redraw", "tab1-tab"):
