@@ -8,7 +8,7 @@ from rdflib import RDF, Graph
 from d3fendtools import as_mermaid, d3fend, kuberdf, mermaidrdf
 
 try:
-    from pyodide import create_proxy
+    from pyodide.ffi import create_proxy
     from pyscript import Element, js
 except ImportError:
     pass

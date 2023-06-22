@@ -302,7 +302,7 @@ log = logging.getLogger(__name__)
 
 # Pyodide imports
 import pyodide_js
-from pyodide import create_proxy
+from pyodide.ffi import create_proxy
 log.info(f"{pyodide_js.version= }")
 import js
 from pathlib import Path
