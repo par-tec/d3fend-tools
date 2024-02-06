@@ -16,48 +16,57 @@
       }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
-    <script type="module">
-      import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-      mermaid.initialize({startOnLoad: true});
-    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
+
+
   </head>
 
   <body>
     <pre class="mermaid">
-graph LR;A[Christmas fa:fa-user] -->|Get money| B(Go shopping);B --> C{Let me think};C -->|One| D[Laptop];C -->|Two| E[iPhone];C -->|Three| F[Car]    </pre>
+        graph LR;A[Christmas fa:fa-user] -->|Get money| B(Go shopping);B --> C{Let me think};C -->|One| D[Laptop];C -->|Two| E[iPhone];C -->|Three| F[Car]    </pre>
     <div class="container">
       <div id="editor" class="editor"></div>
       <div id="content" class="content"></div>
     </div>
+
     <script>
+        const v0 = [
+              'graph TD',
+              'a --> b',
+                'b --> c',
+            ].join('\n');
+    
+
       require.config({
         paths: {
-          'vs': 'https://unpkg.com/monaco-editor/min/vs'
+          'vs': 'https://unpkg.com/monaco-editor/min/vs',
+          'mermaid': 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min',
         }
       });
-      require(['vs/editor/editor.main'], function () {
+      require(['vs/editor/editor.main', 'mermaid'], function (monaco, mermaid) {
+        // mermaid.mermaidAPI.initialize({startOnLoad: true});
+
         var editor = monaco
           .editor
           .create(document.getElementById('editor'), {
-            value: [
-              'graph TD',
-              'A[Christmas] -->|Get money| B(Go shopping)',
-              'B --> C{Let me think}',
-              'C -->|One| D[Laptop]',
-              'C -->|Two| E[iPhone]',
-              'C -->|Three| F[Car]'
-            ].join(';'),
+            value: v0,
             language: 'javascript',
             theme: 'vs-dark'
           });
         editor.onDidChangeModelContent(function () {
           var value = editor.getValue();
-          document
-            .getElementById('content')
-            .innerText = value;
+            const element = document.getElementById('content');
+            mermaid.render('content', value, element).then(({ svg, bindFunctions }) => {
+                console.log(svg);
+                bindFunctions?.(element);
+            });
         });
       });
+    </script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
     </script>
   </body>
 
