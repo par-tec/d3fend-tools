@@ -23,10 +23,6 @@ except ImportError:
 log = logging.getLogger(__name__)
 HEADERS = ["node", "relation", "artifact", "technique"]
 
-flip_mermaid = mermaidrdf.flip_mermaid
-filter_mermaid = mermaidrdf.filter_mermaid
-
-
 MERMAID_INIT_TEXT = """graph LR
 
 %% 1. Design here your architecture using MermaidJS syntax.
@@ -276,12 +272,12 @@ def generate_diagram_mmd(text: str, filter_: str, flip: str, mermaidAPI):
 
     log.info(f"pre-filter {text_mmd}")
     if filter_:
-        text_mmd = filter_mermaid(text_mmd, filter_)
+        text_mmd = mermaidrdf.filter_mermaid(text_mmd, filter_)
 
     # Format the graph.
     text_mmd = mermaidrdf.D3fendMermaid(text_mmd).mermaid()
     if flip:
-        text_mmd = flip_mermaid(text_mmd)
+        text_mmd = mermaidrdf.flip_mermaid(text_mmd)
     log.warning(f"mermaid text: {text_mmd[:100]}")
     mermaid_svg = mermaidAPI.render("mermaid-diagram-svg", text_mmd)
     return text_mmd, mermaid_svg

@@ -55,7 +55,7 @@ class D3fendMermaid:
     """A class to generate a d3fend graph from a mermaid/markdown text."""
 
     def __init__(self, text, ontology=None) -> None:
-        self.text = text
+        self.text = self._prepend_subgraph_name(text)
         self.ontology = ontology or Graph()
         self.annotations = None
         self.hypergraph = None
@@ -67,10 +67,29 @@ class D3fendMermaid:
         self._out = None
 
     @staticmethod
+    def _prepend_subgraph_name(text):
+        """If the text is a subgraph, prepend the subgraph name to each entity starting with `@`."""
+        out = []
+        subgraph_stack = []
+        for line in text.splitlines():
+            if subgraph_stack:
+                subgraph_name = subgraph_stack[-1]
+                line = re.sub(r"@@([^ ]+)", f"{subgraph_name}\\1", line)
+            if line.strip().startswith("subgraph"):
+                subgraph_name = re.split(r"[\s\[]", line)[1]
+                subgraph_stack.append(subgraph_name)
+            elif line.strip().startswith("end"):
+                if not subgraph_stack:
+                    raise ValueError("Unmatched end")
+                subgraph_stack.pop()
+            out.append(line)
+        return "\n".join(out)
+
+    @staticmethod
     def _extract(text):
         if text.strip().startswith("graph"):
             return [text]
-        return extract_mermaid(text)
+        return extract_mermaid(markdown_text=text)
 
     def parse(self):
         turtle = """
@@ -202,9 +221,9 @@ def parse_resources(resources: List[Path], outfile=None, **options):
     a turtle string. If outfile is specified, the turtle string is also."""
     turtle = ""
     for f in resources:
-        mermaid_graphs = extract_mermaid(f.read_text())
-        for graph in mermaid_graphs:
-            turtle += "\n" + parse_mermaid(graph, **options)
+        mermaid_diagrams = extract_mermaid(markdown_text=f.read_text())
+        for diagram in mermaid_diagrams:
+            turtle += "\n" + parse_mermaid(diagram, **options)
     if outfile:
         Path(outfile).with_suffix(".ttl").write_text(turtle)
     return turtle
@@ -393,9 +412,9 @@ def _parse_relation(src, dst, predicate, relation, swap=False):
         return
 
 
-def extract_mermaid(text: str):
+def extract_mermaid(markdown_text: str):
     re_mermaid = re.compile("```mermaid\n.*?\n```", re.DOTALL | re.MULTILINE)
-    return [graph[10:-3].strip() for graph in re_mermaid.findall(text)]
+    return [graph[10:-3].strip() for graph in re_mermaid.findall(markdown_text)]
 
 
 def flip_mermaid(text):
