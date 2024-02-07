@@ -34,6 +34,38 @@
         }
         ,
         {
+            label: 'Restore Access',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring an entity's access to resources.",
+            insertText: 'RestoreAccess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Network Access',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring a entity's access to a computer network.",
+            insertText: 'RestoreNetworkAccess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore User Account Access',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring a user account's access to resources.",
+            insertText: 'RestoreUserAccountAccess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Unlock Account',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring a user account's access to resources by unlocking a locked User Account.",
+            insertText: 'UnlockAccount',
+            range: range,
+        }
+        ,
+        {
             label: 'Process Eviction',
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Process eviction techniques terminate or remove running process.",
@@ -364,14 +396,6 @@
         {
             label: 'Operational Activity Mapping',
             kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Identifying staff and organizational structure is part of operational activity mapping.  One inventories assets; people are *not* assets, but are resources.  Grasping operations and activities (missions) and mapping them to people is (notionally) last phase of modeling architecture.",
-            insertText: 'OperationalActivityMapping',
-            range: range,
-        }
-        ,
-        {
-            label: 'Operational Activity Mapping',
-            kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Operational activity mapping identifies activities of the organization and the organization's suborganizations, groups, roles, and individuals that carry out the activities and then establishes the dependencies of the activities on the systems and people that perform those activities.",
             insertText: 'OperationalActivityMapping',
             range: range,
@@ -442,14 +466,6 @@
         }
         ,
         {
-            label: 'Asset Vulnerability Enumeration',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Asset vulnerability enumeration enriches inventory items with knowledge identifying their vulnerabilities.",
-            insertText: 'AssetVulnerabilityEnumeration',
-            range: range,
-        }
-        ,
-        {
             label: 'Network Node Inventory',
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Network node inventorying identifies and records all the network nodes (hosts, routers, switches, firewalls, etc.) in the organization's architecture.",
@@ -458,10 +474,90 @@
         }
         ,
         {
+            label: 'Asset Vulnerability Enumeration',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Asset vulnerability enumeration enriches inventory items with knowledge identifying their vulnerabilities.",
+            insertText: 'AssetVulnerabilityEnumeration',
+            range: range,
+        }
+        ,
+        {
+            label: 'Container Image Analysis',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Analyzing a Container Image with respect to a set of policies.",
+            insertText: 'ContainerImageAnalysis',
+            range: range,
+        }
+        ,
+        {
             label: 'Hardware Component Inventory',
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Hardware component inventorying identifies and records the hardware items in the organization's architecture.",
             insertText: 'HardwareComponentInventory',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Object',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring an object for an entity to access. This is the broadest class for object restoral.",
+            insertText: 'RestoreObject',
+            range: range,
+        }
+        ,
+        {
+            label: 'Reissue Credential',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Issue a new credential to a user which supercedes their old credential.",
+            insertText: 'ReissueCredential',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Configuration',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring an software configuration.",
+            insertText: 'RestoreConfiguration',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Database',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring the data in a database.",
+            insertText: 'RestoreDatabase',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Disk Image',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring a previously captured disk image a hard drive.",
+            insertText: 'RestoreDiskImage',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Software',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring software to a host.",
+            insertText: 'RestoreSoftware',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore File',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring a file for an entity to access.",
+            insertText: 'RestoreFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Restore Email',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restoring an email for an entity to access.",
+            insertText: 'RestoreEmail',
             range: range,
         }
         ,
@@ -530,6 +626,230 @@
         }
         ,
         {
+            label: 'Decoy Object',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "A Decoy Object is created and deployed for the purposes of deceiving attackers.",
+            insertText: 'DecoyObject',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy Public Release',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Issuing publicly released media to deceive adversaries.",
+            insertText: 'DecoyPublicRelease',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy Session Token',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "An authentication token created for the purposes of deceiving an adversary.",
+            insertText: 'DecoySessionToken',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy Persona',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Establishing a fake online identity to misdirect, deceive, and or interact with adversaries.",
+            insertText: 'DecoyPersona',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy User Credential',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "A Credential created for the purpose of deceiving an adversary.",
+            insertText: 'DecoyUserCredential',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy File',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "A file created for the purposes of deceiving an adversary.",
+            insertText: 'DecoyFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Decoy Network Resource',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Deploying a network resource for the purposes of deceiving an adversary.",
+            insertText: 'DecoyNetworkResource',
+            range: range,
+        }
+        ,
+        {
+            label: 'File Analysis',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "File Analysis is an analytic process to determine a file's status. For example: virus, trojan, benign, malicious, trusted, unauthorized, sensitive, etc.",
+            insertText: 'FileAnalysis',
+            range: range,
+        }
+        ,
+        {
+            label: 'Emulated File Analysis',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Emulating instructions in a file looking for specific patterns.",
+            insertText: 'EmulatedFileAnalysis',
+            range: range,
+        }
+        ,
+        {
+            label: 'File Content Analysis',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Employing a pattern matching algorithm to statically analyze the content of files.",
+            insertText: 'FileContentAnalysis',
+            range: range,
+        }
+        ,
+        {
+            label: 'File Content Rules',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Employing a pattern matching rule language to analyze the content of files.",
+            insertText: 'FileContentRules',
+            range: range,
+        }
+        ,
+        {
+            label: 'Dynamic Analysis',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Executing or opening a file in a synthetic \"sandbox\" environment to determine if the file is a malicious program or if the file exploits another program such as a document reader.",
+            insertText: 'DynamicAnalysis',
+            range: range,
+        }
+        ,
+        {
+            label: 'File Hashing',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Employing file hash comparisons to detect known malware.",
+            insertText: 'FileHashing',
+            range: range,
+        }
+        ,
+        {
+            label: 'Network Isolation',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Network Isolation techniques prevent network hosts from accessing non-essential system network resources.",
+            insertText: 'NetworkIsolation',
+            range: range,
+        }
+        ,
+        {
+            label: 'DNS Allowlisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Permitting only approved domains and their subdomains to be resolved.",
+            insertText: 'DNSAllowlisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Broadcast Domain Isolation',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Broadcast isolation restricts the number of computers a host can contact on their LAN.",
+            insertText: 'BroadcastDomainIsolation',
+            range: range,
+        }
+        ,
+        {
+            label: 'Network Traffic Filtering',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restricting network traffic originating from any location.",
+            insertText: 'NetworkTrafficFiltering',
+            range: range,
+        }
+        ,
+        {
+            label: 'Outbound Traffic Filtering',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restricting network traffic originating from a private host or enclave destined towards untrusted networks.",
+            insertText: 'OutboundTrafficFiltering',
+            range: range,
+        }
+        ,
+        {
+            label: 'Inbound Traffic Filtering',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Restricting network traffic originating from untrusted networks destined towards a private host or enclave.",
+            insertText: 'InboundTrafficFiltering',
+            range: range,
+        }
+        ,
+        {
+            label: 'Email Filtering',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Filtering incoming email traffic based on specific criteria.",
+            insertText: 'EmailFiltering',
+            range: range,
+        }
+        ,
+        {
+            label: 'DNS Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking DNS Network Traffic based on criteria such as IP address, domain name, or DNS query type.",
+            insertText: 'DNSDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Forward Resolution IP Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking a DNS lookup's answer's IP address value.",
+            insertText: 'ForwardResolutionIPDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Reverse Resolution IP Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking a reverse lookup based on the query's IP address value.",
+            insertText: 'ReverseResolutionIPDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Reverse Resolution Domain Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking a reverse DNS lookup's answer's domain name value.",
+            insertText: 'ReverseResolutionDomainDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Forward Resolution Domain Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking a lookup based on the query's domain name value.",
+            insertText: 'ForwardResolutionDomainDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Hierarchical Domain Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking the resolution of any subdomain of a specified domain name.",
+            insertText: 'HierarchicalDomainDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Homoglyph Denylisting',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Blocking DNS queries that are deceptively similar to legitimate domain names.",
+            insertText: 'HomoglyphDenylisting',
+            range: range,
+        }
+        ,
+        {
+            label: 'Encrypted Tunnels',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Encrypted encapsulation of routable network traffic.",
+            insertText: 'EncryptedTunnels',
+            range: range,
+        }
+        ,
+        {
             label: 'Platform Monitoring',
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Monitoring platform components such as operating systems software, hardware devices, or firmware.",
@@ -550,6 +870,14 @@
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Monitoring code is injected into firmware for integrity monitoring of firmware and firmware data.",
             insertText: 'FirmwareEmbeddedMonitoringCode',
+            range: range,
+        }
+        ,
+        {
+            label: 'File Integrity Monitoring',
+            kind: monaco.languages.CompletionItemKind.Interface,
+            documentation: "Detecting any suspicious changes to files in a computer system.",
+            insertText: 'FileIntegrityMonitoring',
             range: range,
         }
         ,
@@ -654,214 +982,6 @@
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Tracking changes to the state or configuration of critical system level processes.",
             insertText: 'SystemDaemonMonitoring',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy Object',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "A Decoy Object is created and deployed for the purposes of deceiving attackers.",
-            insertText: 'DecoyObject',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy Public Release',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Issuing publicly released media to deceive adversaries.",
-            insertText: 'DecoyPublicRelease',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy Session Token',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "An authentication token created for the purposes of deceiving an adversary.",
-            insertText: 'DecoySessionToken',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy Persona',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Establishing a fake online identity to misdirect, deceive, and or interact with adversaries.",
-            insertText: 'DecoyPersona',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy User Credential',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "A Credential created for the purpose of deceiving an adversary.",
-            insertText: 'DecoyUserCredential',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy File',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "A file created for the purposes of deceiving an adversary.",
-            insertText: 'DecoyFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Decoy Network Resource',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Deploying a network resource for the purposes of deceiving an adversary.",
-            insertText: 'DecoyNetworkResource',
-            range: range,
-        }
-        ,
-        {
-            label: 'File Analysis',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "File Analysis is an analytic process to determine a file's status. For example: virus, trojan, benign, malicious, trusted, unauthorized, sensitive, etc.",
-            insertText: 'FileAnalysis',
-            range: range,
-        }
-        ,
-        {
-            label: 'Emulated File Analysis',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Emulating instructions in a file looking for specific patterns.",
-            insertText: 'EmulatedFileAnalysis',
-            range: range,
-        }
-        ,
-        {
-            label: 'Dynamic Analysis',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Executing or opening a file in a synthetic \"sandbox\" environment to determine if the file is a malicious program or if the file exploits another program such as a document reader.",
-            insertText: 'DynamicAnalysis',
-            range: range,
-        }
-        ,
-        {
-            label: 'File Hashing',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Employing file hash comparisons to detect known malware.",
-            insertText: 'FileHashing',
-            range: range,
-        }
-        ,
-        {
-            label: 'File Content Rules',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Employing a pattern matching rule language to analyze files.",
-            insertText: 'FileContentRules',
-            range: range,
-        }
-        ,
-        {
-            label: 'Network Isolation',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Network Isolation techniques prevent network hosts from accessing non-essential system network resources.",
-            insertText: 'NetworkIsolation',
-            range: range,
-        }
-        ,
-        {
-            label: 'DNS Allowlisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Permitting only approved domains and their subdomains to be resolved.",
-            insertText: 'DNSAllowlisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Broadcast Domain Isolation',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Broadcast isolation restricts the number of computers a host can contact on their LAN.",
-            insertText: 'BroadcastDomainIsolation',
-            range: range,
-        }
-        ,
-        {
-            label: 'Network Traffic Filtering',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Restricting network traffic originating from any location.",
-            insertText: 'NetworkTrafficFiltering',
-            range: range,
-        }
-        ,
-        {
-            label: 'Outbound Traffic Filtering',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Restricting network traffic originating from a private host or enclave destined towards untrusted networks.",
-            insertText: 'OutboundTrafficFiltering',
-            range: range,
-        }
-        ,
-        {
-            label: 'Inbound Traffic Filtering',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Restricting network traffic originating from untrusted networks destined towards a private host or enclave.",
-            insertText: 'InboundTrafficFiltering',
-            range: range,
-        }
-        ,
-        {
-            label: 'DNS Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking DNS Network Traffic based on criteria such as IP address, domain name, or DNS query type.",
-            insertText: 'DNSDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Forward Resolution IP Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking a DNS lookup's answer's IP address value.",
-            insertText: 'ForwardResolutionIPDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Reverse Resolution IP Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking a reverse lookup based on the query's IP address value.",
-            insertText: 'ReverseResolutionIPDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Reverse Resolution Domain Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking a reverse DNS lookup's answer's domain name value.",
-            insertText: 'ReverseResolutionDomainDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Forward Resolution Domain Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking a lookup based on the query's domain name value.",
-            insertText: 'ForwardResolutionDomainDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Hierarchical Domain Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking the resolution of any subdomain of a specified domain name.",
-            insertText: 'HierarchicalDomainDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Homoglyph Denylisting',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Blocking DNS queries that are deceptively similar to legitimate domain names.",
-            insertText: 'HomoglyphDenylisting',
-            range: range,
-        }
-        ,
-        {
-            label: 'Encrypted Tunnels',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Encrypted encapsulation of routable network traffic.",
-            insertText: 'EncryptedTunnels',
             range: range,
         }
         ,
@@ -1052,7 +1172,7 @@
         {
             label: 'Certificate Pinning',
             kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Persisting either a server's X509 certificate or their public key and comparing that to server's presented identity to allow for greater client confidence in the remote server's identity for SSL connections.",
+            documentation: "Persisting either a server's X.509 certificate or their public key and comparing that to server's presented identity to allow for greater client confidence in the remote server's identity for SSL connections.",
             insertText: 'CertificatePinning',
             range: range,
         }
@@ -1110,14 +1230,6 @@
             kind: monaco.languages.CompletionItemKind.Interface,
             documentation: "Restricting a user account's access to resources.",
             insertText: 'UserAccountPermissions',
-            range: range,
-        }
-        ,
-        {
-            label: 'User Behavior Analysis',
-            kind: monaco.languages.CompletionItemKind.Interface,
-            documentation: "Analysis of user behavior and patterns for the purpose of detecting unauthorized user activity.",
-            insertText: 'UserBehaviorAnalysis',
             range: range,
         }
         ,
@@ -1890,22 +2002,6 @@
         }
         ,
         {
-            label: 'Java Archive',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A JAR (Java ARchive) is a package file format typically used to aggregate many Java class files and associated metadata and resources (text, images, etc.) into one file for distribution.",
-            insertText: 'JavaArchive',
-            range: range,
-        }
-        ,
-        {
-            label: 'Python Package',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A Python package is an aggregation of many Python files - either in source code or in bytecode - and associated metadata and resources (text, images, etc.). Python packages can be distributed in different file formats.",
-            insertText: 'PythonPackage',
-            range: range,
-        }
-        ,
-        {
             label: 'User Interface',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "The user interface (UI), in the industrial design field of human-machine interaction, is the space where interactions between humans and machines occur. The goal of this interaction is to allow effective operation and control of the machine from the human end, whilst the machine simultaneously feeds back information that aids the operators' decision-making process. Examples of this broad concept of user interfaces include the interactive aspects of computer operating systems, hand tools, heavy machinery operator controls, and process controls. The design considerations applicable when creating user interfaces are related to or involve such disciplines as ergonomics and psychology.",
@@ -2082,6 +2178,30 @@
         }
         ,
         {
+            label: 'Java Archive',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A JAR (Java ARchive) is a package file format typically used to aggregate many Java class files and associated metadata and resources (text, images, etc.) into one file for distribution.",
+            insertText: 'JavaArchive',
+            range: range,
+        }
+        ,
+        {
+            label: 'Python Package',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A Python package is an aggregation of many Python files - either in source code or in bytecode - and associated metadata and resources (text, images, etc.). Python packages can be distributed in different file formats.",
+            insertText: 'PythonPackage',
+            range: range,
+        }
+        ,
+        {
+            label: 'Container Image',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A container is a standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another. A Docker container image is a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings.\n\nContainer images become containers at runtime and in the case of Docker containers - images become containers when they run on Docker Engine. Available for both Linux and Windows-based applications, containerized software will always run the same, regardless of the infrastructure. Containers isolate software from its environment and ensure that it works uniformly despite differences for instance between development and staging.",
+            insertText: 'ContainerImage',
+            range: range,
+        }
+        ,
+        {
             label: 'Stack Component',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A stack component is any component of a call stack used for stack-based memory allocation in a running process.  Examples include saved instruction pointers, stack frames, and stack frame canaries.",
@@ -2116,7 +2236,7 @@
         {
             label: 'Certificate',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "In cryptography, a public key certificate, also known as a digital certificate or identity certificate, is an electronic document used to prove the ownership of a public key. The certificate includes information about the key, information about the identity of its owner (called the subject), and the digital signature of an entity that has verified the certificate's contents (called the issuer). If the signature is valid, and the software examining the certificate trusts the issuer, then it can use that key to communicate securely with the certificate's subject. In email encryption, code signing, and e-signature systems, a certificate's subject is typically a person or organization. However, in Transport Layer Security (TLS) a certificate's subject is typically a computer or other device, t",
+            documentation: "In cryptography, a public key certificate, also known as a digital certificate or identity certificate, is an electronic document used to prove the ownership of a public key. The certificate includes information about the key, information about the identity of its owner (called the subject), and the digital signature of an entity that has verified the certificate's contents (called the issuer). If the signature is valid, and the software examining the certificate trusts the issuer, then it can use that key to communicate securely with the certificate's subject. In email encryption, code signing, and e-signature systems, a certificate's subject is typically a person or organization. However, in Transport Layer Security (TLS) a certificate's subject is typically a computer or other device.",
             insertText: 'Certificate',
             range: range,
         }
@@ -2182,14 +2302,6 @@
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A process image is a copy of a given process's state at a given point in time. It is often used to create persistence within an otherwise volatile system.",
             insertText: 'ProcessImage',
-            range: range,
-        }
-        ,
-        {
-            label: 'User',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A user is a person [or agent] who uses a computer or network service. Users generally use a system or a software product without the technical expertise required to fully understand it. Power users use advanced features of programs, though they are not necessarily capable of computer programming and system administration. A user often has a user account and is identified to the system by a username (or user name). Other terms for username include login name, screenname (or screen name), nickname (or nick) and handle, which is derived from the identical Citizen's Band radio term. Some software products provide services to other systems and have no direct end users.",
-            insertText: 'User',
             range: range,
         }
         ,
@@ -2308,7 +2420,7 @@
         {
             label: 'Boot Loader',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A bootloader is software that is responsible for booting a computer. When a computer is turned off, its software\u200d\u2014\u200cincluding operating systems, application code, and data\u200d\u2014\u200cremains stored on non-volatile memory. When the computer is powered on, it typically does not have an operating system or its loader in random-access memory (RAM). The computer first executes a relatively small program stored in read-only memory (ROM, and later EEPROM, NOR flash) along with some needed data, to initialize RAM (especially on x86 systems) to access the nonvolatile device (usually block device, eg NAND flash) or devices from which the operating system programs and data can be loaded into RAM.",
+            documentation: "A bootloader is software that is responsible for booting a computer. When a computer is turned off, its software\u200d-\u200cincluding operating systems, application code, and data\u200d-\u200cremains stored on non-volatile memory. When the computer is powered on, it typically does not have an operating system or its loader in random-access memory (RAM). The computer first executes a relatively small program stored in read-only memory (ROM, and later EEPROM, NOR flash) along with some needed data, to initialize RAM (especially on x86 systems) to access the nonvolatile device (usually block device, eg NAND flash) or devices from which the operating system programs and data can be loaded into RAM.",
             insertText: 'BootLoader',
             range: range,
         }
@@ -2554,10 +2666,10 @@
         }
         ,
         {
-            label: 'Windows Registry Key',
+            label: 'Windows Registry Value',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "Windows registry keys are container objects similar to folders. Registry values are non-container objects similar to files. Keys may contain values and subkeys. Keys are referenced with a syntax similar to Windows' path names, using backslashes to indicate levels of hierarchy. Keys must have a case insensitive name without backslashes.",
-            insertText: 'WindowsRegistryKey',
+            documentation: "A Windows Registry Value is a data structure consisting of a name, type, data (as a pointer), and the length. Windows Registry Values are always associated with a Windows Registry Key. They store the actual configuration data for the operating system and the programs that run on the system.",
+            insertText: 'WindowsRegistryValue',
             range: range,
         }
         ,
@@ -2570,10 +2682,18 @@
         }
         ,
         {
-            label: 'Task Schedule',
+            label: 'Windows Registry Key',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A task schedule is a specification of tasks to be executed at particular times or time intervals.  The schedule is a plan that enacted by a task scheduling process.",
-            insertText: 'TaskSchedule',
+            documentation: "Windows Registry Keys are container objects similar to folders that contain subkeys and/or data entries called values. A key can be a 'Registry Hive' when it is root key of a logical group of keys, subkeys, and values that has a set of supporting files loaded into memory when the operating system is started or a user logs in.",
+            insertText: 'WindowsRegistryKey',
+            range: range,
+        }
+        ,
+        {
+            label: 'User',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A user is a person [or agent] who uses a computer or network service. Users generally use a system or a software product without the technical expertise required to fully understand it. Power users use advanced features of programs, though they are not necessarily capable of computer programming and system administration. A user often has a user account and is identified to the system by a username (or user name). Other terms for username include login name, screenname (or screen name), nickname (or nick) and handle, which is derived from the identical Citizen's Band radio term. Some software products provide services to other systems and have no direct end users.",
+            insertText: 'User',
             range: range,
         }
         ,
@@ -2582,86 +2702,6 @@
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "In the context of computer operating systems, a volume or logical drive is a single accessible storage area with a single file system, typically (though not necessarily) resident on a single partition of a hard disk. Although a volume might be different from a physical disk drive, it can still be accessed with an operating system's logical interface. However, a volume differs from a partition.",
             insertText: 'Volume',
-            range: range,
-        }
-        ,
-        {
-            label: 'Database',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A database is an organized collection of data, generally stored and accessed electronically from a computer system. Where databases are more complex they are often developed using formal design and modeling techniques.",
-            insertText: 'Database',
-            range: range,
-        }
-        ,
-        {
-            label: 'Code Repository',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A code repository is a form of database where code, typically source code, is stored and managed.  In revision control systems, a repository is a data structure that stores metadata for a set of files or directory structure. Depending on whether the version control system in use is distributed like (Git or Mercurial) or centralized like (Subversion, CVS, or Perforce), the whole set of information in the repository may be duplicated on every user's system or may be maintained on a single server.",
-            insertText: 'CodeRepository',
-            range: range,
-        }
-        ,
-        {
-            label: 'Password Database',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A password database is a database that holds passwords for user accounts and is usually encrypted (i.e.., the passwords are hashed). Password databases are found supporting system services (such as SAM) or part of user applications such as password managers.",
-            insertText: 'PasswordDatabase',
-            range: range,
-        }
-        ,
-        {
-            label: 'Password Store',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A user repository of account passwords, often accessed via a password manager.",
-            insertText: 'PasswordStore',
-            range: range,
-        }
-        ,
-        {
-            label: 'MacOS Keychain',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "Keychain is the password management system in macOS, developed by Apple. It was introduced with Mac OS 8.6, and has been included in all subsequent versions of the operating system, now known as macOS. A Keychain can contain various types of data: passwords (for websites, FTP servers, SSH accounts, network shares, wireless networks, groupware applications, encrypted disk images), private keys, certificates, and secure notes.",
-            insertText: 'MacOSKeychain',
-            range: range,
-        }
-        ,
-        {
-            label: 'In-memory Password Store',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A password store held in memory.",
-            insertText: 'In-memoryPasswordStore',
-            range: range,
-        }
-        ,
-        {
-            label: 'System Password Database',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A password database used by a system service or process to authenticate users (e.g., Security Account Manager)",
-            insertText: 'SystemPasswordDatabase',
-            range: range,
-        }
-        ,
-        {
-            label: 'Password File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "Simple form of password database held in a single file (e.g., /etc/password)",
-            insertText: 'PasswordFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'System Configuration Database',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A database used to hold system configuration data.",
-            insertText: 'SystemConfigurationDatabase',
-            range: range,
-        }
-        ,
-        {
-            label: 'Windows Registry',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "The Windows Registry is a hierarchical database that stores low-level settings for the Microsoft Windows operating system and for applications that opt to use the registry. The kernel, device drivers, services, Security Accounts Manager, and user interface can all use the registry. The registry also allows access to counters for profiling system performance.",
-            insertText: 'WindowsRegistry',
             range: range,
         }
         ,
@@ -2890,10 +2930,98 @@
         }
         ,
         {
+            label: 'Database',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A database is an organized collection of data, generally stored and accessed electronically from a computer system. Where databases are more complex they are often developed using formal design and modeling techniques.",
+            insertText: 'Database',
+            range: range,
+        }
+        ,
+        {
+            label: 'Code Repository',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A code repository is a form of database where code, typically source code, is stored and managed.  In revision control systems, a repository is a data structure that stores metadata for a set of files or directory structure. Depending on whether the version control system in use is distributed like (Git or Mercurial) or centralized like (Subversion, CVS, or Perforce), the whole set of information in the repository may be duplicated on every user's system or may be maintained on a single server.",
+            insertText: 'CodeRepository',
+            range: range,
+        }
+        ,
+        {
+            label: 'Password Database',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A password database is a database that holds passwords for user accounts and is usually encrypted (i.e.., the passwords are hashed). Password databases are found supporting system services (such as SAM) or part of user applications such as password managers.",
+            insertText: 'PasswordDatabase',
+            range: range,
+        }
+        ,
+        {
+            label: 'Password Store',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A user repository of account passwords, often accessed via a password manager.",
+            insertText: 'PasswordStore',
+            range: range,
+        }
+        ,
+        {
+            label: 'MacOS Keychain',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Keychain is the password management system in macOS, developed by Apple. It was introduced with Mac OS 8.6, and has been included in all subsequent versions of the operating system, now known as macOS. A Keychain can contain various types of data: passwords (for websites, FTP servers, SSH accounts, network shares, wireless networks, groupware applications, encrypted disk images), private keys, certificates, and secure notes.",
+            insertText: 'MacOSKeychain',
+            range: range,
+        }
+        ,
+        {
+            label: 'In-memory Password Store',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A password store held in memory.",
+            insertText: 'In-memoryPasswordStore',
+            range: range,
+        }
+        ,
+        {
+            label: 'System Password Database',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A password database used by a system service or process to authenticate users (e.g., Security Account Manager)",
+            insertText: 'SystemPasswordDatabase',
+            range: range,
+        }
+        ,
+        {
+            label: 'Password File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Simple form of password database held in a single file (e.g., /etc/password)",
+            insertText: 'PasswordFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'System Configuration Database',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A database used to hold system configuration data.",
+            insertText: 'SystemConfigurationDatabase',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows Registry',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "The Windows Registry is a hierarchical database that stores low-level settings for the Microsoft Windows operating system and for applications that opt to use the registry. The kernel, device drivers, services, Security Accounts Manager, and user interface can all use the registry. The registry also allows access to counters for profiling system performance.",
+            insertText: 'WindowsRegistry',
+            range: range,
+        }
+        ,
+        {
             label: 'Pointer',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "In computer science, a pointer is a programming language object, whose value refers to (or \"points to\") another value stored elsewhere in the computer memory using its memory address. A pointer references a location in memory, and obtaining the value stored at that location is known as dereferencing the pointer. As an analogy, a page number in a book's index could be considered a pointer to the corresponding page; dereferencing such a pointer would be done by flipping to the page with the given page number.",
             insertText: 'Pointer',
+            range: range,
+        }
+        ,
+        {
+            label: 'Job Schedule',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A job schedule contains specification of tasks to be executed at particular times or time intervals.  The schedule is a plan that enacted by a task scheduling process. In Windows, the schedule can be accessed at 'C:\\Windows\\System32\\Tasks' or in the registry. In Linux, the schedule is located at '/etc/crontab'",
+            insertText: 'JobSchedule',
             range: range,
         }
         ,
@@ -2910,6 +3038,14 @@
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "In computer networking, a hostname (archaically nodename) is a label that is assigned to a device connected to a computer network and that is used to identify the device in various forms of electronic communication, such as the World Wide Web. Hostnames may be simple names consisting of a single word or phrase, or they may be structured.",
             insertText: 'Hostname',
+            range: range,
+        }
+        ,
+        {
+            label: 'Digital Fingerprint',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A digital signature uniquely identifies data and has the property that changing a single bit in the data will cause a completely different message digest to be generated.",
+            insertText: 'DigitalFingerprint',
             range: range,
         }
         ,
@@ -3226,6 +3362,14 @@
         }
         ,
         {
+            label: 'DHCP Server',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A Dynamic Host Configuration Protocol (DHCP) server is a type of server that assigns IP addresses to computers.  DHCP servers are used to assign IP addresses to computers and other devices automatically.  The DHCP server is responsible for assigning the unique IP address to each device.",
+            insertText: 'DHCPServer',
+            range: range,
+        }
+        ,
+        {
             label: 'DNS Server',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A Domain Name System (DNS) name server is a kind of name server.  Domain names are one of the two principal namespaces of the Internet. The most important function of DNS servers is the translation (resolution) of human-memorable domain names and hostnames into the corresponding numeric Internet Protocol (IP) addresses, the second principal name space of the Internet which is used to identify and locate computer systems and resources on the Internet. (en).\n\nMore generally, a name server is a computer application that implements a network service for providing responses to queries against a directory service. It translates an often humanly meaningful, text-based identifier to a system-internal, often numeric identification or addressing component. This service is performed by the server in response to a service protocol request.",
@@ -3250,10 +3394,26 @@
         }
         ,
         {
+            label: 'Network Time Server',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A network time server is a server computer that reads the actual time from a reference clock and distributes this information to its clients using a computer network. The time server may be a local network time server or an internet time server. The time server may also be a stand-alone hardware device. It can use NTP (RFC5905) or other protocols.",
+            insertText: 'NetworkTimeServer',
+            range: range,
+        }
+        ,
+        {
             label: 'Print Server',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A print server, or printer server, is a device that connects printers to client computers over a network. It accepts print jobs from the computers and sends the jobs to the appropriate printers, queuing the jobs locally to accommodate the fact that work may arrive more quickly than the printer can actually handle.",
             insertText: 'PrintServer',
+            range: range,
+        }
+        ,
+        {
+            label: 'TFTP Server',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Trivial File Transfer Protocol (TFTP) is a simple file transfer protocol, typically used to automatically transfer configuration or boot files between machines.  It is used where user authentication and directory visibility are not required.",
+            insertText: 'TFTPServer',
             range: range,
         }
         ,
@@ -3498,6 +3658,30 @@
         }
         ,
         {
+            label: 'Web Resource',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A web resource is a resource identified by a Uniform Resource Identifier (URI) and made available from one host to another host via a web protocol and across a network or networks.",
+            insertText: 'WebResource',
+            range: range,
+        }
+        ,
+        {
+            label: 'Web API Resource',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A web API resource is an API resource identified by a Uniform Resource Identifier (URI) and made available from one host to another host via a web protocol and across a network or networks.",
+            insertText: 'WebAPIResource',
+            range: range,
+        }
+        ,
+        {
+            label: 'Web File Resource',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A web file resource is a file resource identified by a Uniform Resource Identifier (URI) and made available from one host to another host via a web protocol and across a network or networks.",
+            insertText: 'WebFileResource',
+            range: range,
+        }
+        ,
+        {
             label: 'Network File Share Resource',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A shared file resource, or network file share, is a computer file made available from one host to other hosts on a computer network. Network sharing is made possible by inter-process communication over the network. It includes both files and directories.",
@@ -3526,14 +3710,6 @@
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A computer file resource made available from one host to other hosts on a computer network that is also an initialization script.",
             insertText: 'NetworkInitScriptFileResource',
-            range: range,
-        }
-        ,
-        {
-            label: 'Web File Resource',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A web resource is a resource identified by a Uniform Resource Identifier (URI) and made available from one host to another host via a web protocol and across a network or networks.",
-            insertText: 'WebFileResource',
             range: range,
         }
         ,
@@ -3698,6 +3874,30 @@
         }
         ,
         {
+            label: 'Access Control Group',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A collection of objects that can have access controls placed on them.",
+            insertText: 'AccessControlGroup',
+            range: range,
+        }
+        ,
+        {
+            label: 'Host Group',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A collection of Hosts used to allow operations such as access control to be applied to the entire group.",
+            insertText: 'HostGroup',
+            range: range,
+        }
+        ,
+        {
+            label: 'User Group',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "User groups are a way to collect user accounts and/or computer accounts into manageable units. Administrators can assign permissions, roles, or access to resources, as well as modify group membership, depending on the operating system.",
+            insertText: 'UserGroup',
+            range: range,
+        }
+        ,
+        {
             label: 'Access Control List',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A list of permissions attached to an object.",
@@ -3850,14 +4050,6 @@
         }
         ,
         {
-            label: 'Container Image',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A container is a standard unit of software that packages up code and all its dependencies so the application runs quickly and reliably from one computing environment to another. A Docker container image is a lightweight, standalone, executable package of software that includes everything needed to run an application: code, runtime, system tools, system libraries and settings.\n\nContainer images become containers at runtime and in the case of Docker containers - images become containers when they run on Docker Engine. Available for both Linux and Windows-based applications, containerized software will always run the same, regardless of the infrastructure. Containers isolate software from its environment and ensure that it works uniformly despite differences for instance between development and staging.",
-            insertText: 'ContainerImage',
-            range: range,
-        }
-        ,
-        {
             label: 'Object File',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "An object file is a file that contains relocatable machine code.",
@@ -3954,18 +4146,18 @@
         }
         ,
         {
-            label: 'HTML File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A document file encoded in HTML.The HyperText Markup Language, or HTML is the standard markup language for documents designed to be displayed in a web browser. It can be assisted by technologies such as Cascading Style Sheets (CSS) and scripting languages such as JavaScript. Web browsers receive HTML documents from a web server or from local storage and render the documents into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.",
-            insertText: 'HTMLFile',
-            range: range,
-        }
-        ,
-        {
             label: 'Multimedia Document File',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "Digital video files which often contain audio.",
             insertText: 'MultimediaDocumentFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'HTML File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A document file encoded in HTML.The HyperText Markup Language, or HTML is the standard markup language for documents designed to be displayed in a web browser. It can be assisted by technologies such as Cascading Style Sheets (CSS) and scripting languages such as JavaScript. Web browsers receive HTML documents from a web server or from local storage and render the documents into multimedia web pages. HTML describes the structure of a web page semantically and originally included cues for the appearance of the document.",
+            insertText: 'HTMLFile',
             range: range,
         }
         ,
@@ -4210,10 +4402,10 @@
         }
         ,
         {
-            label: 'Task Scheduler Software',
+            label: 'Job Scheduler Software',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A task scheduler software is operating system software that when run executes scheduled tasks (time-scheduling in the sense of wall clock time; not operating system scheduling of processes for multitasking). Processes running such software are task scheduler processes.",
-            insertText: 'TaskSchedulerSoftware',
+            documentation: "A job scheduler software is operating system software that when run executes scheduled tasks (time-scheduling in the sense of wall clock time; not operating system scheduling of processes for multitasking). Processes running such software are task scheduler processes. In Windows, Scheduled Tasks are created and managed by the Task Scheduler. In Unix-like OSes, the `cron` utitility serves a similar role.",
+            insertText: 'JobSchedulerSoftware',
             range: range,
         }
         ,
@@ -4554,6 +4746,366 @@
         }
         ,
         {
+            label: 'Linux Connect',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Initiate a connection on a socket.",
+            insertText: 'LinuxConnect',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Socket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Create an endpoint for communication.",
+            insertText: 'LinuxSocket',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Execve',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Executes a program by replacing the calling process with a new program, with newly initialized stack, heap, and (initialized and uninitialized) data segments. The PID stays the same.",
+            insertText: 'LinuxExecve',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Execveat',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Execute program relative to a directory file descriptor. Behavior is similar to Linux Execve.",
+            insertText: 'LinuxExecveat',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Munmap',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Unmap files or devices from memory.",
+            insertText: 'LinuxMunmap',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Time',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Get time in seconds.",
+            insertText: 'LinuxTime',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtQuerySystemTime',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Returns current time in Coordinated Universal Time (UTC) 8-bytes format.",
+            insertText: 'WindowsNtQuerySystemTime',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Pause Thread',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Causes the calling thread to sleep until a signal is delivered that either terminates the thread or causes the invocation of a signal-catching function.",
+            insertText: 'LinuxPauseThread',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Ptrace Argument PTRACE_TRACEME',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Indicates that the process is to be traced by its parent.",
+            insertText: 'LinuxPtraceArgumentPTRACE_TRACEME',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtOpenProcess',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Opens a handle to process obj and sets the access rights to this object.",
+            insertText: 'WindowsNtOpenProcess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Rename',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Change the name or location of a file",
+            insertText: 'LinuxRename',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Renameat',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Change the name or location of a file. Different parameter handling than Linux Rename.",
+            insertText: 'LinuxRenameat',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Renameat2',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Change the name or location of a file. Additional flags argument.",
+            insertText: 'LinuxRenameat2',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Pause Process',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Causes the calling process to sleep until a signal is delivered that either terminates the process or causes the invocation of a signal-catching function.",
+            insertText: 'LinuxPauseProcess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Ptrace Argument PTRACE_INTERRUPT',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Stops a tracee.",
+            insertText: 'LinuxPtraceArgumentPTRACEINTERRUPT',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Kill Argument SIGKILL',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Send SIGKILL signal to a process.",
+            insertText: 'LinuxKillArgumentSIGKILL',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux _Exit',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Terminate the calling process.",
+            insertText: 'Linux_Exit',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Mmap',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Map files or devices into memory.",
+            insertText: 'LinuxMmap',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Mmap2',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Map files or devices into memory.",
+            insertText: 'LinuxMmap2',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Clone3 Argument CLONE_THREAD',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A flag parameter to the Clone3 syscall. If set, the child is placed in the same thread group as the calling process.",
+            insertText: 'LinuxClone3ArgumentCLONE_THREAD',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Clone Argument CLONE_THREAD',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A flag parameter to the Clone syscall. If set, the child is placed in the same thread group as the calling process.",
+            insertText: 'LinuxCloneArgumentCLONE_THREAD',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Unlink',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Delete a name and possibly the file it refers to.",
+            insertText: 'LinuxUnlink',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Unlinkat',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Delete a name and possibly the file it refers to. Different parameter handling than Linux Unlink",
+            insertText: 'LinuxUnlinkat',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtDeleteFile',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Deletes the specified file.",
+            insertText: 'WindowsNtDeleteFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtSetInformationFile Argument FileDispositionInformation',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Request to delete the file when it is closed or cancel a previously requested deletion.",
+            insertText: 'WindowsNtSetInformationFileArgumentFileDispositionInformation',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Open Argument O_RDONLY, O_WRONLY, O_RDWR',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Opens a file specified by pathname.",
+            insertText: 'LinuxOpenArgumentO_RDONLY-O_WRONLY-O_RDWR',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux OpenAt2 Argument O_RDONLY, O_WRONLY, O_RDWR',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Extension of Linux Openat.",
+            insertText: 'LinuxOpenAt2ArgumentO_RDONLY-O_WRONLY-O_RDWR',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux OpenAt Argument O_RDONLY, O_WRONLY, O_RDWR',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Same functionality as Linux Open but slight differences in parameter.",
+            insertText: 'LinuxOpenAtArgumentO_RDONLY-O_WRONLY-O_RDWR',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Read',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Read from a file descriptor.",
+            insertText: 'LinuxRead',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Readv',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Read data into multiple buffers.",
+            insertText: 'LinuxReadv',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtReadFileScatter',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Reads specified block from file into multiple buffers. Each buffer must have one page length.",
+            insertText: 'WindowsNtReadFileScatter',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Write',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Write to a file descriptor.",
+            insertText: 'LinuxWrite',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Writev',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Write data into multiple buffers.",
+            insertText: 'LinuxWritev',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtWriteFileGather',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Writes specified block of file with data from memory pages.",
+            insertText: 'WindowsNtWriteFileGather',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Clone',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates a child process and provides more precise control over the data shared between the parent and child processes",
+            insertText: 'LinuxClone',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Clone3',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates a child process and provides more precise control over the data shared between the parent and child processes.\n\nNewer system call.",
+            insertText: 'LinuxClone3',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Fork',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates a child process with unique PID but retains parent PID as Parent Process Identifier (PPID)",
+            insertText: 'LinuxFork',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Vfork',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Create child process that temp suspends parent process until it terminates",
+            insertText: 'LinuxVfork',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Creat',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Equivalent to calling Linux Open with flags equal to O_CREAT|O_WRONLY|O_TRUNC.",
+            insertText: 'LinuxCreat',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux Open Argument O_CREAT',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Create a regular file.",
+            insertText: 'LinuxOpenArgumentO_CREAT',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux OpenAt2 Argument O_CREAT',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Create a regular file. Extension of Linux Openat.",
+            insertText: 'LinuxOpenAt2ArgumentO_CREAT',
+            range: range,
+        }
+        ,
+        {
+            label: 'Linux OpenAt Argument O_CREAT',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Create a regular file. Same functionality as Linux Open but slight differences in parameter.",
+            insertText: 'LinuxOpenAtArgumentO_CREAT',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtCreateMailslotFile',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates a special File Object called Mailslot.",
+            insertText: 'WindowsNtCreateMailslotFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtCreateNamedPipeFile',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates Named Pipe File Object.",
+            insertText: 'WindowsNtCreateNamedPipeFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Windows NtCreatePagingFile',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Typically used by Control Panel's \"System\" applet for creating new paged files.",
+            insertText: 'WindowsNtCreatePagingFile',
+            range: range,
+        }
+        ,
+        {
             label: 'Subroutine',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "In different programming languages, a subroutine may be called a procedure, a function, a routine, a method, or a subprogram. The generic term callable unit is sometimes used.",
@@ -4746,110 +5298,6 @@
         }
         ,
         {
-            label: 'System Call',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A system call is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on. This may include hardware-related services (for example, accessing a hard disk drive), creation and execution of new processes, and communication with integral kernel services such as process scheduling. System calls provide an essential interface between a process and the operating system.",
-            insertText: 'SystemCall',
-            range: range,
-        }
-        ,
-        {
-            label: 'Connect Socket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "The connect socket system call connects the socket to a target address.",
-            insertText: 'ConnectSocket',
-            range: range,
-        }
-        ,
-        {
-            label: 'Terminate Process',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "On many computer operating systems, a computer process terminates its execution by making an exit system call. More generally, an exit in a multithreading environment means that a thread of execution has stopped running. For resource management, the operating system reclaims resources (memory, files, etc.) that were used by the process. The process is said to be a dead process after it terminates.",
-            insertText: 'TerminateProcess',
-            range: range,
-        }
-        ,
-        {
-            label: 'Trace Process',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A trace system call provides a means by which one process (the \"tracer\") may observe and control the execution of another process (the \"tracee\"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.",
-            insertText: 'TraceProcess',
-            range: range,
-        }
-        ,
-        {
-            label: 'Write File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "The write is one of the most basic routines provided by a Unix-like operating system kernel. It writes data from a buffer declared by the user to a given device, such as a file. This is the primary way to output data from a program by directly using a system call. The destination is identified by a numeric code. The data to be written, for instance a piece of text, is defined by a pointer and a size, given in number of bytes. write thus takes three arguments.",
-            insertText: 'WriteFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Create Socket',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A create socket system call creates an endpoint for communication and returns a file descriptor that refers to that endpoint.",
-            insertText: 'CreateSocket',
-            range: range,
-        }
-        ,
-        {
-            label: 'Create Thread',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "Threads are an execution model that exists independently from a language, as well as a parallel execution model. They enable a program to control multiple different flows of work that overlap in time.",
-            insertText: 'CreateThread',
-            range: range,
-        }
-        ,
-        {
-            label: 'Move File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A system call to rename or move a file.  Linux's rename() is an example of this kind of system call.",
-            insertText: 'MoveFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Open File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "For most file systems, a program initializes access to a file in a file system using the open system call. This allocates resources associated to the file (the file descriptor), and returns a handle that the process will use to refer to that file. In some cases the open is performed by the first access. During the open, the filesystem may allocate memory for buffers, or it may wait until the first operation. Various other errors which may occur during the open include directory update failures, un-permitted multiple connections, media failures, communication link failures and device failures.",
-            insertText: 'OpenFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Read File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A program that needs to access data from a file stored in a file system uses the read system call. The file is identified by a file descriptor that is normally obtained from a previous call to open. This system call reads in data in bytes, the number of which is specified by the caller, from the file and stores then into a buffer supplied by the calling process.",
-            insertText: 'ReadFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Get System Time',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A system call that gets the system time.  For POSIX.1 systems, time() invokes a call to get the system time.",
-            insertText: 'GetSystemTime',
-            range: range,
-        }
-        ,
-        {
-            label: 'Create File',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "System call to create a new file on a file system. Some operating systems implement this functionality as part of their d3f:OpenFile system call.",
-            insertText: 'CreateFile',
-            range: range,
-        }
-        ,
-        {
-            label: 'Create Process',
-            kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A process spawn refers to a function that loads and executes a new child process.The current process may wait for the child to terminate or may continue to execute asynchronously. Creating a new subprocess requires enough memory in which both the child process and the current program can execute. There is a family of spawn functions in DOS, inherited by Microsoft Windows. There is also a different family of spawn functions in an optional extension of the POSIX standards.  Fork-exec is another technique combining two Unix system calls, which can effect a process spawn.",
-            insertText: 'CreateProcess',
-            range: range,
-        }
-        ,
-        {
             label: 'Process',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A process is an instance of a computer program that is being executed. It contains the program code and its current activity. Depending on the operating system (OS), a process may be made up of multiple threads of execution that execute instructions concurrently. A computer program is a passive collection of instructions, while a process is the actual execution of those instructions. Several processes may be associated with the same program; for example, opening up several instances of the same program often means more than one process is being executed.",
@@ -4994,66 +5442,146 @@
         }
         ,
         {
-            label: 'Task Scheduler Process',
+            label: 'Scheduled Job',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A task scheduler process is an operating system process that executes scheduled tasks (time-scheduling in the sense of wall clock time; not operating system scheduling of processes for multitasking).",
-            insertText: 'TaskSchedulerProcess',
+            insertText: 'ScheduledJob',
             range: range,
         }
         ,
         {
-            label: 'User Account',
+            label: 'System Call',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A user account allows a user to authenticate to a system and potentially to receive authorization to access resources provided by or connected to that system; however, authentication does not imply authorization. To log into an account, a user is typically required to authenticate oneself with a password or other credentials for the purposes of accounting, security, logging, and resource management.",
-            insertText: 'UserAccount',
+            documentation: "A system call is the programmatic way in which a computer program requests a service from the kernel of the operating system it is executed on. This may include hardware-related services (for example, accessing a hard disk drive), creation and execution of new processes, and communication with integral kernel services such as process scheduling. System calls provide an essential interface between a process and the operating system.",
+            insertText: 'SystemCall',
             range: range,
         }
         ,
         {
-            label: 'Privileged User Account',
+            label: 'Connect Socket',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A privileged account is a user account that has more privileges than ordinary users. Privileged accounts might, for example, be able to install or remove software, upgrade the operating system, or modify system or application configurations. They might also have access to files that are not normally accessible to standard users. Typical examples are root and administrator accounts. But there also service accounts, system accounts, etc. Privileged accounts are especially powerful, and should be monitored especially closely.",
-            insertText: 'PrivilegedUserAccount',
+            documentation: "The connect socket system call connects the socket to a target address.",
+            insertText: 'ConnectSocket',
             range: range,
         }
         ,
         {
-            label: 'Default User Account',
+            label: 'Delete File',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "Default accounts are those that are built-into an OS, such as the Guest or Administrator accounts on Windows systems or default factory/provider set accounts on other types of systems, software, or devices.",
-            insertText: 'DefaultUserAccount',
+            documentation: "Remove a file from a machine.",
+            insertText: 'DeleteFile',
             range: range,
         }
         ,
         {
-            label: 'Cloud User Account',
+            label: 'Suspend Thread',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A user account on a given host is a local user account for a given cloud and specified resources within that cloud.",
-            insertText: 'CloudUserAccount',
+            documentation: "Suspending a thread causes the thread to stop executing user-mode code.",
+            insertText: 'SuspendThread',
             range: range,
         }
         ,
         {
-            label: 'Local User Account',
+            label: 'Terminate Process',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A user account on a given host is a local user account for that specific host.",
-            insertText: 'LocalUserAccount',
+            documentation: "On many computer operating systems, a computer process terminates its execution by making an exit system call. More generally, an exit in a multithreading environment means that a thread of execution has stopped running. For resource management, the operating system reclaims resources (memory, files, etc.) that were used by the process. The process is said to be a dead process after it terminates.",
+            insertText: 'TerminateProcess',
             range: range,
         }
         ,
         {
-            label: 'Domain User Account',
+            label: 'Trace Process',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A domain user account in Microsoft Windows (2000) defines that user's access to a logical group of network objects (computers, users, devices) that share the same Active Directory databases; that is, a user's access to a domain.",
-            insertText: 'DomainUserAccount',
+            documentation: "A trace system call provides a means by which one process (the \"tracer\") may observe and control the execution of another process (the \"tracee\"), and examine and change the tracee's memory and registers. It is primarily used to implement breakpoint debugging and system call tracing.",
+            insertText: 'TraceProcess',
             range: range,
         }
         ,
         {
-            label: 'Global User Account',
+            label: 'Write File',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "A type of user account in Microsoft Windows (NT) that has a domain-wide scope.defines that user's access to a logical group of network objects (computers, users, devices) that share the same Active Directory databases; that is, a user's access to the domain.",
-            insertText: 'GlobalUserAccount',
+            documentation: "The write is one of the most basic routines provided by a Unix-like operating system kernel. It writes data from a buffer declared by the user to a given device, such as a file. This is the primary way to output data from a program by directly using a system call. The destination is identified by a numeric code. The data to be written, for instance a piece of text, is defined by a pointer and a size, given in number of bytes. write thus takes three arguments.",
+            insertText: 'WriteFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create Socket',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A create socket system call creates an endpoint for communication and returns a file descriptor that refers to that endpoint.",
+            insertText: 'CreateSocket',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create Thread',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Threads are an execution model that exists independently from a language, as well as a parallel execution model. They enable a program to control multiple different flows of work that overlap in time.",
+            insertText: 'CreateThread',
+            range: range,
+        }
+        ,
+        {
+            label: 'Move File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A system call to rename or move a file.  Linux's rename() is an example of this kind of system call. Another way of handling it is to call a copy file system call followed by a delete file system call.",
+            insertText: 'MoveFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Open File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "For most file systems, a program initializes access to a file in a file system using the open system call. This allocates resources associated to the file (the file descriptor), and returns a handle that the process will use to refer to that file. In some cases the open is performed by the first access. During the open, the filesystem may allocate memory for buffers, or it may wait until the first operation. Various other errors which may occur during the open include directory update failures, un-permitted multiple connections, media failures, communication link failures and device failures.",
+            insertText: 'OpenFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Read File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A program that needs to access data from a file stored in a file system uses the read system call. The file is identified by a file descriptor that is normally obtained from a previous call to open. This system call reads in data in bytes, the number of which is specified by the caller, from the file and stores then into a buffer supplied by the calling process.",
+            insertText: 'ReadFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Get System Time',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A system call that gets the system time.  For POSIX.1 systems, time() invokes a call to get the system time.",
+            insertText: 'GetSystemTime',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create File',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "System call to create a new file on a file system. Some operating systems implement this functionality as part of their d3f:OpenFile system call.",
+            insertText: 'CreateFile',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create Process',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A process spawn refers to a function that loads and executes a new child process.The current process may wait for the child to terminate or may continue to execute asynchronously. Creating a new subprocess requires enough memory in which both the child process and the current program can execute. There is a family of spawn functions in DOS, inherited by Microsoft Windows. There is also a different family of spawn functions in an optional extension of the POSIX standards.  Fork-exec is another technique combining two Unix system calls, which can effect a process spawn.",
+            insertText: 'CreateProcess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create Process',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Creates a process.",
+            insertText: 'CreateProcess',
+            range: range,
+        }
+        ,
+        {
+            label: 'Create Process',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Executes a process.",
+            insertText: 'CreateProcess',
             range: range,
         }
         ,
@@ -5098,6 +5626,14 @@
         }
         ,
         {
+            label: 'DHCP Network Traffic',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "DHCP Network Traffic is network traffic related to the DHCP protocol, used by network nodes to negotiate and configure either IPv4 or IPv6 addresses.",
+            insertText: 'DHCPNetworkTraffic',
+            range: range,
+        }
+        ,
+        {
             label: 'Network Packet',
             kind: monaco.languages.CompletionItemKind.Class,
             documentation: "A network packet is a formatted unit of data carried by a packet-switched network. Computer communications links that do not support packets, such as traditional point-to-point telecommunications links, simply transmit data as a bit stream. When data is formatted into packets, packet switching is possible and the bandwidth of the communication medium can be better shared among users than with circuit switching.",
@@ -5106,9 +5642,17 @@
         }
         ,
         {
+            label: 'TFTP Network Traffic',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "TFTP Network Traffic is network traffic typically used to automatically transfer configuration or boot files between machines.",
+            insertText: 'TFTPNetworkTraffic',
+            range: range,
+        }
+        ,
+        {
             label: 'DNS Network Traffic',
             kind: monaco.languages.CompletionItemKind.Class,
-            documentation: "RPC network traffic is network traffic related to remote procedure calls between network nodes..This includes only network traffic conforming to a standard RPC protocol; not custom protocols.",
+            documentation: "DNS network traffic is network traffic related to queries and responses involving the Domain Name System. DNS traffic can involve clients, servers such as relays or resolvers. This includes only network traffic conforming to standard DNS protocol; not custom protocols.",
             insertText: 'DNSNetworkTraffic',
             range: range,
         }
@@ -5338,6 +5882,62 @@
         }
         ,
         {
+            label: 'User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A user account allows a user to authenticate to a system and potentially to receive authorization to access resources provided by or connected to that system; however, authentication does not imply authorization. To log into an account, a user is typically required to authenticate oneself with a password or other credentials for the purposes of accounting, security, logging, and resource management.",
+            insertText: 'UserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Privileged User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A privileged account is a user account that has more privileges than ordinary users. Privileged accounts might, for example, be able to install or remove software, upgrade the operating system, or modify system or application configurations. They might also have access to files that are not normally accessible to standard users. Typical examples are root and administrator accounts. But there also service accounts, system accounts, etc. Privileged accounts are especially powerful, and should be monitored especially closely.",
+            insertText: 'PrivilegedUserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Default User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "Default accounts are those that are built-into an OS, such as the Guest or Administrator accounts on Windows systems or default factory/provider set accounts on other types of systems, software, or devices.",
+            insertText: 'DefaultUserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Cloud User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A user account on a given host is a local user account for a given cloud and specified resources within that cloud.",
+            insertText: 'CloudUserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Local User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A user account on a given host is a local user account for that specific host.",
+            insertText: 'LocalUserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Domain User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A domain user account in Microsoft Windows (2000) defines that user's access to a logical group of network objects (computers, users, devices) that share the same Active Directory databases; that is, a user's access to a domain.",
+            insertText: 'DomainUserAccount',
+            range: range,
+        }
+        ,
+        {
+            label: 'Global User Account',
+            kind: monaco.languages.CompletionItemKind.Class,
+            documentation: "A type of user account in Microsoft Windows (NT) that has a domain-wide scope.defines that user's access to a logical group of network objects (computers, users, devices) that share the same Active Directory databases; that is, a user's access to the domain.",
+            insertText: 'GlobalUserAccount',
+            range: range,
+        }
+        ,
+        {
             label: 'd3fend-kb-object-property',
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "x d3fend-kb-object-property y: The object y is a d3fend knowledge base object property. These properties allow the linkage of knowledge and information supporting and illustrating the d3fend model.",
@@ -5350,6 +5950,14 @@
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "x kb-is-example-of y: The reference x is an example of technique y.",
             insertText: 'kb-reference-of',
+            range: range,
+        }
+        ,
+        {
+            label: 'resume',
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "The agent or technique x continues a previous action on entity y. Usually occurs after suspension on y.",
+            insertText: 'resume',
             range: range,
         }
         ,
@@ -5410,14 +6018,6 @@
         }
         ,
         {
-            label: 'suspends',
-            kind: monaco.languages.CompletionItemKind.Property,
-            documentation: "x suspends y: The agent or technique x pauses entity y.",
-            insertText: 'suspends',
-            range: range,
-        }
-        ,
-        {
             label: 'obfuscates',
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "x obfuscates y: The technique x makes the digital artifact y unclear or obscure.  Typically obfuscation is a way to hide a digital artifact from discovery, use, or both.",
@@ -5430,6 +6030,14 @@
             kind: monaco.languages.CompletionItemKind.Property,
             documentation: "x terminates y: The technique x brings to an end or halt to some activity y.",
             insertText: 'terminates',
+            range: range,
+        }
+        ,
+        {
+            label: 'suspends',
+            kind: monaco.languages.CompletionItemKind.Property,
+            documentation: "x suspends y: The agent or technique x pauses entity y.",
+            insertText: 'suspends',
             range: range,
         }
         ,
@@ -6074,7 +6682,7 @@
         }
         ];
         }
-
+    
 function provideCompletionItems(model, position) {
     var textUntilPosition = model.getValueInRange({
         startLineNumber: 1,
@@ -6099,3 +6707,4 @@ function provideCompletionItems(model, position) {
         suggestions: createD3fCompletion(range),
     };
 }
+    

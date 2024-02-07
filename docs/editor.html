@@ -3,70 +3,120 @@
 
   <head>
     <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden; /* Prevents scrolling */
+      }
+      .app  {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+      }
       .container {
         display: flex;
-        height: 100vh;
+        flex-grow: 1; /* take up all available space */
+        overflow: auto;
       }
-
+      #title {
+        margin: 0;
+        padding: 10px;
+        align: center;
+        text-align: center;
+      }
       .content,
       .editor {
         flex: 1;
         padding: 10px;
         box-sizing: border-box;
       }
+      .editor {
+        max-width: 40%;
+      }
+      .content {
+        display: flex; /* Add this line */
+        justify-content: center; /* Add this line */
+        align-items: center; /* Add this line */
+        min-width: 60%;
+      }
+      #dcontent {
+        width: 100%;
+        height: 100%;
+        flex-grow: 1;
+      }
+      svg#content {
+        width: 100%;
+        height: 100%;
+      }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
-
-
+		<script src="static/monaco-completion.js"></script>
   </head>
 
   <body>
-    <pre class="mermaid">
-        graph LR;A[Christmas fa:fa-user] -->|Get money| B(Go shopping);B --> C{Let me think};C -->|One| D[Laptop];C -->|Two| E[iPhone];C -->|Three| F[Car]    </pre>
-    <div class="container">
-      <div id="editor" class="editor"></div>
-      <div id="content" class="content"></div>
+    <div class="app">
+      <h1 id="title">D3FEND Mermaid</h1>
+      <div class="container">
+        <div id="editor" class="editor"></div>
+        <div id="content" class="content"></div>
+      </div>
     </div>
 
     <script>
-        const v0 = [
-              'graph TD',
-              'a --> b',
-                'b --> c',
-            ].join('\n');
-    
-
+      const v0 = ['graph', 'u((user d3f:User))', 'w[[API d3f:WebServerApplication]]', 'u -->|d3f:accesses| w'].join('\n');
       require.config({
         paths: {
           'vs': 'https://unpkg.com/monaco-editor/min/vs',
-          'mermaid': 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min',
+          'mermaid': 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.min',
         }
       });
-      require(['vs/editor/editor.main', 'mermaid'], function (monaco, mermaid) {
-        // mermaid.mermaidAPI.initialize({startOnLoad: true});
+      require([
+        'vs/editor/editor.main', 'mermaid',
+      ], function (monaco, mermaid) {
+        monaco.languages.registerCompletionItemProvider(
+          'markdown',
+          {provideCompletionItems}
+        )
 
         var editor = monaco
           .editor
           .create(document.getElementById('editor'), {
             value: v0,
-            language: 'javascript',
-            theme: 'vs-dark'
+            language: 'markdown',
+            theme: 'vs-dark',
+            acceptSuggestionOnEnter: false,
+            automaticLayout: true,
           });
-        editor.onDidChangeModelContent(function () {
+        function updateDiagram() {
           var value = editor.getValue();
-            const element = document.getElementById('content');
-            mermaid.render('content', value, element).then(({ svg, bindFunctions }) => {
-                console.log(svg);
-                bindFunctions?.(element);
+          const element = document.getElementById('content');
+          mermaid
+            .render('content', value, element)
+            .then(({svg, bindFunctions}) => {
+              console.log(svg);
+              bindFunctions
+                ?.(element);
             });
-        });
+        }
+
+        updateDiagram();
+        editor.onDidChangeModelContent(updateDiagram);
       });
     </script>
     <script type="module">
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
+      import mermaid from 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs';
+      mermaid.initialize({
+        startOnLoad: true,
+        maxWidth: '2000px',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+        }
+      });
     </script>
   </body>
 
