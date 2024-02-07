@@ -6682,7 +6682,7 @@
         }
         ];
         }
-    
+
 function provideCompletionItems(model, position) {
     var textUntilPosition = model.getValueInRange({
         startLineNumber: 1,
@@ -6707,4 +6707,3 @@ function provideCompletionItems(model, position) {
         suggestions: createD3fCompletion(range),
     };
 }
-    

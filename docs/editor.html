@@ -3,59 +3,72 @@
 
   <head>
     <style>
-      body, html {
+      body,
+      html {
         margin: 0;
         padding: 0;
         height: 100%;
-        overflow: hidden; /* Prevents scrolling */
+        overflow: hidden;
+        /* Prevents scrolling */
       }
-      .app  {
+
+      .app {
         display: flex;
         flex-direction: column;
         height: 100%;
         overflow: hidden;
       }
+
       .container {
         display: flex;
-        flex-grow: 1; /* take up all available space */
+        flex-grow: 1;
+        /* take up all available space */
         overflow: auto;
       }
+
       #title {
         margin: 0;
         padding: 10px;
         align: center;
         text-align: center;
       }
+
       .content,
       .editor {
         flex: 1;
         padding: 10px;
         box-sizing: border-box;
       }
+
       .editor {
         max-width: 40%;
       }
+
       .content {
-        display: flex; /* Add this line */
-        justify-content: center; /* Add this line */
-        align-items: center; /* Add this line */
+        display: flex;
+        /* Add this line */
+        justify-content: center;
+        /* Add this line */
+        align-items: center;
+        /* Add this line */
         min-width: 60%;
       }
+
       .mermaid {
         width: 100%;
         height: 100%;
       }
+
       svg {
-        width: 2000px !important;
+        width: 100%;
         height: 100%;
       }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
-		<script src="static/monaco-completion.js"></script>
-    <script type="module">
-    </script>
+    <script src="static/monaco-completion.js"></script>
+    <script type="module"></script>
   </head>
 
   <body>
@@ -64,29 +77,33 @@
       <div class="container">
         <div id="editor" class="editor"></div>
         <div id="content" class="content">
-          <pre class="mermaid">graph TD; a-->b; a-->c; b-->d; c-->d;</pre>
+          <pre class="mermaid"></pre>
         </div>
       </div>
     </div>
 
     <script type="module">
       import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
-      console.error("d3", d3);
-
+      /*
+      * Drag and drop the svg.
+      */
       const zoomIt = () => {
         const svg = d3.select('.mermaid');
-        svg.attr('style', '');
-        console.warn("Selected svg", (svg != null) ? svg.html() : svg);
         svg.html("<g>" + svg.html() + "</g>");
-
-        if (!svg.empty()) {
-          const zoom = d3.zoom().on('zoom', function(event) {
-            svg.select("g").attr('transform', event.transform);
-          });
-          svg.call(zoom);
-        } else {
-          console.log('No svg found');
+        if (svg.empty()) {
+          console.warn('No svg found');
+          return;
         }
+
+        const zoom = d3
+          .zoom()
+          .on('zoom', function (event) {
+            // console.debug("Transform:", event);
+            svg
+              .select("g")
+              .attr('transform', event.transform);
+          });
+        svg.call(zoom);
       }
 
       const v0 = ['graph', 'u((user d3f:User))', 'w[[API d3f:WebServerApplication]]', 'u -->|d3f:accesses| w'].join('\n');
@@ -98,27 +115,12 @@
         }
       });
 
-      /*
-      * Drag and drop the svg.
-      */
       require([
-        'vs/editor/editor.main', 'mermaid',
-      ], function (monaco, mermaid, ) {
-        monaco.languages.registerCompletionItemProvider(
-          'markdown',
-          {provideCompletionItems}
-        )
-
- /*        function mermaid_enable_zoom(mermaid) {
-          document.getElementById("content").style = "";
-          var svg = d3.select(mermaid);
-          svg.html("<g>" + svg.html() + "</g>");
-          var inner = svg.select("g");
-          var zoom = d3.zoom().on("zoom", function(event) {
-            inner.attr("transform", event.transform);
-          });
-          svg.call(zoom);
-        } */
+        'vs/editor/editor.main', 'mermaid'
+      ], function (monaco, mermaid,) {
+        monaco
+          .languages
+          .registerCompletionItemProvider('markdown', {provideCompletionItems})
 
         var editor = monaco
           .editor
@@ -127,16 +129,32 @@
             language: 'markdown',
             theme: 'vs-dark',
             acceptSuggestionOnEnter: false,
-            automaticLayout: true,
+            automaticLayout: true
           });
 
         function updateDiagram() {
           var value = editor.getValue();
           const element = document.getElementById('content');
+
           element.innerHTML = '<pre class="mermaid">' + value + '</pre>';
           const ret = mermaid.run();
-          console.error("Returning", ret);
-          zoomIt(element);
+          ret.then(() => {
+            const diagram = document.querySelector("svg");
+            diagram.style = "";
+            var bbox = diagram.getBBox();
+
+            // Calculate the viewBox values to center the diagram
+            var viewBox = [
+              bbox.x - (bbox.width / 2), // min-x
+              bbox.y - (bbox.height / 2), // min-y
+              bbox.width * 2, // width
+              bbox.height * 2 // height
+            ].join(' ');
+
+            // Set the viewBox attribute on the SVG
+            diagram.setAttribute('viewBox', viewBox);
+          });
+          zoomIt();
         }
 
         updateDiagram();
@@ -146,10 +164,11 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs';
       mermaid.initialize({
+        maxTextSize: 100 _000,
         startOnLoad: false,
         flowchart: {
           useMaxWidth: false,
-          htmlLabels: true,
+          htmlLabels: false
         }
       });
     </script>
