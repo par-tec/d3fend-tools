@@ -41,13 +41,12 @@
         align-items: center; /* Add this line */
         min-width: 60%;
       }
-      #dcontent {
+      .mermaid {
         width: 100%;
         height: 100%;
-        flex-grow: 1;
       }
-      svg#content {
-        width: 100%;
+      svg {
+        width: 2000px !important;
         height: 100%;
       }
     </style>
@@ -55,6 +54,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/monaco-editor/min/vs/loader.js"></script>
 		<script src="static/monaco-completion.js"></script>
+    <script type="module">
+    </script>
   </head>
 
   <body>
@@ -63,61 +64,61 @@
       <div class="container">
         <div id="editor" class="editor"></div>
         <div id="content" class="content">
-        <pre class="mermaid">graph TD; a-->b; a-->c; b-->d; c-->d;</pre>
+          <pre class="mermaid">graph TD; a-->b; a-->c; b-->d; c-->d;</pre>
         </div>
       </div>
     </div>
 
-    <script>
+    <script type="module">
+      import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+      console.error("d3", d3);
+
+      const zoomIt = () => {
+        const svg = d3.select('.mermaid');
+        svg.attr('style', '');
+        console.warn("Selected svg", (svg != null) ? svg.html() : svg);
+        svg.html("<g>" + svg.html() + "</g>");
+
+        if (!svg.empty()) {
+          const zoom = d3.zoom().on('zoom', function(event) {
+            svg.select("g").attr('transform', event.transform);
+          });
+          svg.call(zoom);
+        } else {
+          console.log('No svg found');
+        }
+      }
+
       const v0 = ['graph', 'u((user d3f:User))', 'w[[API d3f:WebServerApplication]]', 'u -->|d3f:accesses| w'].join('\n');
       require.config({
         paths: {
           'vs': 'https://unpkg.com/monaco-editor/min/vs',
           'mermaid': 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.min',
+          'd3': 'https://cdn.jsdelivr.net/npm/d3@7/+esm'
         }
       });
 
       /*
       * Drag and drop the svg.
       */
-      function dragElement(element) {
-        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-        element.onmousedown = dragMouseDown;
-        console.error('dragElement', element);
-        function dragMouseDown(e) {
-          e = e || window.event;
-          e.preventDefault();
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          document.onmouseup = closeDragElement;
-          document.onmousemove = elementDrag;
-        }
-
-        function elementDrag(e) {
-          e = e || window.event;
-          e.preventDefault();
-          pos1 = pos3 - e.clientX;
-          pos2 = pos4 - e.clientY;
-          pos3 = e.clientX;
-          pos4 = e.clientY;
-          element.style.top = (element.offsetTop - pos2) + "px";
-          element.style.left = (element.offsetLeft - pos1) + "px";
-        }
-
-        function closeDragElement() {
-            document.onmouseup = null;
-            document.onmousemove = null;
-          }
-        }
-
-
       require([
         'vs/editor/editor.main', 'mermaid',
-      ], function (monaco, mermaid) {
+      ], function (monaco, mermaid, ) {
         monaco.languages.registerCompletionItemProvider(
           'markdown',
           {provideCompletionItems}
         )
+
+ /*        function mermaid_enable_zoom(mermaid) {
+          document.getElementById("content").style = "";
+          var svg = d3.select(mermaid);
+          svg.html("<g>" + svg.html() + "</g>");
+          var inner = svg.select("g");
+          var zoom = d3.zoom().on("zoom", function(event) {
+            inner.attr("transform", event.transform);
+          });
+          svg.call(zoom);
+        } */
 
         var editor = monaco
           .editor
@@ -133,8 +134,9 @@
           var value = editor.getValue();
           const element = document.getElementById('content');
           element.innerHTML = '<pre class="mermaid">' + value + '</pre>';
-          mermaid.run();
-          dragElement(element);
+          const ret = mermaid.run();
+          console.error("Returning", ret);
+          zoomIt(element);
         }
 
         updateDiagram();
@@ -145,9 +147,8 @@
       import mermaid from 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs';
       mermaid.initialize({
         startOnLoad: false,
-        maxWidth: '2000px',
         flowchart: {
-          useMaxWidth: true,
+          useMaxWidth: false,
           htmlLabels: true,
         }
       });
