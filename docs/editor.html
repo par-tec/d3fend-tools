@@ -62,7 +62,9 @@
       <h1 id="title">D3FEND Mermaid</h1>
       <div class="container">
         <div id="editor" class="editor"></div>
-        <div id="content" class="content"></div>
+        <div id="content" class="content">
+        <pre class="mermaid">graph TD; a-->b; a-->c; b-->d; c-->d;</pre>
+        </div>
       </div>
     </div>
 
@@ -74,6 +76,41 @@
           'mermaid': 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.min',
         }
       });
+
+      /*
+      * Drag and drop the svg.
+      */
+      function dragElement(element) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        element.onmousedown = dragMouseDown;
+        console.error('dragElement', element);
+        function dragMouseDown(e) {
+          e = e || window.event;
+          e.preventDefault();
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          document.onmouseup = closeDragElement;
+          document.onmousemove = elementDrag;
+        }
+
+        function elementDrag(e) {
+          e = e || window.event;
+          e.preventDefault();
+          pos1 = pos3 - e.clientX;
+          pos2 = pos4 - e.clientY;
+          pos3 = e.clientX;
+          pos4 = e.clientY;
+          element.style.top = (element.offsetTop - pos2) + "px";
+          element.style.left = (element.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            document.onmouseup = null;
+            document.onmousemove = null;
+          }
+        }
+
+
       require([
         'vs/editor/editor.main', 'mermaid',
       ], function (monaco, mermaid) {
@@ -91,16 +128,13 @@
             acceptSuggestionOnEnter: false,
             automaticLayout: true,
           });
+
         function updateDiagram() {
           var value = editor.getValue();
           const element = document.getElementById('content');
-          mermaid
-            .render('content', value, element)
-            .then(({svg, bindFunctions}) => {
-              console.log(svg);
-              bindFunctions
-                ?.(element);
-            });
+          element.innerHTML = '<pre class="mermaid">' + value + '</pre>';
+          mermaid.run();
+          dragElement(element);
         }
 
         updateDiagram();
@@ -110,7 +144,7 @@
     <script type="module">
       import mermaid from 'https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs';
       mermaid.initialize({
-        startOnLoad: true,
+        startOnLoad: false,
         maxWidth: '2000px',
         flowchart: {
           useMaxWidth: true,
