@@ -7,7 +7,6 @@
     packages = [
       "typing_extensions",
       "pyyaml",
-      "pandas",
       "rdflib",
       "static/d3fendtools-0.0.1-py3-none-any.whl"
     ]
@@ -29,7 +28,8 @@
     <script>
         /// Load mermaid library as a js global variable accessible by pyscript.
         (async() => {
-          mermaid = await import('https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs');
+          // mermaid = await import('https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs');
+          mermaid = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
         })();
 
         function mermaid_enable_zoom(mermaid) {
@@ -428,7 +428,7 @@ def render_mmd(event):
       text=status["editor"].getValue(),
       filter_=Element("mermaid-filter").element.value,
       flip=Element("mermaid-chk-flip").element.checked,
-      mermaidAPI=mermaidAPI,
+      mermaidAPI=js.mermaid.default,
     )
     status["mermaid"]["diagram-text"] = text_mmd
     js.document.getElementById("mermaid-graph").innerHTML = mermaid_svg

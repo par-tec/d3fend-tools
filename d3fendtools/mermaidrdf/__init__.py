@@ -197,9 +197,11 @@ def parse_resources(resources: List[Path], outfile=None, **options):
     a turtle string. If outfile is specified, the turtle string is also."""
     turtle = ""
     for f in resources:
-        mermaid_graphs = extract_mermaid(f.read_text())
-        for graph in mermaid_graphs:
-            turtle += "\n" + parse_mermaid(graph, **options)
+        markdown_text = f.read_text()
+        dm = D3fendMermaid(markdown_text)
+        mermaid_diagrams = extract_mermaid(markdown_text=dm.text)
+        for diagram in mermaid_diagrams:
+            turtle += "\n" + parse_mermaid(diagram, **options)
     if outfile:
         Path(outfile).with_suffix(".ttl").write_text(turtle)
     return turtle

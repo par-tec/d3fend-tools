@@ -1,11 +1,77 @@
 import json
 import shlex
 import shutil
-import subprocess
+import subprocess  # nosec
 from pathlib import Path
 
 import yaml
 from rdflib import Graph  # pip install rdflib pyld
+
+
+def generate_vscode_completion(items):
+    def _item(label, documentation, insert_text, rdf_type):
+        if rdf_type == "d3f:DefensiveTechnique":
+            kind = "Interface"
+        elif rdf_type == "d3f:OffensiveTechnique":
+            kind = "Event"
+        elif rdf_type == "d3f:DigitalArtifact":
+            kind = "Class"
+        elif rdf_type == "d3f:d3fend-object-property":
+            kind = "Property"
+        else:
+            raise ValueError(f"Unknown rdf_type: {rdf_type}")
+
+        return f"""
+        {{
+            label: '{label}',
+            kind: vscode.CompletionItemKind.{kind},
+            documentation: {json.dumps(documentation)},
+            insertText: '{insert_text}',
+        }}
+        """
+
+    js_text = f"""
+    import * as vscode from 'vscode';
+
+    export const COMPLETION_DATA = [
+        {','.join(_item(**x) for x in items)}
+    ];
+    """
+    return js_text
+
+
+def _vscode_completion(g):
+    items = []
+    for rdf_type, rdf_predicate in [
+        ("d3f:DefensiveTechnique", "rdfs:subClassOf*"),
+        ("d3f:OffensiveTechnique", "rdfs:subClassOf*"),
+        ("d3f:DigitalArtifact", "rdfs:subClassOf*"),
+        ("d3f:d3fend-object-property", "rdfs:subPropertyOf*"),
+    ]:
+        ret = g.query(
+            f"""
+            SELECT DISTINCT ?s ?label ?documentation
+            WHERE {{
+                ?s {rdf_predicate} {rdf_type};
+                    rdfs:label ?label;
+                    d3f:definition ?documentation
+                    . }}
+            """
+        )
+        items.extend(
+            [
+                {
+                    "label": x[1],
+                    "documentation": x[2],
+                    "insert_text": x[0].fragment,
+                    "rdf_type": rdf_type,
+                }
+                for x in ret
+            ]
+        )
+
+    js_text = generate_vscode_completion(items)
+    Path("docs/static/vscode-completion.js").write_text(js_text)
 
 
 def generate_monaco_completion(items):
@@ -153,7 +219,8 @@ def generate_files():
     _d3fend_short(g)
     _mermaidrdf_yaml(g)
     _monaco_completion(g)
-    subprocess.run(shlex.split("python setup.py bdist_wheel"))
+    _vscode_completion(g)
+    subprocess.run(shlex.split("python setup.py bdist_wheel"))  # nosec
 
 
 if __name__ == "__main__":
