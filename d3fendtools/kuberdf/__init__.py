@@ -294,7 +294,11 @@ class Route(K8Resource):
 
                 rel_port = self.spec.get("port", {}).get("targetPort")
                 rel_port = f":{rel_port}" if rel_port else ""
-                yield self.uri, NS_D3F.accesses, self.ns + f"/{rel_kind}/{rel_name}{rel_port}"
+                yield (
+                    self.uri,
+                    NS_D3F.accesses,
+                    self.ns + f"/{rel_kind}/{rel_name}{rel_port}",
+                )
                 # yield self.ns + f"/{rel_kind}/{rel_name}", RDF.type, NS_K8S[rel_kind]
                 # rel_port = self.spec.get("port", {}).get("targetPort")
                 # dport = URIRef(f"TCP://{rel_name}:{rel_port}")
@@ -321,8 +325,10 @@ class Service(K8Resource):
 
             yield host_u, RDF.type, NS_K8S.Host
             yield self.uri, NS_K8S.hasHost, host_u
-            yield self.uri, NS_K8S.portForward, Literal(
-                "{port}-{protocol}>{targetPort}".format(**port)
+            yield (
+                self.uri,
+                NS_K8S.portForward,
+                Literal("{port}-{protocol}>{targetPort}".format(**port)),
             )
 
             # Service port forwarded to selectors.
@@ -441,7 +447,7 @@ class DC(K8Resource):
                 raise NotImplementedError(volume)
 
         for container in containers:
-            s_container = self.uri + f'/Container/{container["name"]}'
+            s_container = self.uri + f"/Container/{container['name']}"
             yield self.uri, NS_D3F.runs, s_container
             yield s_container, RDF.type, NS_K8S.Container
             yield s_container, RDFS.label, Literal(container["name"])

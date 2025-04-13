@@ -65,7 +65,6 @@ def _get_resources(basepath, glob_pattern, ignore, match) -> List[Path]:
     help="Select files matching this pattern",
 )
 def main(basepath, destfile, resource_type, ns_from_file, format, ignore, match):
-
     if resource_type == "kube":
         resources = _get_resources(basepath, "**/*.y*ml", ignore, match)
         kuberdf_options = dict(ns_from_file=ns_from_file)

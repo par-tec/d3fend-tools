@@ -37,7 +37,7 @@ def generate_vscode_completion(items):
     import * as vscode from 'vscode';
 
     export const COMPLETION_DATA = [
-        {','.join(_item(**x) for x in items)}
+        {",".join(_item(**x) for x in items)}
     ];
     """
     return js_text
@@ -104,7 +104,7 @@ def generate_monaco_completion(items):
 
     js_text = f"""
     function createD3fCompletion(range) {{
-        return [{','.join(_item(**x) for x in items)}];
+        return [{",".join(_item(**x) for x in items)}];
         }}
     """
     return js_text
@@ -229,7 +229,6 @@ def generate_files():
 
 
 if __name__ == "__main__":
-
     generate_files()
     FILES = (
         {
