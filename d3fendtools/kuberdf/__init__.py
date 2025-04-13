@@ -316,9 +316,9 @@ class Service(K8Resource):
 
         for port in self.spec.get("ports", []):
             # Explicit internal TCP connections.
-            if not port.get("protocol"):
-                continue
+            port.setdefault("protocol", "TCP")
             host_u = URIRef(f"{port['protocol']}://{self.name}:{port['port']}")
+
             yield host_u, RDF.type, NS_K8S.Host
             yield self.uri, NS_K8S.hasHost, host_u
             yield self.uri, NS_K8S.portForward, Literal(
