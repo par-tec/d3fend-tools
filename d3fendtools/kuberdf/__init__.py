@@ -482,6 +482,27 @@ class DC(K8Resource):
                     pass
 
 
+class HorizontalPodAutoscaler(K8Resource):
+    """
+    HorizontalPodAutoscaler
+    $.spec.scaleTargetRef
+    """
+
+    apiVersion = "autoscaling/v1"
+    kind = "HorizontalPodAutoscaler"
+
+    def triple_spec(self):
+        if not (scale_target := self.spec.get("scaleTargetRef")):
+            return
+        kind = scale_target["kind"]
+        name = scale_target["name"]
+        if kind in ("DeploymentConfig", "Deployment"):
+            target_u = URIRef(self.ns + f"/{kind}/{name}")
+            yield self.uri, NS_D3F.accesses, target_u
+            yield target_u, RDF.type, NS_K8S.Deployment
+            yield self.ns, NS_K8S.hasChild, target_u
+
+
 class CronJob(DC):
     """
     CronJob
@@ -572,4 +593,5 @@ CLASSMAP = {
     ("v1", "Service"): Service,
     ("v1", "Secret"): None,
     ("apps/v1", "StatefulSet"): DC,
+    ("autoscaling/v2", "HorizontalPodAutoscaler"): HorizontalPodAutoscaler,
 }

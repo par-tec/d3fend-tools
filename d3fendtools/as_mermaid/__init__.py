@@ -84,7 +84,7 @@ class RDF2Mermaid:
     @staticmethod
     def sanitize_uri(s):
         """Sanitize a URI to be used as a node name in mermaid."""
-        ret = s.split("@", 1)[0].replace("/", "_").replace("@", "_")
+        ret = s.split("@", 1)[0].replace("/", "_").replace("@", "_").replace("=", "_")
         return ret
         if len(ret) < 64:
             return ret
@@ -106,7 +106,7 @@ class RDF2Mermaid:
             if len(ret) - offset > 20:
                 ret += r"\n"
                 offset += 20
-        return ret.strip(r"\n").strip()
+        return ret.strip(r"\n").strip().replace("=", "_")
 
     def parse(self, match: str = "", simplified_view=False):
         if self.lines:
