@@ -18,6 +18,7 @@ k8s:hasImage a rdf:Property ;
     rdfs:subPropertyOf k8s:connected  .
 
 # Kinds
+k8s:Kind a rdfs:Class .
 k8s:Application a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:BuildConfig a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Cluster    a rdfs:Class; rdfs:subClassOf k8s:Kind .
@@ -29,18 +30,53 @@ k8s:Endpoints   a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Host        a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Image       a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:ImageStream a rdfs:Class; rdfs:subClassOf k8s:Kind .
-k8s:Kind a rdfs:Class .
-k8s:Namespace   a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Namespace   a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:PersistentVolumeClaim     a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Port        a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Route       a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Secret      a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Service     a rdfs:Class; rdfs:subClassOf k8s:Kind .
+k8s:Node        a rdfs:Class; rdfs:subClassOf k8s:Kind .
+
+k8s:Pod rdfs:subClassOf k8s:Kind ;
+    rdfs:comment "A group of one or more containers, with shared storage/network, and a specification for how to run the containers" ;
+    rdfs:label "Pod" ;
+    d3f:runsOn [ a k8s:Node ] ;
+    d3f:hasClusterIP [ a d3f:IPAddress ] ;
+    d3f:contains [ a k8s:Container ]  ;
+    d3f:hasNetNs [ a <https://man7.org/linux/man-pages/man7/network_namespaces.7.html> ] ;
+.
+
+#
+# https://kubernetes.io/docs/concepts/workloads/
+#
+k8s:Workload a rdfs:Class;
+rdfs:subClassOf k8s:Kind .
+k8s:Deployment rdfs:subClassOf k8s:Workload .
+k8s:ReplicaSet rdfs:subClassOf k8s:Workload .
+k8s:StatefulSet rdfs:subClassOf k8s:Workload .
+k8s:DaemonSet rdfs:subClassOf k8s:Workload ;
+    rdfs:comment "Ensures that all (or some) Nodes run a copy of a Pod" ;
+.
+k8s:runsOn a rdf:Property ;
+    rdfs:subPropertyOf k8s:connected  ;
+    rdfs:domain k8s:DaemonSet ;
+    rdfs:range k8s:Node
+.
+k8s:HorizontalPodAutoscaler rdfs:subClassOf k8s:Workload ;
+    rdfs:comment "Automatically scales the number of Pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics)" ;
+    k8s:scaleTarget [ a d3f:Workload ] ;
+.
+k8s:Job rdfs:subClassOf k8s:Workload ;
+    rdfs:comment "Runs only once"
+.
+k8s:CronJob rdfs:subClassOf k8s:Workload ;
+    rdfs:comment "Runs on a schedule"
+.
 # Non-kinds
 k8s:Registry     a rdfs:Class .
 
-# Mappings
+# d3fend Mappings
 k8s:Cluster rdfs:subClassOf d3f:ContainerOrchestrationSoftware .
 k8s:ConfigMap rdfs:subClassOf d3f:ConfigurationResource .
 k8s:Container rdfs:subClassOf d3f:ContainerProcess .
@@ -57,3 +93,4 @@ k8s:Selector rdfs:subClassOf d3f:NetworkService .  # new
 k8s:Service rdfs:subClassOf d3f:IntranetNetworkTraffic .
 k8s:Registry rdfs:subClassOf d3f:SoftwareArtifactServer .
 k8s:Route rdfs:subClassOf d3f:InternetNetworkTraffic .
+k8s:Node rdfs:subClassOf d3f:Server .

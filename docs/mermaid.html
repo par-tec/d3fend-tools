@@ -29,6 +29,7 @@
         /// Load mermaid library as a js global variable accessible by pyscript.
         (async() => {
           // mermaid = await import('https://cdn.jsdelivr.net/npm/d3fend-mermaid@10.8.637/dist/mermaid.esm.min.mjs');
+          // mermaid = await import('https://cdn.jsdelivr.net/npm/mermaid@9/dist/mermaid.esm.min.mjs');
           mermaid = await import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs');
         })();
 
@@ -301,9 +302,9 @@ logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 # Pyodide imports
-import pyodide_js
+# import pyodide_js
+# log.info(f"{pyodide_js.version= }")
 from pyodide.ffi import create_proxy
-log.info(f"{pyodide_js.version= }")
 import js
 from pathlib import Path
 

@@ -74,20 +74,25 @@ def strip_oci_image_tag(image: str) -> str:
 
 def parse_resources(
     resources: Iterable[Path], outfile: str, ns_from_file=False, jsonld_output=False
-):
+) -> Graph:
     g = Graph()
     g.parse(data=(Path(__file__).parent / "ontology.ttl").read_text(), format="turtle")
     g.bind("k8s", NS_K8S)
     for f in resources:
         ns = f.stem if ns_from_file else None
         log.info(f"Parsing {f} with namespace {ns}")
-        parse_manifest_as_graph(f.read_text(), g=g, manifest_format=f.suffix[1:])
-    outfile = Path(outfile)
-    g.serialize(outfile.with_suffix(".ttl").as_posix(), format="turtle")
+        try:
+            parse_manifest_as_graph(f.read_text(), g=g, manifest_format=f.suffix[1:])
+        except Exception as e:
+            log.error(f"Error parsing {f}: {e}")
+            continue
+    dpath = Path(outfile)
+    g.serialize(dpath.with_suffix(".ttl").as_posix(), format="turtle")
     if jsonld_output:
         g.serialize(
-            outfile.with_suffix(".jsonld").as_posix(), format="application/ld+json"
+            dpath.with_suffix(".jsonld").as_posix(), format="application/ld+json"
         )
+    return g
 
 
 def parse_manifest(manifest_text: str) -> str:
@@ -153,35 +158,20 @@ class SkipResource:
 
 
 class K8Resource:
+    # Define classmap as a static class constant
+
     @staticmethod
     def factory(manifest, ns=None):
-        classmap = {
-            "Build": SkipResource,
-            "BuildConfig": BuildConfig,
-            "ConsolePlugin": None,
-            "CronJob": CronJob,
-            "Deployment": DC,
-            "DeploymentConfig": DC,
-            "Endpoint": None,
-            "Endpoints": None,
-            "HorizontalPodAutoscaler": SkipResource,
-            "ImageStream": None,
-            "ImageStreamTag": None,
-            "Job": SkipResource,
-            "List": K8List,
-            "Pod": SkipResource,
-            "ReplicationController": ReplicationController,
-            "Route": Route,
-            "Service": Service,
-            "StatefulSet": DC,
-        }
         kind = manifest.get("kind")
-        clz = classmap.get(kind) or K8Resource
+        api_version = manifest.get("apiVersion")
+        log.error(f"Parsing {kind} with apiVersion {api_version} in namespace {ns}")
+        # Use CLASSMAP as the key to fetch the class
+        clz = CLASSMAP.get((api_version, kind)) or K8Resource
         return clz(manifest, ns=ns)
 
     @staticmethod
     def parse_resource(manifest: dict, ns=None):
-        """Parse an openshift manifest file
+        """Parse an OpenShift manifest file
         and convert it to an RDF resource
         """
         resource = K8Resource.factory(manifest, ns=ns)
@@ -198,9 +188,13 @@ class K8Resource:
         app = labels.get("app") or labels.get("application")
         return URIRef(self.ns + f"/Application/{app}") if app else None
 
-    def __init__(self, manifest=None, ns: str = None) -> None:
+    def __init__(self, manifest: dict | None = None, ns: str = None) -> None:
         if ":" in str(ns):
             raise ValueError(f"Invalid namespace: {ns}")
+        manifest = manifest or {}
+        if manifest["apiVersion"] not in [k[0] for k in CLASSMAP]:
+            log.error(f"Invalid apiVersion: {manifest['apiVersion']}")
+            return
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.name = self.metadata["name"]
@@ -322,6 +316,8 @@ class Service(K8Resource):
 
         for port in self.spec.get("ports", []):
             # Explicit internal TCP connections.
+            if not port.get("protocol"):
+                continue
             host_u = URIRef(f"{port['protocol']}://{self.name}:{port['port']}")
             yield host_u, RDF.type, NS_K8S.Host
             yield self.uri, NS_K8S.hasHost, host_u
@@ -553,3 +549,27 @@ class BuildConfig(K8Resource):
             yield from_image_url, RDF.type, NS_K8S.ImageStreamTag
         if from_image_url and to_image_url:
             yield to_image_url, RDFS.subClassOf, from_image_url
+
+
+CLASSMAP = {
+    ("v1", "Build"): SkipResource,
+    ("v1", "BuildConfig"): BuildConfig,
+    ("v1", "ConsolePlugin"): None,
+    ("batch/v1", "CronJob"): CronJob,
+    ("apps/v1", "Deployment"): DC,
+    ("apps.openshift.io/v1", "DeploymentConfig"): DC,
+    ("v1", "Endpoint"): None,
+    ("v1", "Endpoints"): None,
+    ("autoscaling/v1", "HorizontalPodAutoscaler"): SkipResource,
+    ("image.openshift.io/v1", "ImageStream"): None,
+    ("image.openshift.io/v1", "ImageStreamTag"): None,
+    ("batch/v1", "Job"): SkipResource,
+    ("v1", "List"): K8List,
+    ("v1", "Pod"): SkipResource,
+    ("v1", "Project"): SkipResource,
+    ("v1", "ReplicationController"): ReplicationController,
+    ("route.openshift.io/v1", "Route"): Route,
+    ("v1", "Service"): Service,
+    ("v1", "Secret"): None,
+    ("apps/v1", "StatefulSet"): DC,
+}
