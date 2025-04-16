@@ -4,6 +4,7 @@ from pathlib import Path
 from time import time
 from typing import Iterable
 from urllib.parse import urlparse
+import hashlib
 
 import yaml
 from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
@@ -129,7 +130,6 @@ def parse_manifest_as_graph(
             continue
         if "kind" not in manifest:
             log.error(f"Invalid manifest without kind: {manifest}")
-            breakpoint()
             continue
         log.error("Parsing manifest %s", manifest.get("kind"))
         for triple in K8Resource.parse_resource(manifest):
@@ -339,17 +339,29 @@ class Service(K8Resource):
             yield service_port, RDF.type, NS_K8S.Port
             yield self.uri, NS_K8S.hasPort, service_port
             yield self.uri, NS_K8S.hasChild, service_port
+            yield host_u, NS_D3F.accesses, service_port
 
             if selector := self.spec.get("selector"):
-                k, v = next(iter(selector.items()))
-                # Kubernetes by default exposes all ports on a service
-                endpoint_u = URIRef(
-                    f"{{protocol}}://{k}={v}:{{targetPort}}".format(**port)
-                )
-                yield endpoint_u, RDF.type, NS_K8S.Endpoints
+                selector_label = json.dumps(selector, sort_keys=True).replace('"', "")
+                selector_uuid = hashlib.sha256(selector_label.encode()).hexdigest()
+                selector_u = URIRef(f"urn:k8s:{self.ns}/Selector/{selector_uuid}")
+                yield selector_u, RDF.type, NS_K8S.Selector
+                yield selector_u, RDFS.label, Literal(selector_label)
+                # yield selector_u, NS_K8S.hasNamespace, self.ns
 
-                # Service port accesses a selector-based Endpoint.
-                yield service_port, NS_D3F.accesses, endpoint_u
+                for k, v in selector.items():
+                    # k, v = next(iter(selector.items()))
+                    # Kubernetes by default exposes all ports on a service
+                    endpoint_u = URIRef(
+                        f"{{protocol}}://{self.ns}/{k}={v}:{{targetPort}}".format(
+                            **port
+                        )
+                    )
+                    yield endpoint_u, RDF.type, NS_K8S.Endpoints
+                    # yield selector_u, NS_K8S.hasChild, endpoint_u
+                    # Service port accesses a selector-based Endpoint.
+                    yield service_port, NS_D3F.accesses, endpoint_u
+                    yield selector_u, NS_K8S.hasChild, endpoint_u
             else:
                 # yield an Endpoint with the same name as the service
                 # and on the default namespace.
@@ -357,7 +369,7 @@ class Service(K8Resource):
                 yield self.uri, NS_D3F.accesses, endpoint_u
 
             # Connect host to Endpoint
-            yield host_u, NS_D3F.accesses, endpoint_u
+            # yield host_u, NS_D3F.accesses, endpoint_u
             yield self.uri, NS_K8S.hasChild, host_u
 
 
@@ -465,12 +477,14 @@ class DC(K8Resource):
                 for port in container["ports"]:
                     protocol = port.get("protocol", "tcp").upper()
                     for k, v in template_labels.items():
-                        port_u = URIRef(f"{protocol}://{k}={v}:{port['containerPort']}")
+                        port_u = URIRef(
+                            f"{protocol}://{self.ns}/{k}={v}:{port['containerPort']}"
+                        )
                         yield port_u, RDF.type, NS_K8S.Endpoints
                         yield port_u, NS_D3F.accesses, s_container
                         yield self.uri, NS_K8S.hasChild, port_u
-                        if template_app:
-                            yield template_app, NS_K8S.hasChild, port_u
+                        # if template_app:
+                        #     yield template_app, NS_K8S.hasChild, port_u
 
             for env in container.get("env", []):
                 try:
