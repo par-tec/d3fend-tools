@@ -4,7 +4,6 @@ from pathlib import Path
 from time import time
 from typing import Iterable
 from urllib.parse import urlparse
-import hashlib
 
 import yaml
 from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
@@ -20,6 +19,9 @@ def dontyield(*a, **kw):
 
 
 skip_resource_instances = dontyield
+
+
+SELECTOR_LABELS = ("app.kubernetes.io/name", "app.kubernetes.io/instance")
 
 
 class D3fendKube:
@@ -227,6 +229,8 @@ class K8Resource:
         yield self.uri, RDFS.label, Literal(self.label)
 
         for k, v in self.metadata.get("labels", {}).items():
+            if k not in SELECTOR_LABELS:
+                continue
             yield self.uri, RDFS.label, Literal(f"{k}: {v}")
         if self.app:
             yield self.ns, NS_K8S.hasChild, self.app
@@ -342,14 +346,16 @@ class Service(K8Resource):
             yield host_u, NS_D3F.accesses, service_port
 
             if selector := self.spec.get("selector"):
-                selector_label = json.dumps(selector, sort_keys=True).replace('"', "")
-                selector_uuid = hashlib.sha256(selector_label.encode()).hexdigest()
-                selector_u = URIRef(f"urn:k8s:{self.ns}/Selector/{selector_uuid}")
-                yield selector_u, RDF.type, NS_K8S.Selector
-                yield selector_u, RDFS.label, Literal(selector_label)
+                # selector_label = json.dumps(selector, sort_keys=True).replace('"', "")
+                # selector_uuid = hashlib.sha256(selector_label.encode()).hexdigest()
+                # selector_u = URIRef(f"urn:k8s:{self.ns}/Selector/{selector_uuid}")
+                # yield selector_u, RDF.type, NS_K8S.Selector
+                # yield selector_u, RDFS.label, Literal(selector_label)
                 # yield selector_u, NS_K8S.hasNamespace, self.ns
 
                 for k, v in selector.items():
+                    if k not in SELECTOR_LABELS:
+                        continue
                     # k, v = next(iter(selector.items()))
                     # Kubernetes by default exposes all ports on a service
                     endpoint_u = URIRef(
@@ -357,11 +363,11 @@ class Service(K8Resource):
                             **port
                         )
                     )
-                    yield endpoint_u, RDF.type, NS_K8S.Endpoints
+                    yield endpoint_u, RDF.type, NS_K8S.Selector
                     # yield selector_u, NS_K8S.hasChild, endpoint_u
                     # Service port accesses a selector-based Endpoint.
                     yield service_port, NS_D3F.accesses, endpoint_u
-                    yield selector_u, NS_K8S.hasChild, endpoint_u
+                    # yield selector_u, NS_K8S.hasChild, endpoint_u
             else:
                 # yield an Endpoint with the same name as the service
                 # and on the default namespace.
@@ -473,18 +479,25 @@ class DC(K8Resource):
             if "image" in container:
                 image = DC.parse_image(container["image"], container_uri=s_container)
                 yield from image
-            if "ports" in container:
-                for port in container["ports"]:
-                    protocol = port.get("protocol", "tcp").upper()
-                    for k, v in template_labels.items():
-                        port_u = URIRef(
-                            f"{protocol}://{self.ns}/{k}={v}:{port['containerPort']}"
-                        )
-                        yield port_u, RDF.type, NS_K8S.Endpoints
-                        yield port_u, NS_D3F.accesses, s_container
-                        yield self.uri, NS_K8S.hasChild, port_u
-                        # if template_app:
-                        #     yield template_app, NS_K8S.hasChild, port_u
+
+            ports = [p.get("containerPort") for p in container.get("ports", [])]
+            ports += [
+                container.get(p, {}).get("httpGet", {}).get("port")
+                for p in ("livenessProbe", "readinessProbe", "startupProbe")
+            ]
+            for port in ports:
+                if not port:
+                    continue
+                protocol = "TCP"
+                for k, v in template_labels.items():
+                    if k not in SELECTOR_LABELS:
+                        continue
+                    port_u = URIRef(f"{protocol}://{self.ns}/{k}={v}:{port}")
+                    yield port_u, RDF.type, NS_K8S.Selector
+                    yield port_u, NS_D3F.accesses, s_container
+                    yield self.uri, NS_K8S.hasChild, port_u
+                    # if template_app:
+                    #     yield template_app, NS_K8S.hasChild, port_u
 
             for env in container.get("env", []):
                 try:

@@ -54,7 +54,7 @@ class RDF2Mermaid:
         NS_K8S.Pod,
         NS_K8S.Job,
         NS_K8S.BuildConfig,
-        NS_K8S.Selector,
+        #        NS_K8S.Selector,
         # NS_K8S.Host,
         # # For now, skip these. XXX
         # NS_K8S.Image,
@@ -182,6 +182,8 @@ class RDF2Mermaid:
             else:
                 if type_ == NS_K8S.Container:
                     shape = "process"
+                elif type_ == NS_K8S.Selector:
+                    shape = "odd"
                 elif type_ == NS_K8S.Service:
                     shape = "circle"
                 elif type_ in (
