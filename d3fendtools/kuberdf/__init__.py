@@ -198,7 +198,7 @@ class K8Resource:
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.name = self.metadata["name"]
-        self.namespace = manifest["metadata"].get("namespace", ns or "default")
+        self.namespace = manifest["metadata"].get("namespace", ns or "default_")
         self.ns = NS_K8S[self.namespace]
         self.spec = manifest.get("spec", {})
         if self.kind == "Namespace":
@@ -509,6 +509,18 @@ class HorizontalPodAutoscaler(K8Resource):
             yield self.ns, NS_K8S.hasChild, target_u
 
 
+class ReplicaSet(K8Resource):
+    """
+    ReplicaSet
+    $.spec.template.spec.containers[*]
+    """
+
+    def triples(self):
+        # if it's related to a Deployment, skip it.
+        if self.metadata.get("ownerReferences", [{}])[0].get("kind") == "Deployment":
+            return
+
+
 class CronJob(DC):
     """
     CronJob
@@ -530,7 +542,7 @@ class K8List(K8Resource):
         """A List is a special resource, don't call super.__init__"""
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
-        self.namespace = manifest["metadata"].get("namespace", ns or "default")
+        self.namespace = manifest["metadata"].get("namespace", ns or "default_")
         self.ns = NS_K8S[self.namespace]
         self.spec = manifest.get("spec", {})
         self.items = manifest["items"]
@@ -599,5 +611,6 @@ CLASSMAP = {
     ("v1", "Service"): Service,
     ("v1", "Secret"): None,
     ("apps/v1", "StatefulSet"): DC,
+    ("apps/v1", "ReplicaSet"): ReplicaSet,
     ("autoscaling/v2", "HorizontalPodAutoscaler"): HorizontalPodAutoscaler,
 }
