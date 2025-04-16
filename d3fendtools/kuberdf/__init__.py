@@ -345,6 +345,12 @@ class Service(K8Resource):
             yield self.uri, NS_K8S.hasChild, service_port
             yield host_u, NS_D3F.accesses, service_port
 
+            internal_host_u = URIRef(
+                f"{port['protocol']}://{self.name}.{self.namespace}.svc:{port['port']}"
+            )
+            yield internal_host_u, NS_D3F.accesses, service_port
+            yield self.uri, NS_K8S.hasChild, internal_host_u
+
             if selector := self.spec.get("selector"):
                 # selector_label = json.dumps(selector, sort_keys=True).replace('"', "")
                 # selector_uuid = hashlib.sha256(selector_label.encode()).hexdigest()
