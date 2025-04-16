@@ -84,8 +84,8 @@ def parse_resources(
         try:
             parse_manifest_as_graph(f.read_text(), g=g, manifest_format=f.suffix[1:])
         except Exception as e:
-            log.error(f"Error parsing {f}: {e}")
-            continue
+            log.exception(f"Error parsing {f}: {e}")
+            raise  # continue
     dpath = Path(outfile)
     g.serialize(dpath.with_suffix(".ttl").as_posix(), format="turtle")
     if jsonld_output:
@@ -128,7 +128,10 @@ def parse_manifest_as_graph(
         if not manifest:
             continue
         if "kind" not in manifest:
+            log.error(f"Invalid manifest without kind: {manifest}")
+            breakpoint()
             continue
+        log.error("Parsing manifest %s", manifest.get("kind"))
         for triple in K8Resource.parse_resource(manifest):
             g.add(triple)
     return g
@@ -518,7 +521,7 @@ class ReplicaSet(K8Resource):
     def triples(self):
         # if it's related to a Deployment, skip it.
         if self.metadata.get("ownerReferences", [{}])[0].get("kind") == "Deployment":
-            return
+            yield from []
 
 
 class CronJob(DC):

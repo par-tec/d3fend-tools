@@ -181,27 +181,32 @@ class RDF2Mermaid:
                 log.warning("Skipping %s", s)
             else:
                 if type_ == NS_K8S.Container:
-                    left_p, right_p = "[[", "]]"
+                    shape = "process"
                 elif type_ == NS_K8S.Service:
-                    left_p, right_p = "((", "))"
+                    shape = "circle"
                 elif type_ in (
-                    NS_K8S.PersistentVolumeClaim,
                     NS_K8S.Image,
                     NS_K8S.ImageStream,
                     NS_K8S.ImageStreamTag,
                 ):
-                    left_p, right_p = "[(", ")]"
+                    shape = "database"
+                elif type_ in (NS_K8S.PersistentVolumeClaim, NS_K8S.Volume):
+                    shape = "lin-cyl"
                 elif type_ in (NS_K8S.Route,):
-                    left_p, right_p = "([", "])"
+                    shape = "delay"
                 elif type_ in (NS_K8S.Deployment, NS_K8S.DeploymentConfig):
-                    left_p, right_p = "[\\", "/]"
+                    shape = "processes"
                 elif type_ in (NS_K8S.ConfigMap, NS_K8S.Secret):
-                    left_p, right_p = ">", "]"
-
+                    shape = "doc"
+                elif type_ in (NS_K8S.Endpoints,):
+                    shape = "curv-trap"
+                elif type_ in (NS_K8S.Host,):
+                    shape = "trap-b"
                 else:
-                    left_p, right_p = "([", "])"
-
-                line = f"""{src}{left_p}{label_l}{right_p}""".replace("\n", "")
+                    shape = ""
+                if shape:
+                    shape = '@{shape: "' + shape + '"}'
+                line = f"""{src}[{label_l}]{shape}""".replace("\n", "")
                 if line not in self.nodes:
                     self.nodes.append(line)
 
@@ -242,7 +247,7 @@ class RDF2Mermaid:
 
     def render(self):
         self.parse()
-        ret = "graph\n"
+        ret = "graph LR\n"
         ret += "\n".join(sorted(self.nodes) + sorted(self.edges))
         ret += "\n"
         ret += "%%\n%% Subgraphs\n%%\n"
