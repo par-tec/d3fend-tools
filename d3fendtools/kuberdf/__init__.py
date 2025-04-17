@@ -6,7 +6,7 @@ from typing import Iterable
 from urllib.parse import urlparse
 
 import yaml
-from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
+from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef, OWL
 
 log = logging.getLogger(__name__)
 NS_K8S = Namespace("urn:k8s:")
@@ -21,7 +21,7 @@ def dontyield(*a, **kw):
 skip_resource_instances = dontyield
 
 
-SELECTOR_LABELS = ("app.kubernetes.io/name", "app.kubernetes.io/instance")
+SELECTOR_LABELS = ("app.kubernetes.io/name", "app.kubernetes.io/instance", "deployment")
 
 
 class D3fendKube:
@@ -197,9 +197,7 @@ class K8Resource:
         if ":" in str(ns):
             raise ValueError(f"Invalid namespace: {ns}")
         manifest = manifest or {}
-        if manifest["apiVersion"] not in [k[0] for k in CLASSMAP]:
-            log.error(f"Invalid apiVersion: {manifest['apiVersion']}")
-            return
+        self.manifest = manifest
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.name = self.metadata["name"]
@@ -339,13 +337,18 @@ class Service(K8Resource):
                 Literal("{port}-{protocol}>{targetPort}".format(**port)),
             )
             if port_name := port.get("name"):
-                host_portname_u = URIRef(
-                    f"{port['protocol']}://{self.name}:{port_name}"
-                )
-                yield host_portname_u, RDF.type, NS_K8S.Host
-                yield self.uri, NS_K8S.hasHost, host_portname_u
-                yield self.uri, NS_K8S.hasChild, host_portname_u
-                yield host_portname_u, NS_D3F.accesses, host_u
+                # host_portname_u = URIRef(
+                #     f"{port['protocol']}://{self.name}:{port_name}"
+                # )
+                # yield host_portname_u, RDF.type, NS_K8S.Host
+                # yield self.uri, NS_K8S.hasHost, host_portname_u
+                # yield self.uri, NS_K8S.hasChild, host_portname_u
+                # yield host_portname_u, NS_D3F.accesses, host_u
+                service_port = self.uri + f":{port_name}"
+                yield service_port, RDF.type, NS_K8S.Port
+                yield self.uri, NS_K8S.hasPort, service_port
+                yield self.uri, NS_K8S.hasChild, service_port
+                yield service_port, OWL.sameAs, host_u
 
             # Service port forwarded to selectors.
             service_port = self.uri + f":{port['port']}"
@@ -583,7 +586,7 @@ class CronJob(DC):
 
 
 class K8List(K8Resource):
-    def __init__(self, manifest=None, ns: str = None) -> None:
+    def __init__(self, manifest: dict = None, ns: str = None) -> None:
         """A List is a special resource, don't call super.__init__"""
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
