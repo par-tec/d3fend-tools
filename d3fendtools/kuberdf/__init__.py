@@ -331,11 +331,12 @@ class Service(K8Resource):
 
             yield host_u, RDF.type, NS_K8S.Host
             yield self.uri, NS_K8S.hasHost, host_u
-            yield (
-                self.uri,
-                NS_K8S.portForward,
-                Literal("{port}-{protocol}>{targetPort}".format(**port)),
-            )
+            if port.get("targetPort"):
+                yield (
+                    self.uri,
+                    NS_K8S.portForward,
+                    Literal("{port}-{protocol}>{targetPort}".format(**port)),
+                )
             if port_name := port.get("name"):
                 # host_portname_u = URIRef(
                 #     f"{port['protocol']}://{self.name}:{port_name}"
@@ -553,7 +554,8 @@ class HorizontalPodAutoscaler(K8Resource):
         if kind in ("DeploymentConfig", "Deployment"):
             target_u = URIRef(self.ns + f"/{kind}/{name}")
             yield self.uri, NS_D3F.accesses, target_u
-            yield target_u, RDF.type, NS_K8S.Deployment
+            yield target_u, NS_K8S.hasChild, self.uri
+            yield target_u, RDF.type, NS_K8S.Job
             yield self.ns, NS_K8S.hasChild, target_u
 
 

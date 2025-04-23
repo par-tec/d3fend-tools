@@ -30,6 +30,7 @@ class RDF2Mermaid:
         "urn:k8s:ConfigMap": "\N{EMPTY DOCUMENT}",
         "urn:k8s:Container": "fa:fa-cube",
         "urn:k8s:CronJob": "fa:fa-clock",
+        "urn:k8s:HorizontalPodAutoscaler": "fa:fa-clock",
         "urn:k8s:Deployment": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:DeploymentConfig": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:StatefulSet": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
@@ -204,6 +205,8 @@ class RDF2Mermaid:
                     shape = "curv-trap"
                 elif type_ in (NS_K8S.Host,):
                     shape = "trap-b"
+                elif type_ in (NS_K8S.HorizontalPodAutoscaler,):
+                    shape = "subproc"
                 else:
                     shape = ""
                 if shape:
