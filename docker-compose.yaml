@@ -33,3 +33,16 @@ services:
         condition: service_completed_successfully
       super-linter:
         condition: service_completed_successfully
+  virtuoso:
+    # user: "1000:1000"
+    image: docker.io/openlink/virtuoso-opensource-7:7.2.12-alpine
+    ports:
+      - "18890:8890/tcp"
+    environment:
+      - VIRTUOSO_INI_FILE=/virtuoso.ini
+      - DBA_PASSWORD=dba
+    volumes:
+      - .:/code
+      - ./data:/database
+      - ./vocabularies:/initdb.d/
+      - ./sparql/virtuoso.ini:/virtuoso.ini

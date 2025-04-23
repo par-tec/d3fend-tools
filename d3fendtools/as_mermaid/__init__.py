@@ -30,6 +30,7 @@ class RDF2Mermaid:
         "urn:k8s:ConfigMap": "\N{EMPTY DOCUMENT}",
         "urn:k8s:Container": "fa:fa-cube",
         "urn:k8s:CronJob": "fa:fa-clock",
+        "urn:k8s:HorizontalPodAutoscaler": "fa:fa-clock",
         "urn:k8s:Deployment": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:DeploymentConfig": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
         "urn:k8s:StatefulSet": "\N{CLOCKWISE GAPPED CIRCLE ARROW}",
@@ -54,7 +55,7 @@ class RDF2Mermaid:
         NS_K8S.Pod,
         NS_K8S.Job,
         NS_K8S.BuildConfig,
-        NS_K8S.Selector,
+        #        NS_K8S.Selector,
         # NS_K8S.Host,
         # # For now, skip these. XXX
         # NS_K8S.Image,
@@ -84,7 +85,7 @@ class RDF2Mermaid:
     @staticmethod
     def sanitize_uri(s):
         """Sanitize a URI to be used as a node name in mermaid."""
-        ret = s.split("@", 1)[0].replace("/", "_").replace("@", "_")
+        ret = s.split("@", 1)[0].replace("/", "_").replace("@", "_").replace("=", "_")
         return ret
         if len(ret) < 64:
             return ret
@@ -106,7 +107,7 @@ class RDF2Mermaid:
             if len(ret) - offset > 20:
                 ret += r"\n"
                 offset += 20
-        return ret.strip(r"\n").strip()
+        return ret.strip(r"\n").strip().replace("=", "_")
 
     def parse(self, match: str = "", simplified_view=False):
         if self.lines:
@@ -181,27 +182,36 @@ class RDF2Mermaid:
                 log.warning("Skipping %s", s)
             else:
                 if type_ == NS_K8S.Container:
-                    left_p, right_p = "[[", "]]"
+                    shape = "process"
+                elif type_ == NS_K8S.Selector:
+                    shape = "odd"
                 elif type_ == NS_K8S.Service:
-                    left_p, right_p = "((", "))"
+                    shape = "circle"
                 elif type_ in (
-                    NS_K8S.PersistentVolumeClaim,
                     NS_K8S.Image,
                     NS_K8S.ImageStream,
                     NS_K8S.ImageStreamTag,
                 ):
-                    left_p, right_p = "[(", ")]"
+                    shape = "database"
+                elif type_ in (NS_K8S.PersistentVolumeClaim, NS_K8S.Volume):
+                    shape = "lin-cyl"
                 elif type_ in (NS_K8S.Route,):
-                    left_p, right_p = "([", "])"
+                    shape = "delay"
                 elif type_ in (NS_K8S.Deployment, NS_K8S.DeploymentConfig):
-                    left_p, right_p = "[\\", "/]"
+                    shape = "processes"
                 elif type_ in (NS_K8S.ConfigMap, NS_K8S.Secret):
-                    left_p, right_p = ">", "]"
-
+                    shape = "doc"
+                elif type_ in (NS_K8S.Endpoints,):
+                    shape = "curv-trap"
+                elif type_ in (NS_K8S.Host,):
+                    shape = "trap-b"
+                elif type_ in (NS_K8S.HorizontalPodAutoscaler,):
+                    shape = "subproc"
                 else:
-                    left_p, right_p = "([", "])"
-
-                line = f"""{src}{left_p}{label_l}{right_p}""".replace("\n", "")
+                    shape = ""
+                if shape:
+                    shape = '@{shape: "' + shape + '"}'
+                line = f"""{src}[{label_l}]{shape}""".replace("\n", "")
                 if line not in self.nodes:
                     self.nodes.append(line)
 
@@ -242,7 +252,7 @@ class RDF2Mermaid:
 
     def render(self):
         self.parse()
-        ret = "graph\n"
+        ret = "graph LR\n"
         ret += "\n".join(sorted(self.nodes) + sorted(self.edges))
         ret += "\n"
         ret += "%%\n%% Subgraphs\n%%\n"

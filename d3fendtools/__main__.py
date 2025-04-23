@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import List
 
 import click
 from rdflib import Graph
@@ -9,13 +10,15 @@ from d3fendtools import as_mermaid, kuberdf, mermaidrdf
 log = logging.getLogger(__name__)
 
 
-def _get_resources(basepath, glob_pattern, ignore, match):
+def _get_resources(basepath, glob_pattern, ignore, match) -> List[Path]:
     basepath = Path(basepath)
     files = None
     if basepath.is_file():
         files = (basepath,)
     elif basepath.is_dir():
         files = Path(basepath).glob(glob_pattern)
+    else:
+        return []
 
     if ignore:
         files = (f for f in files if not f.match(ignore))
@@ -31,7 +34,7 @@ def _get_resources(basepath, glob_pattern, ignore, match):
 @click.argument(
     "destfile",
     type=click.Path(exists=False),
-    default="deleteme",
+    default="/dev/stdout",
 )
 @click.option(
     "--resource-type",
@@ -47,10 +50,9 @@ def _get_resources(basepath, glob_pattern, ignore, match):
     help="Use the filename as the namespace",
 )
 @click.option(
-    "--mermaid",
-    default=False,
-    is_flag=True,
-    help="Convert from RDF to Mermaid",
+    "--format",
+    default="turtle",
+    help="Destination format",
 )
 @click.option(
     "--ignore",
@@ -62,8 +64,7 @@ def _get_resources(basepath, glob_pattern, ignore, match):
     default=None,
     help="Select files matching this pattern",
 )
-def main(basepath, destfile, resource_type, ns_from_file, mermaid, ignore, match):
-
+def main(basepath, destfile, resource_type, ns_from_file, format, ignore, match):
     if resource_type == "kube":
         resources = _get_resources(basepath, "**/*.y*ml", ignore, match)
         kuberdf_options = dict(ns_from_file=ns_from_file)
@@ -71,10 +72,20 @@ def main(basepath, destfile, resource_type, ns_from_file, mermaid, ignore, match
     elif resource_type == "oas":
         raise NotImplementedError
     elif resource_type == "mermaid":
-        resources = _get_resources(basepath, "**/*.md", ignore, match)
-        mermaidrdf.parse_resources(resources, outfile=destfile)
+        resources: List[Path] = _get_resources(basepath, "**/*.md", ignore, match)
 
-    if mermaid:
+        if format == "markdown":
+            dm = (
+                mermaidrdf.D3fendMermaid(resource.read_text()) for resource in resources
+            )
+            mermaid_text = "\n\n".join(dm.text for dm in dm)
+            Path(destfile).write_text(mermaid_text)
+        elif format == "turtle":
+            mermaidrdf.parse_resources(resources, outfile=destfile)
+        else:
+            raise NotImplementedError(f"Format {format} not implemented")
+
+    if format == "mermaid":
         log.info("Converting to Mermaid")
         g = Graph()
         g.parse(Path(destfile).with_suffix(".ttl"), format="turtle")

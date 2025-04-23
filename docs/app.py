@@ -8,8 +8,9 @@ from rdflib import RDF, Graph
 from d3fendtools import as_mermaid, d3fend, kuberdf, mermaidrdf
 
 try:
+    import js
     from pyodide.ffi import create_proxy
-    from pyscript import Element, js
+    from pyscript import Element
 except ImportError:
     pass
 
@@ -93,7 +94,7 @@ def initialize_graph(ontologies):
     g.bind("d3f", mermaidrdf.NS_D3F)
     for ontology in ontologies:
         g.parse(ontology, format="turtle")
-    log.info(f"Ontologies loaded in {time()-ts}s")
+    log.info(f"Ontologies loaded in {time() - ts}s")
     return g
 
 
@@ -279,8 +280,23 @@ def generate_diagram_mmd(text: str, filter_: str, flip: str, mermaidAPI):
     if flip:
         text_mmd = flip_mermaid(text_mmd)
     log.warning(f"mermaid text: {text_mmd[:100]}")
+
+    return _render_mermaid_v10(text_mmd, mermaidAPI)
+
+
+def _render_mermaid_v9(text_mmd, mermaidAPI):
     mermaid_svg = mermaidAPI.render("mermaid-diagram-svg", text_mmd)
     return text_mmd, mermaid_svg
+
+
+def _render_mermaid_v10(text_mmd, mermaidAPI):
+    ret = {"v": None}
+    mermaidAPI.render("mermaid-diagram-svg", text_mmd).then(
+        lambda svg: ret.update({"v": svg}),
+        lambda err: ret.update({"v": f"Error: {err}"}),
+    )
+    log.warning(f"coro: {ret}")
+    return text_mmd, ret["v"]
 
 
 def test_generate_diagram_mmd():
