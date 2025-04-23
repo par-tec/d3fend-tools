@@ -1,7 +1,8 @@
 import logging
 import uuid
-from pathlib import Path
+import textwrap
 
+from pathlib import Path
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS
 
@@ -187,6 +188,8 @@ class RDF2Mermaid:
                     shape = "odd"
                 elif type_ == NS_K8S.Service:
                     shape = "circle"
+                elif type_ in (NS_K8S.ServiceAccount, NS_K8S.User):
+                    shape = "circle"
                 elif type_ in (
                     NS_K8S.Image,
                     NS_K8S.ImageStream,
@@ -252,7 +255,14 @@ class RDF2Mermaid:
 
     def render(self):
         self.parse()
+
         ret = "graph LR\n"
+        ret += textwrap.dedent("""
+        %% Style
+        classDef namespace fill:none, stroke-dasharray: 5 5, stroke-width: 5px;
+        classDef workload fill:none, stroke: blue;
+        classDef network fill:none, stroke: green;
+        """)
         ret += "\n".join(sorted(self.nodes) + sorted(self.edges))
         ret += "\n"
         ret += "%%\n%% Subgraphs\n%%\n"
@@ -310,6 +320,17 @@ class RDF2Mermaid:
             #     children_to_render = render_in_chunks(children_to_render, 6)
             yield from children_to_render
             yield "end"
+            if parent_type == NS_K8S.Namespace:
+                yield f"class {parent} namespace;"
+            elif parent_type in (
+                NS_K8S.Application,
+                NS_K8S.DeploymentConfig,
+                NS_K8S.Deployment,
+                NS_K8S.StatefulSet,
+            ):
+                yield f"class {parent} workload;"
+            elif parent_type in (NS_K8S.Service, NS_K8S.Endpoints):
+                yield f"class {parent} network;"
 
         tree_namespace = []
         for parent, data in tree.items():
