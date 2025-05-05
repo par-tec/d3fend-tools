@@ -158,8 +158,7 @@ class SkipResource:
     def __init__(self, *a, **k):
         pass
 
-    def triples(self):
-        yield from []
+    triples = dontyield
 
 
 class K8Resource:
@@ -201,8 +200,8 @@ class K8Resource:
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.name = self.metadata["name"]
-        self.namespace = manifest["metadata"].get("namespace", ns or "default_")
-        self.ns = NS_K8S[self.namespace]
+        self.namespace = manifest["metadata"].get("namespace", ns or "default")
+        self.ns = URIRef(f"https://k8s.local/{self.namespace}")
         self.spec = manifest.get("spec", {})
         if self.kind == "Namespace":
             self.uri = self.ns
@@ -438,6 +437,13 @@ class DC(K8Resource):
         metadata = template.get("metadata", {})
         template_labels = metadata.get("labels", {})
         template_app = self.get_app_uri(metadata) or self.app
+
+        if serviceAccount := template.get("spec", {}).get("serviceAccountName"):
+            service_account = self.ns + f"/ServiceAccount/{serviceAccount}"
+            yield service_account, RDF.type, NS_K8S.ServiceAccount
+            yield self.ns, NS_K8S.hasChild, service_account
+            yield service_account, NS_D3F.executes, self.uri
+
         for volume in volumes:
             if "persistentVolumeClaim" in volume:
                 pvc = volume["persistentVolumeClaim"]["claimName"]
