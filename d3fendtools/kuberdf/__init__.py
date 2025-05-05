@@ -187,11 +187,6 @@ class K8Resource:
             pass
         yield from resource.triples()
 
-    def get_app_uri(self, metadata):
-        labels = metadata.get("labels", {})
-        app = labels.get("app") or labels.get("application")
-        return URIRef(self.ns + f"/Application/{app}") if app else None
-
     def __init__(self, manifest: dict | None = None, ns: str = None) -> None:
         if ":" in str(ns):
             raise ValueError(f"Invalid namespace: {ns}")
@@ -210,6 +205,26 @@ class K8Resource:
 
         # Set the application.
         self.app = self.get_app_uri(self.metadata)
+
+    @property
+    def label(self):
+        labelmap = {
+            "BuildConfig": "bc",
+            "Deployment": "dc",
+            "DeploymentConfig": "dc",
+            "ImageStream": "is",
+            "ImageStreamTag": "ist",
+            "Namespace": "ns",
+            "PersistentVolumeClaim": "pvc",
+            "RoleBinding": "rb",
+            "Route": "route",
+            "ServiceAccount": "sa",
+            "StatefulSet": "ss",
+            "Service": "svc",
+        }
+        if self.kind in labelmap:
+            return f"{labelmap[self.kind]}/{self.name}"
+        return f"{self.kind}:{self.name}"
 
     def triples_kind(self):
         yield (NS_K8S[self.kind], RDF.type, NS_K8S.Kind)
@@ -234,44 +249,13 @@ class K8Resource:
             yield self.app, RDF.type, NS_K8S.Application
             yield self.app, NS_K8S.hasChild, self.uri
 
+    def get_app_uri(self, metadata):
+        labels = metadata.get("labels", {})
+        app = labels.get("app") or labels.get("application")
+        return URIRef(self.ns + f"/Application/{app}") if app else None
+
     def triple_spec(self):
         yield from []
-
-    @property
-    def label(self):
-        labelmap = {
-            "BuildConfig": "bc",
-            "Deployment": "dc",
-            "DeploymentConfig": "dc",
-            "ImageStream": "is",
-            "ImageStreamTag": "ist",
-            "Namespace": "ns",
-            "PersistentVolumeClaim": "pvc",
-            "Route": "route",
-            "Service": "svc",
-        }
-        if self.kind in labelmap:
-            return f"{labelmap[self.kind]}/{self.name}"
-        return f"{self.kind}:{self.name}"
-
-    def _triple_spec(self):
-        classmap = {
-            "ConsolePlugin": dontyield,
-            "Deployment": DC.triple_spec,
-            "DeploymentConfig": DC.triple_spec,
-            "Endpoints": dontyield,
-            "HorizontalPodAutoscaler": dontyield,
-            "ImageStream": skip_resource_instances,
-            "ImageStreamTag": dontyield,
-            "Pod": skip_resource_instances,
-            "ReplicationController": dontyield,
-            "Job": skip_resource_instances,
-            "Route": Route.triple_spec,
-            "Service": Service.triple_spec,
-            "StatefulSet": DC.triple_spec,
-        }
-        if self.spec:
-            yield from classmap[self.kind](self)
 
     def triples(self):
         yield from self.triples_ns()
@@ -571,6 +555,9 @@ class ReplicaSet(K8Resource):
     $.spec.template.spec.containers[*]
     """
 
+    apiVersion = "apps/v1"
+    kind = "ReplicaSet"
+
     def triples(self):
         # if it's related to a Deployment, skip it.
         if self.metadata.get("ownerReferences", [{}])[0].get("kind") == "Deployment":
@@ -583,6 +570,9 @@ class CronJob(DC):
     $.spec.jobTemplate.spec.template.spec.containers[*]
     """
 
+    apiVersion = "batch/v1"
+    kind = "CronJob"
+
     def __init__(self, *a, **k) -> None:
         DC.__init__(self, *a, **k)
         self.spec = self.spec["jobTemplate"]["spec"]
@@ -594,6 +584,9 @@ class CronJob(DC):
 
 
 class K8List(K8Resource):
+    apiVersion = "v1"
+    kind = "List"
+
     def __init__(self, manifest: dict = None, ns: str = None) -> None:
         """A List is a special resource, don't call super.__init__"""
         self.kind = manifest["kind"]
@@ -611,6 +604,9 @@ class K8List(K8Resource):
 
 
 class ReplicationController(DC):
+    apiVersion = "v1"
+    kind = "ReplicationController"
+
     def triples(self):
         # OCP ReplicationController is created by a DeploymentConfig.
         if self.metadata.get("annotations", {}).get(
@@ -621,7 +617,46 @@ class ReplicationController(DC):
         yield from super().triples()
 
 
+class Role(K8Resource):
+    apiVersion = "rbac.authorization.k8s.io/v1"
+    kind = "Role"
+
+
+class RoleBinding(K8Resource):
+    apiVersion = "rbac.authorization.k8s.io/v1"
+    kind = "RoleBinding"
+
+    def triple_spec(self):
+        for subject in self.manifest.get("subjects", []):
+            kind = subject["kind"]
+            name = subject["name"]
+            if namespace := subject.get("namespace"):
+                ns = URIRef(f"https://k8s.local/{namespace}")
+            else:
+                ns = self.ns
+
+            if kind == "ServiceAccount":
+                sa_u = ns + f"/ServiceAccount/{name}"
+                yield sa_u, RDF.type, NS_K8S.ServiceAccount
+                yield ns, RDF.type, NS_K8S.Namespace
+                yield ns, NS_K8S.hasChild, sa_u
+                yield sa_u, NS_K8S.hasNamespace, ns
+                yield sa_u, NS_D3F.accesses, self.ns
+            elif kind == "User":
+                user_u = URIRef(ns + f"/User/{name}")
+                yield user_u, RDF.type, NS_K8S.User
+                yield ns, NS_K8S.hasChild, user_u
+                yield user_u, NS_K8S.hasNamespace, ns
+                yield user_u, NS_D3F.accesses, self.ns
+
+            else:
+                raise NotImplementedError(kind)
+
+
 class BuildConfig(K8Resource):
+    apiVersion = "v1"
+    kind = "BuildConfig"
+
     def triple_spec(self):
         from_image_url = None
         to_image_url = None
@@ -647,6 +682,8 @@ class BuildConfig(K8Resource):
 
 
 CLASSMAP = {
+    ("kustomize.config.k8s.io/v1beta1", "Kustomization"): SkipResource,
+    ("kustomize.config.k8s.io/v1alpha1", "Component"): SkipResource,
     ("v1", "Build"): SkipResource,
     ("v1", "BuildConfig"): BuildConfig,
     ("v1", "ConsolePlugin"): None,
@@ -669,4 +706,31 @@ CLASSMAP = {
     ("apps/v1", "StatefulSet"): DC,
     ("apps/v1", "ReplicaSet"): ReplicaSet,
     ("autoscaling/v2", "HorizontalPodAutoscaler"): HorizontalPodAutoscaler,
+    ("rbac.authorization.k8s.io/v1", "Role"): Role,
+    ("rbac.authorization.k8s.io/v1", "RoleBinding"): RoleBinding,
 }
+
+# def _register(cls):
+#     """Register a class in the CLASSMAP"""
+#     if not hasattr(cls, "apiVersion") or not hasattr(cls, "kind"):
+#         raise ValueError(f"Class {cls} must have apiVersion and kind attributes")
+#     if not hasattr(cls, "triples"):
+#         raise ValueError(f"Class {cls} must have a triples method")
+#     if not hasattr(cls, "parse_resource"):
+#         raise ValueError(f"Class {cls} must have a parse_resource method")
+#     CLASSMAP[(cls.apiVersion, cls.kind)] = cls
+#     return cls
+#
+# _classes = [
+#     Route,
+#     Service,
+#     DC,
+#     HorizontalPodAutoscaler,
+#     ReplicationController,
+#     CronJob,
+#     K8List,
+#     BuildConfig,
+#     RoleBinding,
+# ]
+# for cls in _classes:
+#     _register(cls)
