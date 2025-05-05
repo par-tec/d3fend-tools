@@ -23,6 +23,67 @@ def render_in_chunks(items, chunk_size=6):
         yield "end"
 
 
+RENDER_MAP = {
+    NS_K8S.Container: {
+        "shape": "process",
+    },
+    NS_K8S.Selector: {
+        "shape": "odd",
+    },
+    NS_K8S.Service: {
+        "shape": "circle",
+    },
+    NS_K8S.ServiceAccount: {
+        "shape": "circle",
+    },
+    NS_K8S.User: {
+        "shape": "circle",
+    },
+    NS_K8S.Image: {
+        "shape": "lin-cyl",
+    },
+    NS_K8S.ImageStream: {
+        "shape": "lin-cyl",
+    },
+    NS_K8S.ImageStreamTag: {
+        "shape": "lin-cyl",
+    },
+    NS_K8S.PersistentVolumeClaim: {
+        "shape": "lin-cyl",
+    },
+    NS_K8S.Volume: {
+        "shape": "lin-cyl",
+    },
+    NS_K8S.Route: {
+        "shape": "delay",
+    },
+    NS_K8S.Deployment: {
+        "shape": "processes",
+    },
+    NS_K8S.DeploymentConfig: {
+        "shape": "processes",
+    },
+    NS_K8S.ConfigMap: {
+        "shape": "doc",
+    },
+    NS_K8S.Secret: {
+        "shape": "doc",
+    },
+    NS_K8S.Endpoints: {
+        "shape": "curv-trap",
+    },
+    NS_K8S.Host: {
+        "shape": "trap-b",
+    },
+    NS_K8S.HorizontalPodAutoscaler: {
+        "shape": "subproc",
+    },
+    NS_K8S.RoleBinding: {
+        "shape": "doc",
+    },
+}
+
+
 class RDF2Mermaid:
     """Convert an RDF graph to a mermaid graph."""
 
@@ -182,36 +243,8 @@ class RDF2Mermaid:
             if type_ in RDF2Mermaid.DONT_RENDER_AS_NODES:
                 log.warning("Skipping %s", s)
             else:
-                if type_ == NS_K8S.Container:
-                    shape = "process"
-                elif type_ == NS_K8S.Selector:
-                    shape = "odd"
-                elif type_ == NS_K8S.Service:
-                    shape = "circle"
-                elif type_ in (NS_K8S.ServiceAccount, NS_K8S.User):
-                    shape = "circle"
-                elif type_ in (
-                    NS_K8S.Image,
-                    NS_K8S.ImageStream,
-                    NS_K8S.ImageStreamTag,
-                ):
-                    shape = "database"
-                elif type_ in (NS_K8S.PersistentVolumeClaim, NS_K8S.Volume):
-                    shape = "lin-cyl"
-                elif type_ in (NS_K8S.Route,):
-                    shape = "delay"
-                elif type_ in (NS_K8S.Deployment, NS_K8S.DeploymentConfig):
-                    shape = "processes"
-                elif type_ in (NS_K8S.ConfigMap, NS_K8S.Secret):
-                    shape = "doc"
-                elif type_ in (NS_K8S.Endpoints,):
-                    shape = "curv-trap"
-                elif type_ in (NS_K8S.Host,):
-                    shape = "trap-b"
-                elif type_ in (NS_K8S.HorizontalPodAutoscaler,):
-                    shape = "subproc"
-                else:
-                    shape = ""
+                shape = RENDER_MAP.get(type_, {}).get("shape", "")
+
                 if shape:
                     shape = '@{shape: "' + shape + '"}'
                 line = f"""{src}[{label_l}]{shape}""".replace("\n", "")
@@ -257,12 +290,14 @@ class RDF2Mermaid:
         self.parse()
 
         ret = "graph LR\n"
-        ret += textwrap.dedent("""
+        ret += textwrap.dedent(
+            """
         %% Style
         classDef namespace fill:none, stroke-dasharray: 5 5, stroke-width: 5px;
         classDef workload fill:none, stroke: blue;
         classDef network fill:none, stroke: green;
-        """)
+        """
+        )
         ret += "\n".join(sorted(self.nodes) + sorted(self.edges))
         ret += "\n"
         ret += "%%\n%% Subgraphs\n%%\n"
