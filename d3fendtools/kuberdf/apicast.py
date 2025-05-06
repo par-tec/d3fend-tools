@@ -13,7 +13,7 @@ class DeveloperAccount(K8Resource):
             yield secret_uri, RDF.type, K8S.Secret
             yield self.ns, K8S.hasChild, secret_uri
             yield secret_uri, K8S.hasNamespace, self.ns
-            yield self.uri, D3F.accesses, secret_uri
+            yield self.uri, D3F.reads, secret_uri
 
 
 @_register
@@ -27,13 +27,13 @@ class DeveloperUser(K8Resource):
             yield developer_uri, RDF.type, K8S.DeveloperAccount
             yield self.ns, K8S.hasChild, developer_uri
             yield developer_uri, K8S.hasNamespace, self.ns
-            yield self.uri, D3F.accesses, developer_uri
+            yield self.uri, D3F.reads, developer_uri
         if providerAccountRef := self.spec.get("providerAccountRef", {}).get("name"):
             secret_uri = self.ns + f"/Secret/{providerAccountRef}"
             yield secret_uri, RDF.type, K8S.Secret
             yield self.ns, K8S.hasChild, secret_uri
             yield secret_uri, K8S.hasNamespace, self.ns
-            yield self.uri, D3F.accesses, secret_uri
+            yield self.uri, D3F.reads, secret_uri
         if passwordCredentials := self.spec.get("passwordCredentialsRef", {}).get(
             "name"
         ):
@@ -41,4 +41,4 @@ class DeveloperUser(K8Resource):
             yield secret_uri, RDF.type, K8S.Secret
             yield self.ns, K8S.hasChild, secret_uri
             yield secret_uri, K8S.hasNamespace, self.ns
-            yield self.uri, D3F.accesses, secret_uri
+            yield self.uri, D3F.reads, secret_uri

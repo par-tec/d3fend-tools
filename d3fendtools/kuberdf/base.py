@@ -8,6 +8,9 @@ from urllib.parse import urlparse
 import yaml
 from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
 
+
+log = logging.getLogger(__name__)
+
 log = logging.getLogger(__name__)
 K8S = Namespace("urn:k8s:")
 D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
@@ -54,13 +57,6 @@ def _register(cls):
         raise ValueError(f"Class {cls} must have a parse_resource method")
     CLASSMAP[(cls.apiVersion, cls.kind)] = cls
     return cls
-
-
-from d3fendtools.kuberdf.base import NS_DEFAULT, _register, D3F, K8S, SELECTOR_LABELS
-from rdflib import Namespace
-import logging
-
-log = logging.getLogger(__name__)
 
 
 class D3fendKube:

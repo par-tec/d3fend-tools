@@ -277,10 +277,10 @@ class RDF2Mermaid:
             #
             for link, arrow in (
                 (K8S.exposes, "-.-o"),
-                (D3F.executes, "x@{ animate: true}-->"),
-                (D3F.runs, "-->"),
+                (D3F.executes, "x@{ animate: true}==>"),
+                (D3F.runs, "==>"),
                 (D3F.accesses, "-->"),
-                (D3F.reads, "-->"),
+                (D3F.reads, "-.-o"),
                 (D3F.creates, "-->"),
                 (D3F.authorizes, "-.-o"),
             ):
