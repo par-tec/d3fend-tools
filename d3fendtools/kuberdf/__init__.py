@@ -9,8 +9,8 @@ import yaml
 from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef, OWL
 
 log = logging.getLogger(__name__)
-NS_K8S = Namespace("urn:k8s:")
-NS_D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
+K8S = Namespace("urn:k8s:")
+D3F = Namespace("http://d3fend.mitre.org/ontologies/d3fend.owl#")
 NS_DEFAULT = Namespace("https://par-tec.it/example#")
 
 
@@ -32,7 +32,7 @@ class D3fendKube:
         self.hypergraph = None
         self.g = Graph()
         self.g.bind("", NS_DEFAULT)
-        self.g.bind("d3f", NS_D3F)
+        self.g.bind("d3f", D3F)
         self.g.bind("rdfs", RDFS)
         self._turtle = None
         self._out = None
@@ -57,7 +57,7 @@ class D3fendKube:
                 }
             """,
                 initNs={
-                    "d3f": NS_D3F,
+                    "d3f": D3F,
                 },
             )
             self.annotations = annotations.graph
@@ -80,7 +80,7 @@ def parse_resources(
 ) -> Graph:
     g = Graph()
     g.parse(data=(Path(__file__).parent / "ontology.ttl").read_text(), format="turtle")
-    g.bind("k8s", NS_K8S)
+    g.bind("k8s", K8S)
     for f in resources:
         ns = f.stem if ns_from_file else None
         log.info(f"Parsing {f} with namespace {ns}")
@@ -126,7 +126,7 @@ def parse_manifest_as_graph(
         raise ValueError(f"Unknown manifest format: {manifest_format}")
     log.warning(f"Read manifest in %d Using parser {parser_f}", (time() - ts))
     g = g or Graph()
-    g.bind("k8s", NS_K8S)
+    g.bind("k8s", K8S)
     for manifest in parser_f(manifest_text):
         if not manifest:
             continue
@@ -227,17 +227,17 @@ class K8Resource:
         return f"{self.kind}:{self.name}"
 
     def triples_kind(self):
-        yield (NS_K8S[self.kind], RDF.type, NS_K8S.Kind)
+        yield (K8S[self.kind], RDF.type, K8S.Kind)
 
     def triples_ns(self):
-        yield self.ns, RDF.type, NS_K8S.Namespace
+        yield self.ns, RDF.type, K8S.Namespace
         yield self.ns, RDFS.label, Literal(self.namespace)
-        yield NS_K8S.cluster, NS_K8S.hasChild, self.ns
+        yield K8S.cluster, K8S.hasChild, self.ns
 
     def triples_self(self):
-        yield self.uri, RDF.type, NS_K8S[self.kind]
-        yield self.uri, NS_K8S.hasNamespace, self.ns
-        yield self.ns, NS_K8S.hasChild, self.uri
+        yield self.uri, RDF.type, K8S[self.kind]
+        yield self.uri, K8S.hasNamespace, self.ns
+        yield self.ns, K8S.hasChild, self.uri
         yield self.uri, RDFS.label, Literal(self.label)
 
         for k, v in self.metadata.get("labels", {}).items():
@@ -245,9 +245,9 @@ class K8Resource:
                 continue
             yield self.uri, RDFS.label, Literal(f"{k}: {v}")
         if self.app:
-            yield self.ns, NS_K8S.hasChild, self.app
-            yield self.app, RDF.type, NS_K8S.Application
-            yield self.app, NS_K8S.hasChild, self.uri
+            yield self.ns, K8S.hasChild, self.app
+            yield self.app, RDF.type, K8S.Application
+            yield self.app, K8S.hasChild, self.uri
 
     def get_app_uri(self, metadata):
         labels = metadata.get("labels", {})
@@ -264,17 +264,20 @@ class K8Resource:
 
 
 class Route(K8Resource):
+    apiVersion = "route.openshift.io/v1"
+    kind = "Route"
+
     def triple_spec(self):
         for k, v in self.spec.items():
             if k == "host":
                 host_u = URIRef(f"TCP://{v}{self.spec.get('path', '')}:443")
-                yield host_u, RDF.type, NS_K8S.Host
-                yield host_u, NS_D3F.accesses, self.uri
-                yield self.uri, NS_K8S.hasHost, host_u
-                yield host_u, NS_K8S.hasNamespace, self.ns
+                yield host_u, RDF.type, K8S.Host
+                yield host_u, D3F.accesses, self.uri
+                yield self.uri, K8S.hasHost, host_u
+                yield host_u, K8S.hasNamespace, self.ns
                 if self.ns:  # FIXME: Add tests
-                    yield self.ns, NS_K8S.hasChild, host_u
-                yield self.ns, NS_K8S.hasChild, host_u
+                    yield self.ns, K8S.hasChild, host_u
+                yield self.ns, K8S.hasChild, host_u
 
             if k == "to":
                 rel_kind = v["kind"]
@@ -284,7 +287,7 @@ class Route(K8Resource):
                 rel_port = f":{rel_port}" if rel_port else ""
                 yield (
                     self.uri,
-                    NS_D3F.accesses,
+                    D3F.accesses,
                     self.ns + f"/{rel_kind}/{rel_name}{rel_port}",
                 )
                 # yield self.ns + f"/{rel_kind}/{rel_name}", RDF.type, NS_K8S[rel_kind]
@@ -295,6 +298,9 @@ class Route(K8Resource):
 
 
 class Service(K8Resource):
+    apiVersion = "v1"
+    kind = "Service"
+
     def triple_spec(self):
         # Get externalname host or ip
         if external_name := self.spec.get("externalName"):
@@ -302,9 +308,9 @@ class Service(K8Resource):
             # see https://kubernetes.io/docs/concepts/services-networking/service/#externalname
             host_u = URIRef(f"fixme://{external_name}")
 
-            yield host_u, RDF.type, NS_K8S.Host
-            yield host_u, NS_D3F.accesses, self.uri
-            yield self.uri, NS_K8S.hasHost, host_u
+            yield host_u, RDF.type, K8S.Host
+            yield host_u, D3F.accesses, self.uri
+            yield self.uri, K8S.hasHost, host_u
 
         for port in self.spec.get("ports", []):
             # Explicit internal TCP connections.
@@ -312,12 +318,12 @@ class Service(K8Resource):
 
             host_u = URIRef(f"{port['protocol']}://{self.name}:{port['port']}")
 
-            yield host_u, RDF.type, NS_K8S.Host
-            yield self.uri, NS_K8S.hasHost, host_u
+            yield host_u, RDF.type, K8S.Host
+            yield self.uri, K8S.hasHost, host_u
             if port.get("targetPort"):
                 yield (
                     self.uri,
-                    NS_K8S.portForward,
+                    K8S.portForward,
                     Literal("{port}-{protocol}>{targetPort}".format(**port)),
                 )
             if port_name := port.get("name"):
@@ -329,23 +335,23 @@ class Service(K8Resource):
                 # yield self.uri, NS_K8S.hasChild, host_portname_u
                 # yield host_portname_u, NS_D3F.accesses, host_u
                 service_port = self.uri + f":{port_name}"
-                yield service_port, RDF.type, NS_K8S.Port
-                yield self.uri, NS_K8S.hasPort, service_port
-                yield self.uri, NS_K8S.hasChild, service_port
+                yield service_port, RDF.type, K8S.Port
+                yield self.uri, K8S.hasPort, service_port
+                yield self.uri, K8S.hasChild, service_port
                 yield service_port, OWL.sameAs, host_u
 
             # Service port forwarded to selectors.
             service_port = self.uri + f":{port['port']}"
-            yield service_port, RDF.type, NS_K8S.Port
-            yield self.uri, NS_K8S.hasPort, service_port
-            yield self.uri, NS_K8S.hasChild, service_port
-            yield host_u, NS_D3F.accesses, service_port
+            yield service_port, RDF.type, K8S.Port
+            yield self.uri, K8S.hasPort, service_port
+            yield self.uri, K8S.hasChild, service_port
+            yield host_u, D3F.accesses, service_port
 
             internal_host_u = URIRef(
                 f"{port['protocol']}://{self.name}.{self.namespace}.svc:{port['port']}"
             )
-            yield internal_host_u, NS_D3F.accesses, service_port
-            yield self.uri, NS_K8S.hasChild, internal_host_u
+            yield internal_host_u, D3F.accesses, service_port
+            yield self.uri, K8S.hasChild, internal_host_u
 
             if selector := self.spec.get("selector"):
                 # selector_label = json.dumps(selector, sort_keys=True).replace('"', "")
@@ -365,20 +371,20 @@ class Service(K8Resource):
                             **port
                         )
                     )
-                    yield endpoint_u, RDF.type, NS_K8S.Selector
+                    yield endpoint_u, RDF.type, K8S.Selector
                     # yield selector_u, NS_K8S.hasChild, endpoint_u
                     # Service port accesses a selector-based Endpoint.
-                    yield service_port, NS_D3F.accesses, endpoint_u
+                    yield service_port, D3F.accesses, endpoint_u
                     # yield selector_u, NS_K8S.hasChild, endpoint_u
             else:
                 # yield an Endpoint with the same name as the service
                 # and on the default namespace.
                 endpoint_u = URIRef(f"urn:k8s:default/Endpoints/{self.name}")
-                yield self.uri, NS_D3F.accesses, endpoint_u
+                yield self.uri, D3F.accesses, endpoint_u
 
             # Connect host to Endpoint
             # yield host_u, NS_D3F.accesses, endpoint_u
-            yield self.uri, NS_K8S.hasChild, host_u
+            yield self.uri, K8S.hasChild, host_u
 
 
 class DC(K8Resource):
@@ -405,13 +411,13 @@ class DC(K8Resource):
         )
         if image_url.netloc:
             registry_uri = URIRef(image_url.scheme + "://" + image_url.netloc)
-            yield registry_uri, RDF.type, NS_K8S.Registry
-            yield registry_uri, NS_K8S.hasChild, image_uri
+            yield registry_uri, RDF.type, K8S.Registry
+            yield registry_uri, K8S.hasChild, image_uri
 
-        yield image_uri, RDF.type, NS_K8S.Image
+        yield image_uri, RDF.type, K8S.Image
         if container_uri:
-            yield container_uri, NS_K8S.hasImage, image_uri
-            yield container_uri, NS_D3F.runs, image_uri
+            yield container_uri, K8S.hasImage, image_uri
+            yield container_uri, D3F.runs, image_uri
 
     def triple_spec(self):
         if not (template := self.spec.get("template")):
@@ -424,36 +430,36 @@ class DC(K8Resource):
 
         if serviceAccount := template.get("spec", {}).get("serviceAccountName"):
             service_account = self.ns + f"/ServiceAccount/{serviceAccount}"
-            yield service_account, RDF.type, NS_K8S.ServiceAccount
-            yield self.ns, NS_K8S.hasChild, service_account
-            yield service_account, NS_D3F.executes, self.uri
+            yield service_account, RDF.type, K8S.ServiceAccount
+            yield self.ns, K8S.hasChild, service_account
+            yield service_account, D3F.executes, self.uri
 
         for volume in volumes:
             if "persistentVolumeClaim" in volume:
                 pvc = volume["persistentVolumeClaim"]["claimName"]
                 s_volume = self.ns + f"/PersistentVolumeClaim/{pvc}"
-                yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_D3F.accesses, s_volume
-                yield s_volume, RDF.type, NS_K8S.PersistentVolumeClaim
+                yield self.uri, K8S.hasVolume, s_volume
+                yield self.uri, D3F.accesses, s_volume
+                yield s_volume, RDF.type, K8S.PersistentVolumeClaim
                 # XXX: the volume can be mounted in multiple applications.
                 if template_app:
-                    yield template_app, NS_K8S.hasChild, s_volume
+                    yield template_app, K8S.hasChild, s_volume
                 else:
-                    yield self.ns, NS_K8S.hasChild, s_volume
+                    yield self.ns, K8S.hasChild, s_volume
             elif "secret" in volume:
                 secret = volume["secret"]["secretName"]
                 s_volume = self.ns + f"/Secret/{secret}"
-                yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_D3F.reads, s_volume
-                yield s_volume, RDF.type, NS_K8S.Secret
-                yield self.ns, NS_K8S.hasChild, s_volume
+                yield self.uri, K8S.hasVolume, s_volume
+                yield self.uri, D3F.reads, s_volume
+                yield s_volume, RDF.type, K8S.Secret
+                yield self.ns, K8S.hasChild, s_volume
             elif "configMap" in volume:
                 configmap = volume["configMap"]["name"]
                 s_volume = self.ns + f"/ConfigMap/{configmap}"
-                yield self.uri, NS_K8S.hasVolume, s_volume
-                yield self.uri, NS_D3F.reads, s_volume
-                yield s_volume, RDF.type, NS_K8S.ConfigMap
-                yield self.ns, NS_K8S.hasChild, s_volume
+                yield self.uri, K8S.hasVolume, s_volume
+                yield self.uri, D3F.reads, s_volume
+                yield s_volume, RDF.type, K8S.ConfigMap
+                yield self.ns, K8S.hasChild, s_volume
             elif "hostPath" in volume:
                 if self.namespace.startswith(
                     (
@@ -478,12 +484,12 @@ class DC(K8Resource):
 
         for container in containers:
             s_container = self.uri + f"/Container/{container['name']}"
-            yield self.uri, NS_D3F.runs, s_container
-            yield s_container, RDF.type, NS_K8S.Container
+            yield self.uri, D3F.runs, s_container
+            yield s_container, RDF.type, K8S.Container
             yield s_container, RDFS.label, Literal(container["name"])
-            yield self.uri, NS_K8S.hasChild, s_container
+            yield self.uri, K8S.hasChild, s_container
             if self.app:
-                yield self.app, NS_K8S.hasChild, s_container
+                yield self.app, K8S.hasChild, s_container
 
             if "image" in container:
                 image = DC.parse_image(container["image"], container_uri=s_container)
@@ -502,9 +508,9 @@ class DC(K8Resource):
                     if k not in SELECTOR_LABELS:
                         continue
                     port_u = URIRef(f"{protocol}://{self.ns}/{k}={v}:{port}")
-                    yield port_u, RDF.type, NS_K8S.Selector
-                    yield port_u, NS_D3F.accesses, s_container
-                    yield self.uri, NS_K8S.hasChild, port_u
+                    yield port_u, RDF.type, K8S.Selector
+                    yield port_u, D3F.accesses, s_container
+                    yield self.uri, K8S.hasChild, port_u
                     # if template_app:
                     #     yield template_app, NS_K8S.hasChild, port_u
 
@@ -517,8 +523,8 @@ class DC(K8Resource):
                         # host_u is the name of a kubernetes service
                         host_u = self.ns + f"/Service/{host_u}"
 
-                    yield host_u, RDF.type, NS_K8S.Host
-                    yield s_container, NS_D3F.accesses, host_u
+                    yield host_u, RDF.type, K8S.Host
+                    yield s_container, D3F.accesses, host_u
                 except (
                     KeyError,
                     AttributeError,
@@ -543,10 +549,10 @@ class HorizontalPodAutoscaler(K8Resource):
         name = scale_target["name"]
         if kind in ("DeploymentConfig", "Deployment"):
             target_u = URIRef(self.ns + f"/{kind}/{name}")
-            yield self.uri, NS_D3F.accesses, target_u
-            yield target_u, NS_K8S.hasChild, self.uri
-            yield target_u, RDF.type, NS_K8S.Job
-            yield self.ns, NS_K8S.hasChild, target_u
+            yield self.uri, D3F.accesses, target_u
+            yield target_u, K8S.hasChild, self.uri
+            yield target_u, RDF.type, K8S.Job
+            yield self.ns, K8S.hasChild, target_u
 
 
 class ReplicaSet(K8Resource):
@@ -580,7 +586,7 @@ class CronJob(DC):
     def triples_spec(self):
         yield from super().triple_spec()
         jobs_u = self.ns + "/Jobs"
-        yield jobs_u, NS_K8S.hasChild, self.uri
+        yield jobs_u, K8S.hasChild, self.uri
 
 
 class K8List(K8Resource):
@@ -592,7 +598,7 @@ class K8List(K8Resource):
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.namespace = manifest["metadata"].get("namespace", ns or "default_")
-        self.ns = NS_K8S[self.namespace]
+        self.ns = K8S[self.namespace]
         self.spec = manifest.get("spec", {})
         self.items = manifest["items"]
         # Set the application.
@@ -637,17 +643,17 @@ class RoleBinding(K8Resource):
 
             if kind == "ServiceAccount":
                 sa_u = ns + f"/ServiceAccount/{name}"
-                yield sa_u, RDF.type, NS_K8S.ServiceAccount
-                yield ns, RDF.type, NS_K8S.Namespace
-                yield ns, NS_K8S.hasChild, sa_u
-                yield sa_u, NS_K8S.hasNamespace, ns
-                yield sa_u, NS_D3F.accesses, self.ns
+                yield sa_u, RDF.type, K8S.ServiceAccount
+                yield ns, RDF.type, K8S.Namespace
+                yield ns, K8S.hasChild, sa_u
+                yield sa_u, K8S.hasNamespace, ns
+                yield self.uri, D3F.authorizes, sa_u
             elif kind == "User":
                 user_u = URIRef(ns + f"/User/{name}")
-                yield user_u, RDF.type, NS_K8S.User
-                yield ns, NS_K8S.hasChild, user_u
-                yield user_u, NS_K8S.hasNamespace, ns
-                yield user_u, NS_D3F.accesses, self.ns
+                yield user_u, RDF.type, K8S.User
+                yield ns, K8S.hasChild, user_u
+                yield user_u, K8S.hasNamespace, ns
+                yield self.uri, D3F.authorizes, user_u
 
             else:
                 raise NotImplementedError(kind)
@@ -666,8 +672,8 @@ class BuildConfig(K8Resource):
             to_image_url = URIRef(
                 self.ns + "/ImageStreamTag/" + strip_oci_image_tag(to_["name"])
             )
-            yield self.uri, NS_K8S.writes, to_image_url
-            yield to_image_url, RDF.type, NS_K8S.ImageStreamTag
+            yield self.uri, K8S.writes, to_image_url
+            yield to_image_url, RDF.type, K8S.ImageStreamTag
 
         from_ = self.spec.get("strategy", {}).get("sourceStrategy", {}).get("from", {})
         if from_.get("kind") == "ImageStreamTag":
@@ -675,8 +681,8 @@ class BuildConfig(K8Resource):
             from_image_url = URIRef(
                 ns + "/ImageStreamTag/" + strip_oci_image_tag(from_["name"])
             )
-            yield self.uri, NS_K8S.reads, from_image_url
-            yield from_image_url, RDF.type, NS_K8S.ImageStreamTag
+            yield self.uri, K8S.reads, from_image_url
+            yield from_image_url, RDF.type, K8S.ImageStreamTag
         if from_image_url and to_image_url:
             yield to_image_url, RDFS.subClassOf, from_image_url
 

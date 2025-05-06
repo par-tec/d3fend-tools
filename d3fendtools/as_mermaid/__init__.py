@@ -6,7 +6,7 @@ from pathlib import Path
 from rdflib import Graph
 from rdflib.namespace import RDF, RDFS
 
-from d3fendtools.kuberdf import NS_D3F, NS_K8S
+from d3fendtools.kuberdf import D3F, K8S
 
 log = logging.getLogger(__name__)
 
@@ -24,61 +24,61 @@ def render_in_chunks(items, chunk_size=6):
 
 
 RENDER_MAP = {
-    NS_K8S.Container: {
+    K8S.Container: {
         "shape": "process",
     },
-    NS_K8S.Selector: {
+    K8S.Selector: {
         "shape": "odd",
     },
-    NS_K8S.Service: {
+    K8S.Service: {
         "shape": "circle",
     },
-    NS_K8S.ServiceAccount: {
+    K8S.ServiceAccount: {
         "shape": "circle",
     },
-    NS_K8S.User: {
+    K8S.User: {
         "shape": "circle",
     },
-    NS_K8S.Image: {
+    K8S.Image: {
         "shape": "lin-cyl",
     },
-    NS_K8S.ImageStream: {
+    K8S.ImageStream: {
         "shape": "lin-cyl",
     },
-    NS_K8S.ImageStreamTag: {
+    K8S.ImageStreamTag: {
         "shape": "lin-cyl",
     },
-    NS_K8S.PersistentVolumeClaim: {
+    K8S.PersistentVolumeClaim: {
         "shape": "lin-cyl",
     },
-    NS_K8S.Volume: {
+    K8S.Volume: {
         "shape": "lin-cyl",
     },
-    NS_K8S.Route: {
+    K8S.Route: {
         "shape": "delay",
     },
-    NS_K8S.Deployment: {
+    K8S.Deployment: {
         "shape": "processes",
     },
-    NS_K8S.DeploymentConfig: {
+    K8S.DeploymentConfig: {
         "shape": "processes",
     },
-    NS_K8S.ConfigMap: {
+    K8S.ConfigMap: {
         "shape": "doc",
     },
-    NS_K8S.Secret: {
+    K8S.Secret: {
         "shape": "doc",
     },
-    NS_K8S.Endpoints: {
+    K8S.Endpoints: {
         "shape": "curv-trap",
     },
-    NS_K8S.Host: {
+    K8S.Host: {
         "shape": "trap-b",
     },
-    NS_K8S.HorizontalPodAutoscaler: {
+    K8S.HorizontalPodAutoscaler: {
         "shape": "subproc",
     },
-    NS_K8S.RoleBinding: {
+    K8S.RoleBinding: {
         "shape": "doc",
     },
 }
@@ -108,15 +108,17 @@ class RDF2Mermaid:
         "urn:k8s:Port": "fa:fa-ethernet",
         "urn:k8s:Secret": "fa:fa-key",
         "urn:k8s:Service": "fa:fa-sitemap",
+        "urn:k8s:ServiceAccount": "fa:fa-user-shield",
         "urn:k8s:Registry": "fab:fa-docker fa:fa-boxes-stacked",
         "urn:k8s:Route": "fa:fa-route",
+        "urn:k8s:RoleBinding": "fa:fa-id-badge",
     }
     # NB: A node connected with another is always rendered.
     DONT_RENDER = (
         # These are not nodes.
-        NS_K8S.Pod,
-        NS_K8S.Job,
-        NS_K8S.BuildConfig,
+        K8S.Pod,
+        K8S.Job,
+        K8S.BuildConfig,
         #        NS_K8S.Selector,
         # NS_K8S.Host,
         # # For now, skip these. XXX
@@ -125,20 +127,20 @@ class RDF2Mermaid:
         # NS_K8S.ImageStreamTag,
     )
     RENDER_AS_SUBGRAPHS = (
-        NS_K8S.Namespace,
-        NS_K8S.Registry,
-        NS_K8S.Application,
+        K8S.Namespace,
+        K8S.Registry,
+        K8S.Application,
         # DC are groups.
-        NS_K8S.DeploymentConfig,
-        NS_K8S.Deployment,
-        NS_K8S.StatefulSet,
+        K8S.DeploymentConfig,
+        K8S.Deployment,
+        K8S.StatefulSet,
     )
     DONT_RENDER_AS_NODES = DONT_RENDER + RENDER_AS_SUBGRAPHS
 
     def __init__(self, g: Graph):
         self.g = g
-        g.bind("k8s", NS_K8S)
-        g.bind("d3f", NS_D3F)
+        g.bind("k8s", K8S)
+        g.bind("d3f", D3F)
         self.lines = []
         self.nodes = []
         self.edges = []
@@ -170,6 +172,16 @@ class RDF2Mermaid:
                 ret += r"\n"
                 offset += 20
         return ret.strip(r"\n").strip().replace("=", "_")
+
+    def _format_link(self, link):
+        import re
+
+        def _replace_curie(match: str | re.Match):
+            needle = match.group(0) if isinstance(match, re.Match) else match
+            return self.g.namespace_manager.curie(needle)
+
+        ret = re.sub(r"http[^ ]+", _replace_curie, link)
+        return ret
 
     def parse(self, match: str = "", simplified_view=False):
         if self.lines:
@@ -214,7 +226,7 @@ class RDF2Mermaid:
 
             # Create a tree of subgraph based on the
             # hasChild predicate.
-            for child in self.g.objects(s, NS_K8S.hasChild) or []:
+            for child in self.g.objects(s, K8S.hasChild) or []:
                 child = RDF2Mermaid.sanitize_uri(child)
                 children_ = self.subgraphs.setdefault(
                     src,
@@ -226,7 +238,7 @@ class RDF2Mermaid:
                 )["children"]
                 children_.append(child)
                 children_ = None
-                if False and type_ == NS_K8S.Namespace and child.startswith("TCP:__"):
+                if False and type_ == K8S.Namespace and child.startswith("TCP:__"):
                     controlplane = self.subgraphs.setdefault(
                         f"{src}_cp",
                         {
@@ -255,18 +267,19 @@ class RDF2Mermaid:
             # Adjust link direction to improve readability.
             #
             for link, arrow in (
-                (NS_K8S.exposes, "-.-o"),
-                (NS_D3F.executes, "-->"),
-                (NS_D3F.runs, "-->"),
-                (NS_D3F.accesses, "-->"),
-                (NS_D3F.reads, "-->"),
+                (K8S.exposes, "-.-o"),
+                (D3F.executes, "x@{ animate: true}-->"),
+                (D3F.runs, "-->"),
+                (D3F.accesses, "-->"),
+                (D3F.reads, "-->"),
+                (D3F.authorizes, "-.-o"),
             ):
                 for dst in self.g.objects(s, link) or []:
                     dst = RDF2Mermaid.sanitize_uri(dst)
-                    if link == NS_K8S.exposes:
+                    if link == K8S.exposes:
                         src, dst = dst, src
                         link = "exposed by"
-                    elif link in (NS_D3F.executes, NS_D3F.runs):
+                    elif link in (D3F.executes, D3F.runs):
                         pass
                         # src, dst = dst, src
                         # link = "executed by"
@@ -277,10 +290,10 @@ class RDF2Mermaid:
                     if link.startswith("urn:k8s:"):
                         link = str(link)[8:]
 
-                    if hasattr(link, "fragment"):
-                        link = link.fragment
+                    # if hasattr(link, "fragment"):
+                    #     link = link.fragment
 
-                    line = f"""{src} {arrow} |{link}| {dst}"""
+                    line = f"""{src} {arrow} |{self._format_link(link)}| {dst}"""
                     if line not in self.edges:
                         self.edges.append(line)
         log.info("Parsed %s lines.", len(self.nodes) + len(self.edges))
@@ -324,7 +337,7 @@ class RDF2Mermaid:
                     continue
                 if child == parent:
                     continue
-                if parent_type == NS_K8S.Namespace:
+                if parent_type == K8S.Namespace:
                     # Namespace should be processed last.
                     # Deployment* and Service* should be processed
                     #   under Application.
@@ -334,7 +347,7 @@ class RDF2Mermaid:
                         continue
                     if "_Service_" in child:
                         continue
-                if parent_type == NS_K8S.Application:
+                if parent_type == K8S.Application:
                     # Application should be processed last.
                     # Deployment* and Service* should be processed
                     #   under Application.
@@ -355,22 +368,22 @@ class RDF2Mermaid:
             #     children_to_render = render_in_chunks(children_to_render, 6)
             yield from children_to_render
             yield "end"
-            if parent_type == NS_K8S.Namespace:
+            if parent_type == K8S.Namespace:
                 yield f"class {parent} namespace;"
             elif parent_type in (
-                NS_K8S.Application,
-                NS_K8S.DeploymentConfig,
-                NS_K8S.Deployment,
-                NS_K8S.StatefulSet,
+                K8S.Application,
+                K8S.DeploymentConfig,
+                K8S.Deployment,
+                K8S.StatefulSet,
             ):
                 yield f"class {parent} workload;"
-            elif parent_type in (NS_K8S.Service, NS_K8S.Endpoints):
+            elif parent_type in (K8S.Service, K8S.Endpoints):
                 yield f"class {parent} network;"
 
         tree_namespace = []
         for parent, data in tree.items():
             parent_type = data.get("type")
-            if parent_type == NS_K8S.Namespace:
+            if parent_type == K8S.Namespace:
                 tree_namespace.append((parent, data))
                 continue
             yield from _render_tree(parent, data)
