@@ -81,6 +81,15 @@ RENDER_MAP = {
     K8S.RoleBinding: {
         "shape": "doc",
     },
+    K8S.DeveloperAccount: {
+        "shape": "circle",
+    },
+    K8S.DeveloperUser: {
+        "shape": "circle",
+    },
+    K8S.ExternalSecret: {
+        "shape": "process",
+    },
 }
 
 
@@ -272,6 +281,7 @@ class RDF2Mermaid:
                 (D3F.runs, "-->"),
                 (D3F.accesses, "-->"),
                 (D3F.reads, "-->"),
+                (D3F.creates, "-->"),
                 (D3F.authorizes, "-.-o"),
             ):
                 for dst in self.g.objects(s, link) or []:
@@ -279,6 +289,11 @@ class RDF2Mermaid:
                     if link == K8S.exposes:
                         src, dst = dst, src
                         link = "exposed by"
+                    elif link == D3F.reads:
+                        line = f"""{dst} ~~~ {dst}"""
+                        if line not in self.edges:
+                            self.edges.append(line)
+
                     elif link in (D3F.executes, D3F.runs):
                         pass
                         # src, dst = dst, src
