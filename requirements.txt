@@ -1,5 +1,6 @@
-rdflib
-pyyaml
 click
-requests
+ipython
 pandas
+pyyaml
+rdflib
+requests

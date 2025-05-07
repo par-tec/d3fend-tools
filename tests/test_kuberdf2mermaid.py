@@ -100,7 +100,7 @@ def test_file():
     x = Graph()
     # Add all g triples to x
     for s, p, o in g:
-        if (p, o) == (RDF.type, kuberdf.NS_K8S.Namespace):
+        if (p, o) == (RDF.type, kuberdf.K8S.Namespace):
             x.add((s, p, o))
         if "ws" in f"{s}{o}":
             x.add((s, p, o))

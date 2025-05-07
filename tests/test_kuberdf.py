@@ -5,7 +5,12 @@ import pytest
 import yaml
 from rdflib import Graph, URIRef
 
-from d3fendtools.kuberdf import DC, K8Resource, parse_manifest_as_graph, parse_resources
+from d3fendtools.kuberdf import (
+    Deployment,
+    K8Resource,
+    parse_manifest_as_graph,
+    parse_resources,
+)
 
 log = logging.getLogger(__name__)
 
@@ -97,7 +102,7 @@ def test_graph():
 )
 def test_image(image):
     g = Graph()
-    for triple in DC.parse_image(image, URIRef("urn:k8s:Container/uri")):
+    for triple in Deployment.parse_image(image, URIRef("urn:k8s:Container/uri")):
         g.add(triple)
 
     assert "fafafa" not in g.serialize()

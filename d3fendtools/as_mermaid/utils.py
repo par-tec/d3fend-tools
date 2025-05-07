@@ -1,5 +1,5 @@
 from rdflib import Graph, RDF, OWL
-from d3fendtools.kuberdf import NS_K8S
+from d3fendtools.kuberdf import K8S
 
 
 class UnionFind:
@@ -52,9 +52,7 @@ def unify_sameas(
     index = 0
     for root, members in eq_classes.items():
         index += 1
-        union_node = (
-            NS_K8S["union"] if len(eq_classes) == 1 else NS_K8S[f"union{index}"]
-        )
+        union_node = K8S["union"] if len(eq_classes) == 1 else K8S[f"union{index}"]
         union_nodes[root] = (union_node, members)
 
     for s, p, o in g:
@@ -77,7 +75,7 @@ def unify_sameas(
     #    and replicate type relationships on the union node
     for root, (union_node, members) in union_nodes.items():
         for m in members:
-            new_g.add((union_node, NS_K8S.hasChild, m))
+            new_g.add((union_node, K8S.hasChild, m))
             # Copy the type triple: if m a T, also union a T
             for _, p, t in g.triples((m, RDF.type, None)):
                 new_g.add((union_node, RDF.type, t))
