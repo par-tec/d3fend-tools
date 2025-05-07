@@ -4,6 +4,7 @@ from pathlib import Path
 from time import time
 from typing import Iterable
 from urllib.parse import urlparse
+import re
 
 import yaml
 from rdflib import RDF, RDFS, Graph, Literal, Namespace, URIRef
@@ -309,4 +310,24 @@ class K8List(K8Resource):
 
     def triples(self):
         for item in self.items:
+            yield from K8Resource.parse_resource(item, ns=self.namespace)
+
+
+@_register
+class Template(K8Resource):
+    apiVersion = "template.openshift.io/v1"
+    kind = "Template"
+
+    def __init__(self, manifest: dict = None, ns: str = None) -> None:
+        super().__init__(manifest, ns=ns)
+        self.parameters = manifest.get("parameters", [])
+        self.objects = manifest.get("objects", [])
+
+    def triples(self):
+        r = re.compile(r"\$\{+([a-zA-Z_]+)\}+")
+        for item in self.objects:
+            item = yaml.safe_dump(item)
+
+            item = r.sub(lambda x: x.group(1).lower(), item)
+            item = yaml.safe_load(item)
             yield from K8Resource.parse_resource(item, ns=self.namespace)
