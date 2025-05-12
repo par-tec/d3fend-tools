@@ -38,6 +38,8 @@ k8s:Secret      a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Service     a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:Node        a rdfs:Class; rdfs:subClassOf k8s:Kind .
 k8s:ServiceAccount a rdfs:Class; rdfs:subClassOf k8s:Kind .
+k8s:RoleBinding a rdfs:Class; rdfs:subClassOf k8s:Kind .
+k8s:ExternalSecret a rdfs:Class; rdfs:subClassOf k8s:Kind .
 
 k8s:Pod rdfs:subClassOf k8s:Kind ;
     rdfs:comment "A group of one or more containers, with shared storage/network, and a specification for how to run the containers" ;
@@ -96,3 +98,6 @@ k8s:Registry rdfs:subClassOf d3f:SoftwareArtifactServer .
 k8s:Route rdfs:subClassOf d3f:InternetNetworkTraffic .
 k8s:Node rdfs:subClassOf d3f:Server .
 k8s:ServiceAccount rdfs:subClassOf d3f:ServiceAccount .
+k8s:RoleBinding rdfs:subClassOf d3f:AccessControlConfiguration .
+k8s:Role rdfs:subClassOf d3f:AccessControlConfiguration .
+k8s:ExternalSecret rdfs:subClassOf d3f:ConfigurationResource, d3f:ScheduledJob .
