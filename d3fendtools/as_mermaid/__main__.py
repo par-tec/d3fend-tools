@@ -12,7 +12,7 @@ logging.basicConfig(
 
 
 @click.command()
-@click.argument("files", nargs=-1, type=click.Path(exists=True))
+@click.argument("files", nargs=-1, type=click.Path(exists=True), required=True)
 @click.option("--output", "-o", help="Output markdown file")
 def main(files, output):
     output_md = Path(output)

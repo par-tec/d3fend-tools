@@ -139,6 +139,7 @@ class RDF2Mermaid:
         K8S.Namespace,
         K8S.Registry,
         K8S.Application,
+        K8S.Service,
         # DC are groups.
         K8S.DeploymentConfig,
         K8S.Deployment,
@@ -333,11 +334,11 @@ class RDF2Mermaid:
         return ret
 
     @staticmethod
-    def create_tree(tree):
+    def create_tree(tree: dict):
         """Create a tree of subgraphs according to mermaid syntax."""
         rendered = set()
 
-        def _render_tree(parent, data):
+        def _render_tree(parent, data, is_namespace=False):
             label = data.get("label") or ""
             parent_type = data.get("type")
             children = data.get("children") or []
@@ -352,7 +353,7 @@ class RDF2Mermaid:
                     continue
                 if child == parent:
                     continue
-                if parent_type == K8S.Namespace:
+                if (is_namespace, parent_type) == (False, K8S.Namespace):
                     # Namespace should be processed last.
                     # Deployment* and Service* should be processed
                     #   under Application.
@@ -402,5 +403,7 @@ class RDF2Mermaid:
                 tree_namespace.append((parent, data))
                 continue
             yield from _render_tree(parent, data)
+
+        # Render namespaces last.
         for parent, data in tree_namespace:
-            yield from _render_tree(parent, data)
+            yield from _render_tree(parent, data, is_namespace=True)

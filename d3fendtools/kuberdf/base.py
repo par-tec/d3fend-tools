@@ -224,6 +224,9 @@ class K8Resource:
         self.kind = manifest["kind"]
         self.metadata = manifest["metadata"]
         self.name = self.metadata["name"]
+        from urllib.parse import quote
+
+        self.name = quote(self.name, safe="")
         self.namespace = manifest["metadata"].get("namespace", ns or "default")
         self.ns = URIRef(f"https://k8s.local/{self.namespace}")
         self.spec = manifest.get("spec", {})

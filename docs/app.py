@@ -10,11 +10,28 @@ from d3fendtools import as_mermaid, d3fend, kuberdf, mermaidrdf
 try:
     import js
     from pyodide.ffi import create_proxy
-    from pyscript import Element
 except ImportError:
     pass
 
 log = logging.getLogger(__name__)
+
+
+class Element:
+    """Element class to access the DOM element with id `id_`."""
+
+    def __init__(self, id_: str):
+        self.id_ = id_
+        self.element = js.document.getElementById(id_)
+
+    def write(self, text):
+        """Write text to the element."""
+        self.element.innerHTML = text
+
+    def clear(self):
+        """Clear the element."""
+        self.element.innerHTML = ""
+
+
 HEADERS = ["node", "relation", "artifact", "technique"]
 
 flip_mermaid = mermaidrdf.flip_mermaid
@@ -223,7 +240,9 @@ def _copy_text_to_clipboard(text):
 
 def event_listener(element_id, event_type):
     def decorator(callback):
-        Element(element_id).element.addEventListener(event_type, create_proxy(callback))
+        js.document.getElementById(element_id).addEventListener(
+            event_type, create_proxy(callback)
+        )
 
     return decorator
 

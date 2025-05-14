@@ -1,7 +1,7 @@
 <html>
   <head>
-    <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-    <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    <link rel="stylesheet" href="https://pyscript.net/releases/2025.3.1/core.css" />
+    <script type="module" src="https://pyscript.net/releases/2025.3.1/core.js"></script>
     <py-config type="toml">
     terminal = false
     packages = [
@@ -306,12 +306,15 @@ log = logging.getLogger(__name__)
 # log.info(f"{pyodide_js.version= }")
 from pyodide.ffi import create_proxy
 import js
+
+from app import Element
 from pathlib import Path
 
 from time import time
 import re
 import html
 import rdflib
+
 
 # Import local application.
 import app
@@ -331,6 +334,7 @@ mermaidAPI.initialize(**{
 CONFIG = {
   "strip_prefix": True,  # "urn:k8s:"
 }
+
 
 ontology = app.initialize_graph(["static/ontology.ttl","static/d3fend-short.ttl"])
 # Publish information in the global namespace
