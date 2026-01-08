@@ -13,7 +13,7 @@ logging.basicConfig(
 
 @click.command()
 @click.argument("files", nargs=-1, type=click.Path(exists=True))
-@click.option("--output", "-o", help="Output markdown file")
+@click.option("--output", "-o", required=True, help="Output markdown file")
 def main(files, output):
     if not files:
         raise click.UsageError("At least one file is required")
