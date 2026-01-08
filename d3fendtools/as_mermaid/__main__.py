@@ -12,9 +12,11 @@ logging.basicConfig(
 
 
 @click.command()
-@click.argument("files", nargs=-1, type=click.Path(exists=True), required=True)
-@click.option("--output", "-o", help="Output markdown file")
+@click.argument("files", nargs=-1, type=click.Path(exists=True))
+@click.option("--output", "-o", required=True, help="Output markdown file")
 def main(files, output):
+    if not files:
+        raise click.UsageError("At least one file is required")
     output_md = Path(output)
     resource_paths = []
     for file in files:
